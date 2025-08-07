@@ -20,6 +20,7 @@ class EtapePipelineResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-arrow-path';
 
     protected static ?string $navigationGroup = 'Paramètres > Opportunités';
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {

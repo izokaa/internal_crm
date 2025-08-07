@@ -67,6 +67,10 @@ class OpportunityResource extends Resource
                     ])
                     ->required()
                     ->default('Ouverte'),
+                Forms\Components\TextInput::make('prefix')
+                    ->required()
+                    ->maxLength(255)
+                    ->default('OPPO'),
                 Forms\Components\Select::make('contact_id')
                     ->relationship('contact', 'nom')
                     ->required(),
@@ -90,6 +94,10 @@ class OpportunityResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('identifiant')
+                    ->label('Identifiant')
+                    ->getStateUsing(fn (Opportunity $record): string => "{$record->prefix}-{$record->id}")
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('titre')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('montant_estime')

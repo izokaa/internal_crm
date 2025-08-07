@@ -21,6 +21,7 @@ return new class extends Migration
             $table->date('date_echeance');
             $table->integer('probabilite');
             $table->enum('status', ['Ouverte', 'Gagnée', 'Perdue', 'En retard', 'Annulée', 'Fermée'])->default('Ouverte');
+            $table->string('prefix')->nullable(); // Réajouté
             $table->foreignId('contact_id')->constrained()->cascadeOnDelete();
             $table->foreignId('source_id')->constrained()->cascadeOnDelete();
             $table->foreignId('pipeline_id')->nullable()->constrained()->cascadeOnDelete();
