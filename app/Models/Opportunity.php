@@ -21,6 +21,8 @@ class Opportunity extends Model
         'prefix',
         'contact_id',
         'source_id',
+        'pipeline_id',
+        'etape_pipeline_id',
     ];
 
     public function contact()
@@ -36,5 +38,15 @@ class Opportunity extends Model
     public function users()
     {
         return $this->belongsToMany(User::class);
+    }
+
+    public function pipeline()
+    {
+        return $this->belongsTo(Pipeline::class);
+    }
+
+    public function etapePipeline()
+    {
+        return $this->belongsTo(EtapePipeline::class);
     }
 }

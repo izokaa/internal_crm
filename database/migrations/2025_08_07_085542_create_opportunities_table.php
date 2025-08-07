@@ -22,8 +22,10 @@ return new class extends Migration
             $table->text('brief');
             $table->enum('status', ['ouvert', 'ferme', 'en retard', 'annule']);
             $table->string('prefix');
-            $table->foreignId('contact_id')->constrained();
-            $table->foreignId('source_id')->constrained();
+            $table->foreignId('contact_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('source_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('pipeline_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('etape_pipeline_id')->nullable()->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

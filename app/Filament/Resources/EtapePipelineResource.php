@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ServiceResource\Pages;
-use App\Filament\Resources\ServiceResource\RelationManagers;
-use App\Models\Service;
+use App\Filament\Resources\EtapePipelineResource\Pages;
+use App\Filament\Resources\EtapePipelineResource\RelationManagers;
+use App\Models\EtapePipeline;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,22 +13,28 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ServiceResource extends Resource
+class EtapePipelineResource extends Resource
 {
-    protected static ?string $model = Service::class;
+    protected static ?string $model = EtapePipeline::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
+    protected static ?string $navigationIcon = 'heroicon-o-arrow-path';
 
-    protected static ?string $navigationGroup = 'Paramètres';
+    protected static ?string $navigationGroup = 'Paramètres > Opportunités';
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('nom')
-                    ->required(),
-                Forms\Components\Select::make('business_unit_id')
-                    ->relationship('businessUnit', 'nom')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('ordre')
+                    ->required()
+                    ->numeric()
+                    ->default(1),
+                Forms\Components\Select::make('pipeline_id')
+                    ->relationship('pipeline', 'nom')
                     ->required(),
             ]);
     }
@@ -39,7 +45,10 @@ class ServiceResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('nom')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('businessUnit.nom')
+                Tables\Columns\TextColumn::make('ordre')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('pipeline.nom')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -54,8 +63,8 @@ class ServiceResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('businessUnit')
-                    ->relationship('businessUnit', 'nom'),
+                Tables\Filters\SelectFilter::make('pipeline')
+                    ->relationship('pipeline', 'nom'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -78,9 +87,9 @@ class ServiceResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListServices::route('/'),
-            'create' => Pages\CreateService::route('/create'),
-            'edit' => Pages\EditService::route('/{record}/edit'),
+            'index' => Pages\ListEtapePipelines::route('/'),
+            'create' => Pages\CreateEtapePipeline::route('/create'),
+            'edit' => Pages\EditEtapePipeline::route('/{record}/edit'),
         ];
     }
 

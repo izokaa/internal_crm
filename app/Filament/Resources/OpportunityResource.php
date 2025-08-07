@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\OpportunityResource\Pages;
 use App\Filament\Resources\OpportunityResource\RelationManagers;
 use App\Models\Opportunity;
+use App\Models\Pipeline;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -12,6 +13,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 
 class OpportunityResource extends Resource
 {
@@ -24,7 +27,8 @@ class OpportunityResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('titre')
-                    ->required(),
+                    ->required()
+                    ->maxLength(255),
                 Forms\Components\Textarea::make('description')
                     ->required()
                     ->columnSpanFull(),
@@ -33,12 +37,14 @@ class OpportunityResource extends Resource
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('montant_estime')
                     ->required()
-                    ->numeric(),
+                    ->numeric()
+                    ->prefix('$'),
                 Forms\Components\DatePicker::make('date_echeance')
                     ->required(),
                 Forms\Components\TextInput::make('probabilite')
                     ->required()
-                    ->numeric(),
+                    ->numeric()
+                    ->suffix('%'),
                 Forms\Components\MarkdownEditor::make('brief')
                     ->required()
                     ->columnSpanFull(),
@@ -51,13 +57,24 @@ class OpportunityResource extends Resource
                     ])
                     ->required(),
                 Forms\Components\TextInput::make('prefix')
-                    ->required(),
+                    ->required()
+                    ->maxLength(255),
                 Forms\Components\Select::make('contact_id')
                     ->relationship('contact', 'nom')
                     ->required(),
                 Forms\Components\Select::make('source_id')
                     ->relationship('source', 'nom')
                     ->required(),
+                Forms\Components\Select::make('pipeline_id')
+                    ->label('Pipeline')
+                    ->options(Pipeline::all()->pluck('nom', 'id'))
+                    ->live()
+                    ->afterStateUpdated(fn (Set $set) => $set('etape_pipeline_id', null))
+                    ->nullable(),
+                Forms\Components\Select::make('etape_pipeline_id')
+                    ->label('Étape du Pipeline')
+                    ->options(fn (Get $get): array => Pipeline::find($get('pipeline_id'))?->etapePipelines->pluck('nom', 'id')->toArray() ?? [])
+                    ->nullable(),
             ]);
     }
 
@@ -86,6 +103,12 @@ class OpportunityResource extends Resource
                 Tables\Columns\TextColumn::make('source.nom')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('pipeline.nom')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('etapePipeline.nom')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Date de création')
                     ->dateTime()
@@ -98,10 +121,25 @@ class OpportunityResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('status')
+                    ->options([
+                        'ouvert' => 'Ouvert',
+                        'ferme' => 'Fermé',
+                        'en retard' => 'En retard',
+                        'annule' => 'Annulé',
+                    ]),
+                Tables\Filters\SelectFilter::make('contact')
+                    ->relationship('contact', 'nom'),
+                Tables\Filters\SelectFilter::make('source')
+                    ->relationship('source', 'nom'),
+                Tables\Filters\SelectFilter::make('pipeline')
+                    ->relationship('pipeline', 'nom'),
+                Tables\Filters\SelectFilter::make('etapePipeline')
+                    ->relationship('etapePipeline', 'nom'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
