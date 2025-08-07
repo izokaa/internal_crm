@@ -13,11 +13,17 @@ return new class extends Migration
     {
         Schema::create('opportunities', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->text('description')->nullable();
-            $table->decimal('amount', 10, 2)->nullable();
-            $table->foreignId('contact_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('stage_id')->constrained()->cascadeOnDelete();
+            $table->string('titre');
+            $table->text('description');
+            $table->text('note');
+            $table->decimal('montant_estime');
+            $table->date('date_echeance');
+            $table->integer('probabilite');
+            $table->text('brief');
+            $table->enum('status', ['ouvert', 'ferme', 'en retard', 'annule']);
+            $table->string('prefix');
+            $table->foreignId('contact_id')->constrained();
+            $table->foreignId('source_id')->constrained();
             $table->timestamps();
         });
     }

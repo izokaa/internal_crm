@@ -9,5 +9,18 @@ class Opportunity extends Model
 {
     use HasFactory;
 
-    //
+    public function contact()
+    {
+        return $this->belongsTo(Contact::class);
+    }
+
+    public function source()
+    {
+        return $this->belongsTo(Source::class);
+    }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+    }
 }

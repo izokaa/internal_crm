@@ -9,5 +9,8 @@ class Contact extends Model
 {
     use HasFactory;
 
-    //
+    public function opportunities()
+    {
+        return $this->hasMany(Opportunity::class);
+    }
 }
