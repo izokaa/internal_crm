@@ -38,6 +38,10 @@ class PaysResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('nom')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('villes_count')
+                    ->counts('villes')
+                    ->label('Nombre de Villes')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

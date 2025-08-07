@@ -59,11 +59,17 @@ class BusinessUnitResource extends Resource
                     ->counts('services')
                     ->label('Nombre de Services')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('contacts_count')
+                    ->counts('contacts')
+                    ->label('Nombre de Contacts')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Date de création')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Date de modification')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
