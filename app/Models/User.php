@@ -52,5 +52,5 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Opportunity::class);
     }
-}
 
+}

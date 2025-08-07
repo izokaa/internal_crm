@@ -17,6 +17,7 @@
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
+        "laravel/pail": "^1.2.2",
         "nunomaduro/collision": "^8.6"
     },
     "autoload": {

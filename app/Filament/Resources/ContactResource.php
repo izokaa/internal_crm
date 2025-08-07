@@ -22,6 +22,7 @@ class ContactResource extends Resource
     protected static ?string $model = Contact::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
+    protected static ?string $navigationGroup = 'Clients & Abonnements';
 
     public static function form(Form $form): Form
     {
