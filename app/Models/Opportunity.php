@@ -9,6 +9,20 @@ class Opportunity extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'titre',
+        'description',
+        'note',
+        'montant_estime',
+        'date_echeance',
+        'probabilite',
+        'brief',
+        'status',
+        'prefix',
+        'contact_id',
+        'source_id',
+    ];
+
     public function contact()
     {
         return $this->belongsTo(Contact::class);

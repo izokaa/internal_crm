@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Source extends Model
+class Pays extends Model
 {
     use HasFactory;
 
@@ -13,8 +13,8 @@ class Source extends Model
         'nom',
     ];
 
-    public function opportunities()
+    public function contacts()
     {
-        return $this->hasMany(Opportunity::class);
+        return $this->hasMany(Contact::class);
     }
 }
