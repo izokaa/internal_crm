@@ -21,7 +21,8 @@ class OpportunityResource extends Resource
     protected static ?string $model = Opportunity::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-light-bulb';
-    protected static ?int $navigationSort = 10;
+    protected static ?string $navigationGroup = 'Opportunités';
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
@@ -73,8 +74,12 @@ class OpportunityResource extends Resource
                     ->maxLength(255)
                     ->default('OPPO'),
                 Forms\Components\Select::make('contact_id')
-                    ->relationship('contact', 'nom')
-                    ->required(),
+                    ->relationship('contact')
+                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->nom . $record->prenom)
+                    ->required()
+                    ->searchable()
+                    ->preload()
+                    ->label('Contact'),
                 Forms\Components\Select::make('source_id')
                     ->relationship('source', 'nom')
                     ->required(),
@@ -123,28 +128,37 @@ class OpportunityResource extends Resource
                         'Fermée' => 'primary',
                         default => 'gray',
                     }),
-                Tables\Columns\TextColumn::make('contact.nom')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('contact_info')
+                    ->label('Contact')
+                    ->getStateUsing(fn (\App\Models\Opportunity $record): string => "{$record->contact->nom} {$record->contact->prenom}")
+                    ->searchable(['contact.nom', 'contact.prenom', 'contact.type'])
+                    ->sortable(['contact.nom'])
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('source.nom')
-                    ->numeric()
-                    ->sortable(),
+                    ->label('Source')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('pipeline.nom')
+                    ->label('Pipeline')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('etapePipeline.nom')
+                    ->label('Étape Pipeline')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Date de création')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Date de modification')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')

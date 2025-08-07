@@ -186,15 +186,13 @@ class ContratResource extends Resource
                     ->numeric()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false),
-                Tables\Columns\TextColumn::make('client.nom')
-                    ->label('Nom Client')
-                    ->sortable()
+                Tables\Columns\TextColumn::make('client_info')
+                    ->label('Client')
+                    ->getStateUsing(fn (\App\Models\Contrat $record): string => "{$record->client->nom} {$record->client->prenom} ({$record->client->type})")
+                    ->searchable(['client.nom', 'client.prenom', 'client.type'])
+                    ->sortable(['client.nom'])
                     ->toggleable(isToggledHiddenByDefault: false),
-                Tables\Columns\TextColumn::make('client.prenom')
-                    ->label('Prénom Client')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: false),
-                
+
             ])
             ->filters([
                 //
@@ -215,6 +213,11 @@ class ContratResource extends Resource
         return [
             //
         ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
     }
 
     public static function getPages(): array

@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     /**
      * Run the migrations.
      */
@@ -18,7 +17,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('telephone');
             $table->enum('type', ['prospect', 'client']);
-            $table->foreignId('ville_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('ville_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('specialite_id')->constrained()->cascadeOnDelete();
             $table->foreignId('business_unit_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('service_id')->nullable()->constrained()->cascadeOnDelete();

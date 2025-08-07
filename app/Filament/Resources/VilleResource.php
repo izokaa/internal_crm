@@ -19,7 +19,7 @@ class VilleResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
 
-    protected static ?string $navigationGroup = 'Paramètres';
+    protected static ?string $navigationGroup = 'Paramètres > Clients';
     protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form

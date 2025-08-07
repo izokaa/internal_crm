@@ -19,7 +19,7 @@ class SourceResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
 
-    protected static ?string $navigationGroup = 'Paramètres';
+    protected static ?string $navigationGroup = 'Paramètres > Opportunités';
     protected static ?int $navigationSort = 3;
 
 

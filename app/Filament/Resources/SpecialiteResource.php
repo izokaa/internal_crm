@@ -19,8 +19,8 @@ class SpecialiteResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
 
-    protected static ?string $navigationGroup = 'Paramètres';
-    protected static ?int $navigationSort = 4;
+    protected static ?string $navigationGroup = 'Paramètres > Clients';
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {

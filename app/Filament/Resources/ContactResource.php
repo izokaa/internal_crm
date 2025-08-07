@@ -59,11 +59,11 @@ class ContactResource extends Resource
                             ->options(Pays::all()->pluck('nom', 'id'))
                             ->live()
                             ->afterStateUpdated(fn (Set $set) => $set('ville_id', null))
-                            ->required(),
+                            ->nullable(),
                         Forms\Components\Select::make('ville_id')
                             ->label('Ville')
                             ->options(fn (Get $get): array => Pays::find($get('pays_id'))?->villes->pluck('nom', 'id')->toArray() ?? [])
-                            ->required(),
+                            ->nullable(),
                     ])->columns(2),
 
                 Forms\Components\Section::make('Professionnel')
@@ -72,7 +72,7 @@ class ContactResource extends Resource
                             ->relationship('specialite', 'nom')
                             ->required(),
                         Forms\Components\Select::make('business_unit_id')
-                            ->label('Unité Commerciale')
+                            ->label('Business Unit')
                             ->options(BusinessUnit::all()->pluck('nom', 'id'))
                             ->live()
                             ->afterStateUpdated(fn (Set $set) => $set('service_id', null))
@@ -195,3 +195,4 @@ class ContactResource extends Resource
         return static::getModel()::count();
     }
 }
+

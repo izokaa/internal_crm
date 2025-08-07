@@ -60,6 +60,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 'Clients & Abonnements',
+                'Opportunités',
                 'Paramètres',
             ]);
     }
