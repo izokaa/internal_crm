@@ -15,8 +15,10 @@ class Contact extends Model
         'email',
         'telephone',
         'type',
-        'pays_id',
+        'ville_id',
         'specialite_id',
+        'business_unit_id',
+        'service_id',
     ];
 
     public function opportunities()
@@ -24,13 +26,23 @@ class Contact extends Model
         return $this->hasMany(Opportunity::class);
     }
 
-    public function pays()
+    public function ville()
     {
-        return $this->belongsTo(Pays::class);
+        return $this->belongsTo(Ville::class);
     }
 
     public function specialite()
     {
         return $this->belongsTo(Specialite::class);
+    }
+
+    public function businessUnit()
+    {
+        return $this->belongsTo(BusinessUnit::class);
+    }
+
+    public function service()
+    {
+        return $this->belongsTo(Service::class);
     }
 }

@@ -18,8 +18,10 @@ return new class extends Migration
             $table->string('email');
             $table->string('telephone');
             $table->enum('type', ['prospect', 'client']);
-            $table->foreignId('pays_id')->constrained();
-            $table->foreignId('specialite_id')->constrained();
+            $table->foreignId('ville_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('specialite_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('business_unit_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('service_id')->nullable()->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

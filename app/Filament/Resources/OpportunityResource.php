@@ -28,7 +28,7 @@ class OpportunityResource extends Resource
                 Forms\Components\Textarea::make('description')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\Textarea::make('note')
+                Forms\Components\MarkdownEditor::make('note')
                     ->required()
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('montant_estime')
@@ -39,7 +39,7 @@ class OpportunityResource extends Resource
                 Forms\Components\TextInput::make('probabilite')
                     ->required()
                     ->numeric(),
-                Forms\Components\Textarea::make('brief')
+                Forms\Components\MarkdownEditor::make('brief')
                     ->required()
                     ->columnSpanFull(),
                 Forms\Components\Select::make('status')

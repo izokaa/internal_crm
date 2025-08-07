@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\PaysResource\Pages;
-use App\Filament\Resources\PaysResource\RelationManagers;
-use App\Models\Pays;
+use App\Filament\Resources\ServiceResource\Pages;
+use App\Filament\Resources\ServiceResource\RelationManagers;
+use App\Models\Service;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,21 +13,22 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class PaysResource extends Resource
+class ServiceResource extends Resource
 {
-    protected static ?string $model = Pays::class;
+    protected static ?string $model = Service::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-flag';
+    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
 
     protected static ?string $navigationGroup = 'Paramètres';
-    protected static ?int $navigationSort = 1;
-
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('nom')
+                    ->required(),
+                Forms\Components\Select::make('business_unit_id')
+                    ->relationship('businessUnit', 'nom')
                     ->required(),
             ]);
     }
@@ -38,6 +39,9 @@ class PaysResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('nom')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('businessUnit.nom')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -48,7 +52,8 @@ class PaysResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('businessUnit')
+                    ->relationship('businessUnit', 'nom'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -71,9 +76,9 @@ class PaysResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPays::route('/'),
-            'create' => Pages\CreatePays::route('/create'),
-            'edit' => Pages\EditPays::route('/{record}/edit'),
+            'index' => Pages\ListServices::route('/'),
+            'create' => Pages\CreateService::route('/create'),
+            'edit' => Pages\EditService::route('/{record}/edit'),
         ];
     }
 
@@ -82,3 +87,4 @@ class PaysResource extends Resource
         return static::getModel()::count();
     }
 }
+

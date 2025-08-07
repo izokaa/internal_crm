@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ContactResource\Pages;
 use App\Filament\Resources\ContactResource\RelationManagers;
 use App\Models\Contact;
+use App\Models\Pays;
+use App\Models\BusinessUnit;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -12,6 +14,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 
 class ContactResource extends Resource
 {
@@ -23,28 +27,60 @@ class ContactResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nom')
-                    ->required(),
-                Forms\Components\TextInput::make('prenom')
-                    ->required(),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required(),
-                Forms\Components\TextInput::make('telephone')
-                    ->tel()
-                    ->required(),
-                Forms\Components\Select::make('type')
-                    ->options([
-                        'prospect' => 'Prospect',
-                        'client' => 'Client',
-                    ])
-                    ->required(),
-                Forms\Components\Select::make('pays_id')
-                    ->relationship('pays', 'nom')
-                    ->required(),
-                Forms\Components\Select::make('specialite_id')
-                    ->relationship('specialite', 'nom')
-                    ->required(),
+                Forms\Components\Section::make('Informations Personnelles')
+                    ->schema([
+                        Forms\Components\TextInput::make('nom')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('prenom')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('email')
+                            ->email()
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('telephone')
+                            ->tel()
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\Select::make('type')
+                            ->options([
+                                'prospect' => 'Prospect',
+                                'client' => 'Client',
+                            ])
+                            ->required(),
+                    ])->columns(2),
+
+                Forms\Components\Section::make('Localisation')
+                    ->schema([
+                        Forms\Components\Select::make('pays_id')
+                            ->label('Pays')
+                            ->options(Pays::all()->pluck('nom', 'id'))
+                            ->live()
+                            ->afterStateUpdated(fn (Set $set) => $set('ville_id', null))
+                            ->required(),
+                        Forms\Components\Select::make('ville_id')
+                            ->label('Ville')
+                            ->options(fn (Get $get): array => Pays::find($get('pays_id'))?->villes->pluck('nom', 'id')->toArray() ?? [])
+                            ->required(),
+                    ])->columns(2),
+
+                Forms\Components\Section::make('Professionnel')
+                    ->schema([
+                        Forms\Components\Select::make('specialite_id')
+                            ->relationship('specialite', 'nom')
+                            ->required(),
+                        Forms\Components\Select::make('business_unit_id')
+                            ->label('Unité Commerciale')
+                            ->options(BusinessUnit::all()->pluck('nom', 'id'))
+                            ->live()
+                            ->afterStateUpdated(fn (Set $set) => $set('service_id', null))
+                            ->nullable(),
+                        Forms\Components\Select::make('service_id')
+                            ->label('Service')
+                            ->options(fn (Get $get): array => BusinessUnit::find($get('business_unit_id'))?->services->pluck('nom', 'id')->toArray() ?? [])
+                            ->nullable(),
+                    ])->columns(2),
             ]);
     }
 
@@ -68,17 +104,25 @@ class ContactResource extends Resource
                         'client' => 'success',
                         default => 'gray',
                     }),
-                Tables\Columns\TextColumn::make('pays.nom')
+                Tables\Columns\TextColumn::make('ville.nom')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('specialite.nom')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('businessUnit.nom')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('service.nom')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Date de création')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Date de modification')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -89,10 +133,14 @@ class ContactResource extends Resource
                         'prospect' => 'Prospect',
                         'client' => 'Client',
                     ]),
-                Tables\Filters\SelectFilter::make('pays')
-                    ->relationship('pays', 'nom'),
+                Tables\Filters\SelectFilter::make('ville')
+                    ->relationship('ville', 'nom'),
                 Tables\Filters\SelectFilter::make('specialite')
                     ->relationship('specialite', 'nom'),
+                Tables\Filters\SelectFilter::make('businessUnit')
+                    ->relationship('businessUnit', 'nom'),
+                Tables\Filters\SelectFilter::make('service')
+                    ->relationship('service', 'nom'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

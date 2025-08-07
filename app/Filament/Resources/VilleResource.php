@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\PaysResource\Pages;
-use App\Filament\Resources\PaysResource\RelationManagers;
-use App\Models\Pays;
+use App\Filament\Resources\VilleResource\Pages;
+use App\Filament\Resources\VilleResource\RelationManagers;
+use App\Models\Ville;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,21 +13,23 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class PaysResource extends Resource
+class VilleResource extends Resource
 {
-    protected static ?string $model = Pays::class;
+    protected static ?string $model = Ville::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-flag';
+    protected static ?string $navigationIcon = 'heroicon-o-building-office';
 
     protected static ?string $navigationGroup = 'Paramètres';
-    protected static ?int $navigationSort = 1;
-
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('nom')
+                    ->required(),
+                Forms\Components\Select::make('pays_id')
+                    ->relationship('pays', 'nom')
                     ->required(),
             ]);
     }
@@ -38,6 +40,9 @@ class PaysResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('nom')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('pays.nom')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -48,7 +53,8 @@ class PaysResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('pays')
+                    ->relationship('pays', 'nom'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -71,9 +77,9 @@ class PaysResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPays::route('/'),
-            'create' => Pages\CreatePays::route('/create'),
-            'edit' => Pages\EditPays::route('/{record}/edit'),
+            'index' => Pages\ListVilles::route('/'),
+            'create' => Pages\CreateVille::route('/create'),
+            'edit' => Pages\EditVille::route('/{record}/edit'),
         ];
     }
 

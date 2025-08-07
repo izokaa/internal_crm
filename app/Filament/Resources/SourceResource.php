@@ -20,7 +20,7 @@ class SourceResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-arrow-down-on-square-stack';
 
     protected static ?string $navigationGroup = 'Paramètres';
-    // protected static ?string $navigationParentItem = 'Opportunité';
+    protected static ?int $navigationSort = 3;
 
 
     public static function form(Form $form): Form
