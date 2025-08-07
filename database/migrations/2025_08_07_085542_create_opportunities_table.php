@@ -17,11 +17,10 @@ return new class extends Migration
             $table->text('description');
             $table->text('note');
             $table->decimal('montant_estime');
+            $table->enum('devise', ['MAD', 'EUR', 'USD'])->default('EUR');
             $table->date('date_echeance');
             $table->integer('probabilite');
-            $table->text('brief');
-            $table->enum('status', ['ouvert', 'ferme', 'en retard', 'annule']);
-            $table->string('prefix');
+            $table->enum('status', ['Ouverte', 'Gagnée', 'Perdue', 'En retard', 'Annulée', 'Fermée'])->default('Ouverte');
             $table->foreignId('contact_id')->constrained()->cascadeOnDelete();
             $table->foreignId('source_id')->constrained()->cascadeOnDelete();
             $table->foreignId('pipeline_id')->nullable()->constrained()->cascadeOnDelete();

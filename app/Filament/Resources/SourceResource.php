@@ -17,7 +17,7 @@ class SourceResource extends Resource
 {
     protected static ?string $model = Source::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-down-on-square-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
 
     protected static ?string $navigationGroup = 'Paramètres';
     protected static ?int $navigationSort = 3;

@@ -11,6 +11,7 @@ class EtapePipeline extends Model
 
     protected $fillable = [
         'nom',
+        'icon',
         'ordre',
         'pipeline_id',
     ];

@@ -35,30 +35,38 @@ class OpportunityResource extends Resource
                 Forms\Components\MarkdownEditor::make('note')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('montant_estime')
-                    ->required()
-                    ->numeric()
-                    ->prefix('$'),
+                Forms\Components\Grid::make(2)
+                    ->schema([
+                        Forms\Components\TextInput::make('montant_estime')
+                            ->label('Montant Potentiel')
+                            ->required()
+                            ->numeric(),
+                        Forms\Components\Select::make('devise')
+                            ->options([
+                                'MAD' => 'MAD',
+                                'EUR' => 'EUR',
+                                'USD' => 'USD',
+                            ])
+                            ->required()
+                            ->default('EUR'),
+                    ]),
                 Forms\Components\DatePicker::make('date_echeance')
                     ->required(),
                 Forms\Components\TextInput::make('probabilite')
                     ->required()
                     ->numeric()
                     ->suffix('%'),
-                Forms\Components\MarkdownEditor::make('brief')
-                    ->required()
-                    ->columnSpanFull(),
                 Forms\Components\Select::make('status')
                     ->options([
-                        'ouvert' => 'Ouvert',
-                        'ferme' => 'Fermé',
-                        'en retard' => 'En retard',
-                        'annule' => 'Annulé',
+                        'Ouverte' => 'Ouverte',
+                        'Gagnée' => 'Gagnée',
+                        'Perdue' => 'Perdue',
+                        'En retard' => 'En retard',
+                        'Annulée' => 'Annulée',
+                        'Fermée' => 'Fermée',
                     ])
-                    ->required(),
-                Forms\Components\TextInput::make('prefix')
                     ->required()
-                    ->maxLength(255),
+                    ->default('Ouverte'),
                 Forms\Components\Select::make('contact_id')
                     ->relationship('contact', 'nom')
                     ->required(),
@@ -86,7 +94,8 @@ class OpportunityResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('montant_estime')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->formatStateUsing(fn (string $state, Opportunity $record): string => "{$state} {$record->devise}"),
                 Tables\Columns\TextColumn::make('date_echeance')
                     ->date()
                     ->sortable(),
@@ -94,9 +103,17 @@ class OpportunityResource extends Resource
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('prefix')
-                    ->searchable(),
+                    ->searchable()
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'Ouverte' => 'info',
+                        'Gagnée' => 'success',
+                        'Perdue' => 'danger',
+                        'En retard' => 'warning',
+                        'Annulée' => 'gray',
+                        'Fermée' => 'primary',
+                        default => 'gray',
+                    }),
                 Tables\Columns\TextColumn::make('contact.nom')
                     ->numeric()
                     ->sortable(),
@@ -123,10 +140,12 @@ class OpportunityResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
                     ->options([
-                        'ouvert' => 'Ouvert',
-                        'ferme' => 'Fermé',
-                        'en retard' => 'En retard',
-                        'annule' => 'Annulé',
+                        'Ouverte' => 'Ouverte',
+                        'Gagnée' => 'Gagnée',
+                        'Perdue' => 'Perdue',
+                        'En retard' => 'En retard',
+                        'Annulée' => 'Annulée',
+                        'Fermée' => 'Fermée',
                     ]),
                 Tables\Filters\SelectFilter::make('contact')
                     ->relationship('contact', 'nom'),
