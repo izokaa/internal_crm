@@ -111,8 +111,8 @@ class ContratResource extends Resource
                                 }
                             }),
                         Forms\Components\Select::make('client_id')
-                            ->relationship('client', 'nom')
-                            ->getOptionLabelFromRecordUsing(fn ($record) => $record->nom . ' ' . $record->prenom)
+                            ->relationship('client')
+                            ->getOptionLabelFromRecordUsing(fn ($record) => $record->nom . ' ' . $record->prenom . ' - ' . $record->businessUnit->nom . ' - ' . $record->service->nom)
                             ->required()
                             ->searchable()
                             ->preload()
@@ -210,6 +210,16 @@ class ContratResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->getStateUsing(fn (\App\Models\Contrat $record): string => "{$record->client->nom} {$record->client->prenom}"),
+                Tables\Columns\TextColumn::make('client.businessUnit.nom')
+                    ->label('Business Unit')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('client.service.nom')
+                    ->label('Service')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
 
             ])
             ->filters([
