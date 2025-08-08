@@ -8,6 +8,7 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Pages\ListRecords\Tab;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Opportunity;
+use App\Filament\Pages\OpportunityBoardPage;
 
 class ListOpportunities extends ListRecords
 {
@@ -15,6 +16,10 @@ class ListOpportunities extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('pipeline')
+                ->label('Pipeline')
+                ->url(OpportunityBoardPage::getUrl())
+                ->icon('heroicon-o-view-columns'),
             Actions\CreateAction::make(),
         ];
     }

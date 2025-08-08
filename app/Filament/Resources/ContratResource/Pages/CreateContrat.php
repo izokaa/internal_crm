@@ -3,20 +3,28 @@
 namespace App\Filament\Resources\ContratResource\Pages;
 
 use App\Filament\Resources\ContratResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\Model;
 
 class CreateContrat extends CreateRecord
 {
     protected static string $resource = ContratResource::class;
 
-    protected function mutateFormDataBeforeCreate(array $data): array
+    protected function handleRecordCreation(array $data): Model
     {
-        $montantHt = $data['montant_ht'];
-        $tva = $data['tva'];
-        $data['montant_ttc'] = $montantHt * (1 + ($tva / 100));
+        $contratData = collect($data)->except('piecesJointes')->toArray();
+        $montantHt = $contratData['montant_ht'];
+        $tva = $contratData['tva'];
+        $contratData['montant_ttc'] = $montantHt * (1 + ($tva / 100));
 
-        return $data;
+        $contrat = static::getModel()::create($contratData);
+
+        if (isset($data['piecesJointes'])) {
+            foreach ($data['piecesJointes'] as $pieceJointeData) {
+                $contrat->piecesJointes()->create($pieceJointeData);
+            }
+        }
+
+        return $contrat;
     }
 }

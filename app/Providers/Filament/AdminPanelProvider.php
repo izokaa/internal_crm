@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\OpportunityBoardPage;
+use CharrafiMed\GlobalSearchModal\GlobalSearchModalPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -25,19 +27,23 @@ class AdminPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
+            ->id('admin')
             ->default()
             ->profile()
-            ->id('admin')
             ->path('admin')
             ->login()
             ->brandLogo(fn () => view('filament.admin.logo'))
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->sidebarCollapsibleOnDesktop()
+            ->sidebarWidth('20rem')
+            ->maxContentWidth('full')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                // Pages\Dashboard::class,
+                OpportunityBoardPage::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
@@ -59,9 +65,12 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->navigationGroups([
-                'Clients & Abonnements',
+                'Contacts & Abonnements',
                 'Opportunités',
                 'Paramètres',
+            ])
+            ->plugins([
+                GlobalSearchModalPlugin::make()
             ]);
     }
 }

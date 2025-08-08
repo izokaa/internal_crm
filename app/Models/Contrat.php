@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Contrat extends Model
 {
@@ -22,6 +23,11 @@ class Contrat extends Model
     public function client()
     {
         return $this->belongsTo(Contact::class, 'client_id');
+    }
+
+    public function piecesJointes(): HasMany
+    {
+        return $this->hasMany(PieceJointe::class);
     }
 
 }

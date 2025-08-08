@@ -7,6 +7,7 @@ use App\Filament\Resources\ContactResource\RelationManagers;
 use App\Models\Contact;
 use App\Models\Pays;
 use App\Models\BusinessUnit;
+use App\Traits\HasActiveIcon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -19,10 +20,21 @@ use Filament\Forms\Set;
 
 class ContactResource extends Resource
 {
+    use HasActiveIcon;
     protected static ?string $model = Contact::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
-    protected static ?string $navigationGroup = 'Clients & Abonnements';
+    protected static ?string $navigationIcon = 'lucide-contact';
+    protected static ?string $navigationActiveIcon = 'bxs-contact';
+    protected static ?string $recordTitleAttribute = 'nom';
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return [
+            'nom',
+            'prenom',
+            'email'
+        ];
+    }
 
     public static function form(Form $form): Form
     {
@@ -195,4 +207,3 @@ class ContactResource extends Resource
         return static::getModel()::count();
     }
 }
-

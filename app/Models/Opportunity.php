@@ -23,6 +23,11 @@ class Opportunity extends Model
         'source_id',
         'pipeline_id',
         'etape_pipeline_id',
+        'sort_order',
+    ];
+
+    protected $casts = [
+        'date_echeance' => 'date',
     ];
 
     public function contact()

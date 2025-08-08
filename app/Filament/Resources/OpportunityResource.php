@@ -24,6 +24,15 @@ class OpportunityResource extends Resource
     protected static ?string $navigationGroup = 'Opportunités';
     protected static ?int $navigationSort = 1;
 
+    protected static ?string $recordTitleAttribute = 'titre';
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return [
+            'titre'
+        ];
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -205,4 +214,11 @@ class OpportunityResource extends Resource
             'edit' => Pages\EditOpportunity::route('/{record}/edit'),
         ];
     }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+
 }
