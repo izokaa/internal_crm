@@ -20,6 +20,12 @@ class Contrat extends Model
         'devise'
     ];
 
+    protected $casts = [
+        'date_contrat' => 'date',
+        'date_debut' => 'date',
+        'date_fin' => 'date',
+    ];
+
     public function client()
     {
         return $this->belongsTo(Contact::class, 'client_id');

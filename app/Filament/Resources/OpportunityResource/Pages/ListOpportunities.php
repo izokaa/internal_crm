@@ -30,18 +30,30 @@ class ListOpportunities extends ListRecords
             'All' => Tab::make()
                 ->badge(Opportunity::count())
                 ->badgeColor('gray'),
-            'Clients' => Tab::make()
-                ->modifyQueryUsing(function (Builder $query) {
-                    return $query->whereHas('contact', fn ($query) => $query->where('type', 'client'));
-                })
-                ->badge(Opportunity::whereHas('contact', fn ($query) => $query->where('type', 'client'))->count())
+            'Ouverte' => Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', 'Ouverte'))
+                ->badge(Opportunity::where('status', 'Ouverte')->count())
+                ->badgeColor('info'),
+            'Gagnée' => Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', 'Gagnée'))
+                ->badge(Opportunity::where('status', 'Gagnée')->count())
                 ->badgeColor('success'),
-            'Prospects' => Tab::make()
-                ->modifyQueryUsing(function (Builder $query) {
-                    return $query->whereHas('contact', fn ($query) => $query->where('type', 'prospect'));
-                })
-                ->badge(Opportunity::whereHas('contact', fn ($query) => $query->where('type', 'prospect'))->count())
-                ->badgeColor('info')
+            'Perdue' => Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', 'Perdue'))
+                ->badge(Opportunity::where('status', 'Perdue')->count())
+                ->badgeColor('danger'),
+            'En retard' => Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', 'En retard'))
+                ->badge(Opportunity::where('status', 'En retard')->count())
+                ->badgeColor('warning'),
+            'Annulée' => Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', 'Annulée'))
+                ->badge(Opportunity::where('status', 'Annulée')->count())
+                ->badgeColor('gray'),
+            'Fermée' => Tab::make()
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('status', 'Fermée'))
+                ->badge(Opportunity::where('status', 'Fermée')->count())
+                ->badgeColor('primary'),
         ];
     }
 }

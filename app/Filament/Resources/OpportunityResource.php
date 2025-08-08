@@ -143,6 +143,16 @@ class OpportunityResource extends Resource
                     ->searchable(['contact.nom', 'contact.prenom', 'contact.type'])
                     ->sortable(['contact.nom'])
                     ->toggleable(isToggledHiddenByDefault: false),
+                Tables\Columns\TextColumn::make('contact.type')
+                    ->label('Type de Contact')
+                    ->searchable()
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'prospect' => 'info',
+                        'client' => 'success',
+                        default => 'gray',
+                    })
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('source.nom')
                     ->label('Source')
                     ->searchable()
@@ -178,7 +188,14 @@ class OpportunityResource extends Resource
                         'En retard' => 'En retard',
                         'Annulée' => 'Annulée',
                         'Fermée' => 'Fermée',
-                    ]),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        if (isset($data['value'])) {
+                            $query->where('status', $data['value']);
+                        }
+                        return $query;
+                    })
+                    ->visible(),
                 Tables\Filters\SelectFilter::make('contact')
                     ->relationship('contact', 'nom'),
                 Tables\Filters\SelectFilter::make('source')
@@ -187,6 +204,13 @@ class OpportunityResource extends Resource
                     ->relationship('pipeline', 'nom'),
                 Tables\Filters\SelectFilter::make('etapePipeline')
                     ->relationship('etapePipeline', 'nom'),
+                Tables\Filters\SelectFilter::make('contact_type')
+                    ->relationship('contact', 'type')
+                    ->label('Type de Contact')
+                    ->options([
+                        'prospect' => 'Prospect',
+                        'client' => 'Client',
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

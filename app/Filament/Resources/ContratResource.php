@@ -220,10 +220,53 @@ class ContratResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
+                Tables\Columns\TextColumn::make('statut_contrat')
+                    ->label('Statut du Contrat')
+                    ->getStateUsing(function (\App\Models\Contrat $record): string {
+                        return $record->date_fin->isPast() ? 'Expiré' : 'Actif';
+                    })
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'Expiré' => 'danger',
+                        'Actif' => 'success',
+                        default => 'gray',
+                    })
+                    ->toggleable(isToggledHiddenByDefault: false),
 
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('statut_contrat')
+                    ->options([
+                        'Actif' => 'Actif',
+                        'Expiré' => 'Expiré',
+                    ])
+                    ->query(function (\Illuminate\Database\Eloquent\Builder $query, array $data): \Illuminate\Database\Eloquent\Builder {
+                        if (isset($data['value'])) {
+                            if ($data['value'] === 'Actif') {
+                                $query->where('date_fin', '>=', now());
+                            } elseif ($data['value'] === 'Expiré') {
+                                $query->where('date_fin', '<', now());
+                            }
+                        }
+                        return $query;
+                    }),
+                Tables\Filters\SelectFilter::make('client_id')
+                    ->relationship('client', 'nom')
+                    ->label('Client'),
+                Tables\Filters\SelectFilter::make('devise')
+                    ->options([
+                        'MAD' => 'MAD',
+                        'EUR' => 'EUR',
+                        'USD' => 'USD',
+                    ])
+                    ->label('Devise'),
+                Tables\Filters\SelectFilter::make('periode_unite')
+                    ->options([
+                        'jours' => 'Jours',
+                        'mois' => 'Mois',
+                        'années' => 'Années',
+                    ])
+                    ->label('Unité de Période'),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

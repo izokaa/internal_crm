@@ -46,12 +46,16 @@ class OpportunityKanbanBoard extends Component
             $opportunity->etape_pipeline_id = $newStageId;
             $opportunity->save();
 
-            // Reorder opportunities in the new stage
-            $this->reorderOpportunitiesInStage($newStageId, $newOrder);
+            $this->reorderOpportunities($newOrder);
         }
     }
 
-    protected function reorderOpportunitiesInStage(int $stageId, array $newOrder): void
+    public function updateOpportunityOrder($opportunityId, $newOrder): void
+    {
+        $this->reorderOpportunities($newOrder);
+    }
+
+    protected function reorderOpportunities(array $newOrder): void
     {
         foreach ($newOrder as $index => $opportunityId) {
             Opportunity::where('id', $opportunityId)->update(['sort_order' => $index + 1]);
