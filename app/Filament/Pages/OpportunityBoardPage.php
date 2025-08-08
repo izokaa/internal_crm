@@ -2,12 +2,16 @@
 
 namespace App\Filament\Pages;
 
+use App\Traits\HasActiveIcon;
 use Filament\Pages\Page;
 use Filament\Actions\Action;
 
 class OpportunityBoardPage extends Page
 {
+    use HasActiveIcon;
+
     protected static ?string $navigationIcon = 'heroicon-o-view-columns';
+    protected static ?string $navigationActiveIcon = 'heroicon-s-view-columns';
     protected static ?string $navigationLabel = 'Vue pipeline';
     protected static ?int $navigationSort = 2;
     protected static string $view = 'filament.pages.opportunity-board-page';

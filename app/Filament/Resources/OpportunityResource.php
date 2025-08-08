@@ -6,6 +6,7 @@ use App\Filament\Resources\OpportunityResource\Pages;
 use App\Filament\Resources\OpportunityResource\RelationManagers;
 use App\Models\Opportunity;
 use App\Models\Pipeline;
+use App\Traits\HasActiveIcon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -22,10 +23,12 @@ use Filament\Infolists\Infolist;
 
 class OpportunityResource extends Resource
 {
+    use HasActiveIcon;
+
     protected static ?string $model = Opportunity::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-light-bulb';
-    protected static ?string $navigationGroup = 'Opportunités';
+    protected static ?string $navigationActiveIcon = 'elusive-idea';
     protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'titre';
