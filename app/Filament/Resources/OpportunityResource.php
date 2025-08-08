@@ -15,6 +15,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ViewEntry;
+use Filament\Infolists\Infolist;
 
 class OpportunityResource extends Resource
 {
@@ -102,6 +106,82 @@ class OpportunityResource extends Resource
                     ->label('Étape du Pipeline')
                     ->options(fn (Get $get): array => Pipeline::find($get('pipeline_id'))?->etapePipelines->pluck('nom', 'id')->toArray() ?? [])
                     ->nullable(),
+            ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Section::make('Avancement du Pipeline')
+                    ->schema([
+                        ViewEntry::make('timeline')
+                            ->view('livewire.opportunity-pipeline-timeline')
+                            ->viewData(['opportunity' => $infolist->getRecord()])
+                            ->columnSpanFull(),
+                    ]),
+                Section::make('Informations Générales')
+                    ->schema([
+                        TextEntry::make('titre'),
+                        TextEntry::make('identifiant')
+                            ->getStateUsing(fn (Opportunity $record): string => "{$record->prefix}-{$record->id}"),
+                        TextEntry::make('description'),
+                        TextEntry::make('note'),
+                        TextEntry::make('date_echeance')
+                            ->date(),
+                        TextEntry::make('probabilite')
+                            ->suffix('%'),
+                        TextEntry::make('status')
+                            ->badge()
+                            ->color(fn (string $state): string => match ($state) {
+                                'Ouverte' => 'info',
+                                'Gagnée' => 'success',
+                                'Perdue' => 'danger',
+                                'En retard' => 'warning',
+                                'Annulée' => 'gray',
+                                'Fermée' => 'primary',
+                                default => 'gray',
+                            }),
+                    ])->columns(2),
+                Section::make('Informations Financières')
+                    ->schema([
+                        TextEntry::make('montant_estime')
+                            ->label('Montant Potentiel')
+                            ->money('EUR'), // Assuming EUR as default currency
+                        TextEntry::make('devise'),
+                    ])->columns(2),
+                Section::make('Détails du Contact et Source')
+                    ->schema([
+                        TextEntry::make('contact.nom')
+                            ->label('Nom du Contact'),
+                        TextEntry::make('contact.prenom')
+                            ->label('Prénom du Contact'),
+                        TextEntry::make('contact.email')
+                            ->label('Email du Contact'),
+                        TextEntry::make('contact.telephone')
+                            ->label('Téléphone du Contact'),
+                        TextEntry::make('contact.type')
+                            ->label('Type de Contact')
+                            ->badge()
+                            ->color(fn (string $state): string => match ($state) {
+                                'prospect' => 'info',
+                                'client' => 'success',
+                                default => 'gray',
+                            }),
+                        TextEntry::make('source.nom')
+                            ->label('Source'),
+                        TextEntry::make('contact.businessUnit.nom')
+                            ->label('Unité Commerciale'),
+                        TextEntry::make('contact.service.nom')
+                            ->label('Service'),
+                    ])->columns(2),
+                Section::make('Pipeline et Étape')
+                    ->schema([
+                        TextEntry::make('pipeline.nom')
+                            ->label('Pipeline'),
+                        TextEntry::make('etapePipeline.nom')
+                            ->label('Étape Actuelle'),
+                    ])->columns(2),
             ]);
     }
 
@@ -213,6 +293,7 @@ class OpportunityResource extends Resource
                     ]),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
@@ -236,6 +317,7 @@ class OpportunityResource extends Resource
             'index' => Pages\ListOpportunities::route('/'),
             'create' => Pages\CreateOpportunity::route('/create'),
             'edit' => Pages\EditOpportunity::route('/{record}/edit'),
+            'view' => Pages\ViewOpportunity::route('/{record}'),
         ];
     }
 
@@ -243,6 +325,4 @@ class OpportunityResource extends Resource
     {
         return static::getModel()::count();
     }
-
-
 }

@@ -9,7 +9,6 @@ class OpportunityBoardPage extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-view-columns';
     protected static ?string $navigationLabel = 'Vue pipeline';
-    protected static ?string $navigationGroup = 'Opportunités';
     protected static ?int $navigationSort = 2;
     protected static string $view = 'filament.pages.opportunity-board-page';
 
