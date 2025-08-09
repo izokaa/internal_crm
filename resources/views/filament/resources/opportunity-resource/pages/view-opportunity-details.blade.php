@@ -39,7 +39,7 @@
                                                 <nav class="-mb-px flex" aria-label="Action Tabs">
                             <button
                                 @click="activeActionTab = 'tache'"
-                                class="whitespace-nowrap py-2 px-4 rounded-md font-medium text-sm focus:outline-none flex items-center space-x-2 transition-colors duration-200"
+                                class="whitespace-nowrap flex items-center gap-2 py-2 px-4 rounded-md font-medium text-sm focus:outline-none s-center space-x-2 transition-colors duration-200"
                                 style="background-color: #3B82F6; color: #FFFFFF; margin-right: 1rem;" /* bg-blue-500 text-white */
                             >
                                 <x-heroicon-o-clipboard-document-check class="h-5 w-5" />
@@ -47,16 +47,16 @@
                             </button>
                             <button
                                 @click="activeActionTab = 'evenement'"
-                                class="whitespace-nowrap py-2 px-4 rounded-md font-medium text-sm focus:outline-none flex items-center space-x-2 transition-colors duration-200"
-                                style="background-color: #22C55E; color: #FFFFFF; margin-right: 1rem;" /* bg-green-500 text-white */
+                                class="whitespace-nowrap py-2 px-4 rounded-md font-medium text-sm focus:outline-none flex items-center gap-2 space-x-2 transition-colors duration-200"
+                                style="background-color: #A855F7; color: #FFFFFF; margin-right: 1rem;" /* bg-green-500 text-white */
                             >
                                 <x-heroicon-o-calendar class="h-5 w-5" />
                                 <span>Événement</span>
                             </button>
                             <button
                                 @click="activeActionTab = 'appel'"
-                                class="whitespace-nowrap py-2 px-4 rounded-md font-medium text-sm focus:outline-none flex items-center space-x-2 transition-colors duration-200"
-                                style="background-color: #A855F7; color: #FFFFFF;" /* bg-purple-500 text-white */
+                                class="whitespace-nowrap py-2 px-4 rounded-md font-medium text-sm focus:outline-none flex items-center gap-2 space-x-2 transition-colors duration-200"
+                                style="background-color: #22C55E; color: #FFFFFF; " /* bg-purple-500 text-white */
                             >
                                 <x-heroicon-o-phone class="h-5 w-5" />
                                 <span>Appel</span>
