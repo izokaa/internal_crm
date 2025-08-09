@@ -50,7 +50,7 @@
                         {{ $selectedStatus }}
                     </div>
 
-                    <div x-show="open" class="absolute z-10 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <div x-show="open" class="absolute z-50 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                             @foreach ($statuses as $statusValue => $statusClasses)
                                 @php

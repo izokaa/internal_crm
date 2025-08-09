@@ -9,7 +9,7 @@
     background-color: #f9fafb;
     border-radius: 0.5rem;
     border: 1px solid #e5e7eb;
-    overflow-x: hidden; /* Prevents scrollbars from the wrapper itself */
+    /* Removed overflow-x: hidden; */
 }
 
 /* Header */
