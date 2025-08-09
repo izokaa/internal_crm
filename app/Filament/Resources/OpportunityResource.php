@@ -313,7 +313,7 @@ class OpportunityResource extends Resource
             'index' => Pages\ListOpportunities::route('/'),
             'create' => Pages\CreateOpportunity::route('/create'),
             'edit' => Pages\EditOpportunity::route('/{record}/edit'),
-            'view' => Pages\ViewOpportunity::route('/{record}'),
+            'view' => Pages\ViewOpportunityDetails::route('/{record}'),
         ];
     }
 
