@@ -12,6 +12,8 @@ class ViewOpportunity extends ViewRecord
 {
     protected static string $resource = OpportunityResource::class;
 
+    protected static string $view = 'filament.resources.opportunity-resource.pages.view-opportunity';
+
     protected function getHeaderActions(): array
     {
         return [

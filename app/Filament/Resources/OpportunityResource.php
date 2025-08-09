@@ -116,13 +116,6 @@ class OpportunityResource extends Resource
     {
         return $infolist
             ->schema([
-                Section::make('Avancement du Pipeline')
-                    ->schema([
-                        ViewEntry::make('timeline')
-                            ->view('livewire.opportunity-pipeline-timeline')
-                            ->viewData(['opportunity' => $infolist->getRecord()])
-                            ->columnSpanFull(),
-                    ]),
                 Section::make('Informations Générales')
                     ->schema([
                         TextEntry::make('titre'),

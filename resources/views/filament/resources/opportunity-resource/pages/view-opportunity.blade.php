@@ -1,13 +1,7 @@
 <x-filament-panels::page>
-    <x-filament-panels::form wire:submit="save">
-        {{-- Timeline Section --}}
-        <x-filament::section>
-            <x-slot name="heading">
-                Pipeline et Étape Actuelle
-            </x-slot>
-            @livewire('opportunity-pipeline-timeline', ['opportunity' => $record])
-        </x-filament::section>
+    {{-- We will render the interactive timeline component here --}}
+    @livewire('opportunity-pipeline-timeline', ['opportunity' => $record])
 
-        {{ $this->form }}
-    </x-filament-panels::form>
+    {{-- And then render the rest of the static infolist fields --}}
+    {{ $this->infolist }}
 </x-filament-panels::page>

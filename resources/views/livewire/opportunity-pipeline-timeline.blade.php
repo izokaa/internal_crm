@@ -34,7 +34,7 @@
                     $isCompleted = $currentEtape && $etapes->search(fn($e) => $e->id === $etape->id) < $currentEtapeIndex;
                     $isActive = $currentEtape && $etape->id === $currentEtape->id;
                 @endphp
-                <div class="timeline-etape {{ $isCompleted ? 'completed' : '' }} {{ $isActive ? 'active' : '' }}">
+                <div class="timeline-etape {{ $isCompleted ? 'completed' : '' }} {{ $isActive ? 'active' : '' }} {{ !$isActive ? 'clickable' : '' }}" wire:click="updateEtape({{ $etape->id }})">
                     <div class="etape-circle">{{ $loop->index + 1 }}</div>
                     <div class="etape-name">{{ $etape->nom }}</div>
                 </div>
