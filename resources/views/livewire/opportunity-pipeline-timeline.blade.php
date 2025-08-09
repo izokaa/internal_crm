@@ -102,7 +102,15 @@
             </div>
             <div class="right-corner">
                 <h3 class="font-bold text-xl"> {{ $opportunity->montant_estime }} {{ $opportunity->devise }}</h3>
-                                <input type="date" wire:model.live="dateEcheance">
+                                <div class="mt-2 flex items-center gap-2">
+                    <label for="date_echeance" class="block text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">Date d'échéance:</label>
+                    <input
+                        type="date"
+                        id="date_echeance"
+                        wire:model.live="dateEcheance"
+                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                    >
+                </div>
                 <span class="text-gray-300">source: {{ $opportunity->source->nom }}</span>
             </div>
         </div>
