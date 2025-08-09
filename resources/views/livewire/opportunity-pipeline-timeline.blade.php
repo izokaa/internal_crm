@@ -20,6 +20,76 @@
             <div class="left-corner">
                 <h4 class="text-xl capitalize font-semibold"> {{ $opportunity->contact->nom }} {{ $opportunity->contact->prenom }}</h4>
                 <span class="">{{ $opportunity->prefix }} - {{ $opportunity->id }}</span>
+                @php
+                    $statusBgColor = match ($selectedStatus) {
+                        'Ouverte' => '#DBEAFE', // blue-100
+                        'Gagnée' => '#D1FAE5', // green-100
+                        'Perdue' => '#FEE2E2', // red-100
+                        'En retard' => '#FEF3C7', // yellow-100
+                        'Annulée' => '#E5E7EB', // gray-100
+                        'Fermée' => '#EDE9FE', // purple-100
+                        default => '#E5E7EB', // gray-100
+                    };
+                    $statusTextColor = match ($selectedStatus) {
+                        'Ouverte' => '#1E40AF', // blue-800
+                        'Gagnée' => '#065F46', // green-800
+                        'Perdue' => '#991B1B', // red-800
+                        'En retard' => '#92400E', // yellow-800
+                        'Annulée' => '#4B5563', // gray-800
+                        'Fermée' => '#5B21B6', // purple-800
+                        default => '#4B5563', // gray-800
+                    };
+                @endphp
+                <div class="mt-2" x-data="{ open: false }" @click.away="open = false">
+                    <div
+                        wire:click="toggleEditingStatus"
+                        @click="open = !open"
+                        class="inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium cursor-pointer"
+                        style="background-color: {{ $statusBgColor }}; color: {{ $statusTextColor }};"
+                    >
+                        {{ $selectedStatus }}
+                    </div>
+
+                    <div x-show="open" class="absolute z-10 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                            @foreach ($statuses as $statusValue => $statusClasses)
+                                @php
+                                    $optionBgColor = match ($statusValue) {
+                                        'Ouverte' => '#DBEAFE', // blue-100
+                                        'Gagnée' => '#D1FAE5', // green-100
+                                        'Perdue' => '#FEE2E2', // red-100
+                                        'En retard' => '#FEF3C7', // yellow-100
+                                        'Annulée' => '#E5E7EB', // gray-100
+                                        'Fermée' => '#EDE9FE', // purple-100
+                                        default => '#E5E7EB', // gray-100
+                                    };
+                                    $optionTextColor = match ($statusValue) {
+                                        'Ouverte' => '#1E40AF', // blue-800
+                                        'Gagnée' => '#065F46', // green-800
+                                        'Perdue' => '#991B1B', // red-800
+                                        'En retard' => '#92400E', // yellow-800
+                                        'Annulée' => '#4B5563', // gray-800
+                                        'Fermée' => '#5B21B6', // purple-800
+                                        default => '#4B5563', // gray-800
+                                    };
+                                @endphp
+                                <a href="#"
+                                   wire:click="updateStatus('{{ $statusValue }}')"
+                                   @click="open = false"
+                                   class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                   role="menuitem"
+                                >
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-medium"
+                                        style="background-color: {{ $optionBgColor }}; color: {{ $optionTextColor }};"
+                                    >
+                                        {{ $statusValue }}
+                                    </span>
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="timeline-header">
                 <h3 class="pipeline-name">{{ $pipeline->nom }}</h3>
