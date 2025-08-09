@@ -1,0 +1,137 @@
+/* General Wrapper */
+.timeline-wrapper {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    padding: 1.5rem;
+    background-color: #f9fafb;
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb;
+    overflow-x: hidden; /* Prevents scrollbars from the wrapper itself */
+}
+
+/* Header */
+.timeline-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.pipeline-name {
+    font-size: 1.5rem; /* 24px */
+    font-weight: 600;
+    color: #111827;
+}
+
+.current-etape {
+    margin-top: 0.5rem;
+    font-size: 1rem; /* 16px */
+    color: #4b5563;
+}
+
+.current-etape-label {
+    font-weight: 500;
+}
+
+.current-etape-name {
+    font-weight: 600;
+    color: #1d4ed8; /* A nice blue */
+}
+
+
+/* Timeline Container */
+.timeline-container {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    overflow-x: auto; /* Allows scrolling on the container if needed */
+    padding: 1rem 0;
+    /* A little trick to hide the scrollbar visually if it appears */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+.timeline-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+}
+
+/* Base Timeline Line */
+.timeline-line {
+    position: absolute;
+    /* Adjusted top position: 1rem (container padding) + 20px (half circle height) = 36px approx */
+    top: calc(1rem + 20px);
+    left: 0;
+    right: 0;
+    height: 4px;
+    background-color: #d1d5db; /* gray-300 */
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+/* Progress bar on top of the base line */
+.timeline-progress-line {
+    position: absolute;
+    top: calc(1rem + 20px); /* Aligned with the main line */
+    left: 0;
+    height: 4px;
+    background-color: #16a34a; /* Completed color */
+    transform: translateY(-50%);
+    z-index: 2; /* On top of the base line */
+    transition: width 0.4s ease-in-out;
+}
+
+
+/* Etape (Step) */
+.timeline-etape {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 3; /* On top of everything */
+    padding: 0 0.5rem; /* Reduced padding to decrease gap */
+    text-align: center;
+}
+
+.etape-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 700;
+    color: white;
+    border: 4px solid #d1d5db; /* gray-300 */
+    background-color: #9ca3af; /* gray-400 */
+    transition: all 0.3s ease;
+}
+
+.etape-name {
+    margin-top: 0.75rem;
+    font-size: 0.875rem; /* 14px */
+    font-weight: 500;
+    color: #4b5563; /* gray-600 */
+    width: 100px; /* Reduced width to decrease gap */
+}
+
+/* Etape States */
+.timeline-etape.completed .etape-circle {
+    background-color: #16a34a; /* green-600 */
+    border-color: #16a34a;
+}
+
+.timeline-etape.active .etape-circle {
+    background-color: #2563eb; /* blue-600 */
+    border-color: #2563eb;
+    transform: scale(1.1);
+}
+
+.timeline-etape.active .etape-name {
+    font-weight: 700;
+    color: #1e40af; /* blue-800 */
+}
+
+/* No pipeline message */
+.no-pipeline-message {
+    text-align: center;
+    color: #6b7280;
+    font-style: italic;
+    padding: 2rem;
+}

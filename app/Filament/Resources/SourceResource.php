@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\SourceResource\Pages;
 use App\Filament\Resources\SourceResource\RelationManagers;
 use App\Models\Source;
+use App\Traits\HasActiveIcon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -15,8 +16,11 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class SourceResource extends Resource
 {
+    use HasActiveIcon;
+
     protected static ?string $model = Source::class;
 
+    protected static ?string $navigationActiveIcon = 'heroicon-s-globe-alt';
     protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
 
     protected static ?string $navigationGroup = 'Paramètres > Opportunités';

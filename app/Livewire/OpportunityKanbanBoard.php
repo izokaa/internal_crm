@@ -72,3 +72,4 @@ class OpportunityKanbanBoard extends Component
         ]);
     }
 }
+

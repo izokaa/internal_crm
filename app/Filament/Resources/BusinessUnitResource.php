@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\BusinessUnitResource\Pages;
 use App\Filament\Resources\BusinessUnitResource\RelationManagers;
 use App\Models\BusinessUnit;
+use App\Traits\HasActiveIcon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -15,9 +16,12 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class BusinessUnitResource extends Resource
 {
+    use HasActiveIcon;
+
     protected static ?string $model = BusinessUnit::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
+    protected static ?string $navigationActiveIcon = 'heroicon-s-building-office-2';
 
     protected static ?string $navigationGroup = 'Paramètres > Business';
     protected static ?int $navigationSort = 1;

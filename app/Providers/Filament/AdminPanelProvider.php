@@ -13,6 +13,7 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Navigation\NavigationItem;
+use Filament\Support\Assets\Css;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -21,6 +22,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Illuminate\Support\Facades\Vite;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -35,6 +37,9 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(fn () => view('filament.admin.logo'))
             ->colors([
                 'primary' => Color::Amber,
+            ])
+            ->assets([
+                Css::make('timeline-styles', Vite::asset('resources/css/timeline.css')),
             ])
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('20rem')

@@ -129,7 +129,7 @@ class OpportunityResource extends Resource
                         TextEntry::make('identifiant')
                             ->getStateUsing(fn (Opportunity $record): string => "{$record->prefix}-{$record->id}"),
                         TextEntry::make('description'),
-                        TextEntry::make('note'),
+                        TextEntry::make('note')->markdown(),
                         TextEntry::make('date_echeance')
                             ->date(),
                         TextEntry::make('probabilite')
