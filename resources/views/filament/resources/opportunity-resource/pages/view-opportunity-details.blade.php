@@ -3,7 +3,7 @@
         <livewire:opportunity-pipeline-timeline :opportunity="$record" />
     </div>
 
-    <div x-data="{ activeFilter: 'informations-generales' }" class="mt-8">
+    <div x-data="{ activeFilter: 'activite' }" class="mt-8">
         <div class="border-b border-gray-200 dark:border-gray-700 mb-4">
             <nav class="-mb-px flex space-x-8" aria-label="Filters">
                 <button
@@ -34,6 +34,48 @@
         <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
             <div x-show="activeFilter === 'activite'">
                 <h3 class="text-lg font-semibold mb-4">Activité</h3>
+                <div x-data="{ activeActionTab: 'tache' }" class="mb-6">
+                    <div class="border-b border-gray-200 dark:border-gray-700">
+                                                <nav class="-mb-px flex" aria-label="Action Tabs">
+                            <button
+                                @click="activeActionTab = 'tache'"
+                                class="whitespace-nowrap py-2 px-4 rounded-md font-medium text-sm focus:outline-none flex items-center space-x-2 transition-colors duration-200"
+                                style="background-color: #3B82F6; color: #FFFFFF; margin-right: 1rem;" /* bg-blue-500 text-white */
+                            >
+                                <x-heroicon-o-clipboard-document-check class="h-5 w-5" />
+                                <span>Tâche</span>
+                            </button>
+                            <button
+                                @click="activeActionTab = 'evenement'"
+                                class="whitespace-nowrap py-2 px-4 rounded-md font-medium text-sm focus:outline-none flex items-center space-x-2 transition-colors duration-200"
+                                style="background-color: #22C55E; color: #FFFFFF; margin-right: 1rem;" /* bg-green-500 text-white */
+                            >
+                                <x-heroicon-o-calendar class="h-5 w-5" />
+                                <span>Événement</span>
+                            </button>
+                            <button
+                                @click="activeActionTab = 'appel'"
+                                class="whitespace-nowrap py-2 px-4 rounded-md font-medium text-sm focus:outline-none flex items-center space-x-2 transition-colors duration-200"
+                                style="background-color: #A855F7; color: #FFFFFF;" /* bg-purple-500 text-white */
+                            >
+                                <x-heroicon-o-phone class="h-5 w-5" />
+                                <span>Appel</span>
+                            </button>
+                        </nav>
+                    </div>
+
+                    <div class="mt-4">
+                        <div x-show="activeActionTab === 'tache'">
+                            <p>Formulaire pour programmer une tâche.</p>
+                        </div>
+                        <div x-show="activeActionTab === 'evenement'">
+                            <p>Formulaire pour programmer un événement.</p>
+                        </div>
+                        <div x-show="activeActionTab === 'appel'">
+                            <p>Formulaire pour programmer un appel.</p>
+                        </div>
+                    </div>
+                </div>
                 <p>Contenu de l'onglet Activité (actions, historique, commentaires).</p>
             </div>
             <div x-show="activeFilter === 'informations-generales'">
@@ -53,7 +95,9 @@
                     </div>
                     <div class="md:col-span-2">
                         <p class="text-sm text-gray-500 dark:text-gray-400">Note:</p>
-                        <p class="text-base font-medium text-gray-900 dark:text-gray-100">{{ $record->note }}</p>
+                        <div class="prose dark:prose-invert">
+                            {!! \Illuminate\Support\Str::markdown($record->note) !!}
+                        </div>
                     </div>
                     <div>
                         <p class="text-sm text-gray-500 dark:text-gray-400">Date d'échéance:</p>

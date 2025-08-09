@@ -54,4 +54,9 @@ class Opportunity extends Model
     {
         return $this->belongsTo(EtapePipeline::class);
     }
+
+    public function activities()
+    {
+        return $this->hasMany(Activity::class);
+    }
 }

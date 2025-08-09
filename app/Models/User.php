@@ -53,4 +53,9 @@ class User extends Authenticatable
         return $this->belongsToMany(Opportunity::class);
     }
 
+    public function activities()
+    {
+        return $this->hasMany(Activity::class);
+    }
+
 }

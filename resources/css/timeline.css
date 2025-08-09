@@ -47,7 +47,7 @@
     align-items: center;
     position: sticky;
     top: 0;
-    z-index: 20; /* Ensure it's above other content */
+    z-index: 5; /* Lower z-index to be below Filament header */
     background-color: #f9fafb; /* Match wrapper background */
     padding-bottom: 1rem; /* Add some padding at the bottom */
 }
@@ -58,7 +58,7 @@
     justify-content: space-between;
     position: sticky;
     top: calc(100px + 1rem); /* Adjust based on header height and its padding */
-    z-index: 10; /* Ensure it's above other content but below header */
+    z-index: 4; /* Lower z-index to be below Filament header */
     overflow-x: auto; /* Allows scrolling on the container if needed */
     padding: 1rem 0;
     background-color: #f9fafb; /* Match wrapper background */
