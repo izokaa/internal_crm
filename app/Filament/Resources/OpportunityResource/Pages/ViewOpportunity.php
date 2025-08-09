@@ -14,13 +14,6 @@ class ViewOpportunity extends ViewRecord
 
     protected static string $view = 'filament.resources.opportunity-resource.pages.view-opportunity';
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\EditAction::make(),
-            Actions\DeleteAction::make(),
-        ];
-    }
 
     public function getRecord(): Model
     {
@@ -30,5 +23,15 @@ class ViewOpportunity extends ViewRecord
     public function infolist(Infolist $infolist): Infolist
     {
         return OpportunityResource::infolist($infolist);
+    }
+
+    public function getTitle(): string
+    {
+        return '';
+    }
+
+    public function getBreadcrumbs(): array
+    {
+        return [];
     }
 }

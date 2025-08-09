@@ -54,8 +54,7 @@
 /* Base Timeline Line */
 .timeline-line {
     position: absolute;
-    /* Adjusted top position: 1rem (container padding) + 20px (half circle height) = 36px approx */
-    top: calc(1rem + 20px);
+    top: calc(1rem + 20px); /* Adjusted top position: 1rem (container padding) + 20px (half circle height) = 36px approx */
     left: 0;
     right: 0;
     height: 4px;
@@ -74,6 +73,7 @@
     transform: translateY(-50%);
     z-index: 2; /* On top of the base line */
     transition: width 0.4s ease-in-out;
+    width: var(--progress-percentage, 0%); /* Use CSS variable */
 }
 
 
@@ -111,29 +111,64 @@
     width: 100px; /* Reduced width to decrease gap */
 }
 
-/* Etape States */
+/* --- MOBILE STYLES (Vertical Layout) --- */
+
+@media (max-width: 768px) {
+    .timeline-container {
+        flex-direction: column;
+        align-items: flex-start; /* Align items to the left */
+        padding: 0 1rem;
+    }
+
+    .timeline-line {
+        width: 4px;
+        height: 100%;
+        left: calc(1rem + 20px); /* 1rem padding + 20px half circle */
+        top: 0;
+        right: auto;
+        transform: translateX(-50%);
+    }
+
+    .timeline-progress-line {
+        width: 4px;
+        left: calc(1rem + 20px);
+        top: 0;
+        transform: translateX(-50%);
+        height: var(--progress-percentage, 0%); /* Use CSS variable for height */
+        transition: height 0.4s ease-in-out;
+    }
+
+    .timeline-etape {
+        flex-direction: row; /* Circle and name side-by-side */
+        align-items: center;
+        padding: 1rem 0; /* Vertical padding between steps */
+        width: 100%;
+        text-align: left;
+    }
+
+    .etape-name {
+        margin-top: 0;
+        margin-left: 1.5rem; /* Space between circle and name */
+        width: auto; /* Allow name to take available space */
+    }
+}
+
+
+/* Etape States (apply to both layouts) */
 .timeline-etape.completed .etape-circle {
-    background-color: #16a34a; /* green-600 */
+    background-color: #16a34a;
     border-color: #16a34a;
 }
 
 .timeline-etape.active .etape-circle {
-    background-color: #2563eb; /* blue-600 */
+    background-color: #2563eb;
     border-color: #2563eb;
     transform: scale(1.1);
 }
 
 .timeline-etape.active .etape-name {
     font-weight: 700;
-    color: #1e40af; /* blue-800 */
-}
-
-/* No pipeline message */
-.no-pipeline-message {
-    text-align: center;
-    color: #6b7280;
-    font-style: italic;
-    padding: 2rem;
+    color: #1e40af;
 }
 
 /* Clickable states */
@@ -145,4 +180,12 @@
 .timeline-etape.clickable:not(.active):hover .etape-circle {
     transform: scale(1.1);
     filter: brightness(1.1);
+}
+
+/* No pipeline message */
+.no-pipeline-message {
+    text-align: center;
+    color: #6b7280;
+    font-style: italic;
+    padding: 2rem;
 }

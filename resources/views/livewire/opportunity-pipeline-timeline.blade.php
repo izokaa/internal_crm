@@ -26,9 +26,9 @@
             @endif
         </div>
 
-        <div class="timeline-container">
+        <div class="timeline-container" style="--progress-percentage: {{ $progressPercentage }}%;">
             <div class="timeline-line"></div>
-            <div class="timeline-progress-line" style="width: {{ $progressPercentage }}%;"></div>
+            <div class="timeline-progress-line"></div>
             @foreach($etapes as $etape)
                 @php
                     $isCompleted = $currentEtape && $etapes->search(fn($e) => $e->id === $etape->id) < $currentEtapeIndex;
