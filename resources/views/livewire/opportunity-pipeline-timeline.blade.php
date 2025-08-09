@@ -19,10 +19,10 @@
         <div class="timeline-header">
             <h3 class="pipeline-name">{{ $pipeline->nom }}</h3>
             @if($currentEtape)
-                <p class="current-etape">
-                    <span class="current-etape-label">Étape actuelle :</span>
-                    <span class="current-etape-name">{{ $currentEtape->nom }}</span>
-                </p>
+            <p class="current-etape">
+                <span class="current-etape-label">Étape actuelle :</span>
+                <span class="current-etape-name">{{ $currentEtape->nom }}</span>
+            </p>
             @endif
         </div>
 
