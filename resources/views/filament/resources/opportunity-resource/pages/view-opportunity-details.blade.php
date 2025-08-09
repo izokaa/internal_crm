@@ -38,7 +38,7 @@
                     <div class="border-b border-gray-200 dark:border-gray-700 pb-4">
                                                 <nav class="-mb-px flex" aria-label="Action Tabs">
                             <button
-                                @click="activeActionTab = 'tache'"
+                                wire:click="mountAction('createTask')"
                                 class="whitespace-nowrap flex items-center gap-2 py-2 px-4 rounded-md font-medium text-sm focus:outline-none s-center space-x-2 transition-colors duration-200"
                                 style="background-color: #3B82F6; color: #FFFFFF; margin-right: 1rem;" /* bg-blue-500 text-white */
                             >

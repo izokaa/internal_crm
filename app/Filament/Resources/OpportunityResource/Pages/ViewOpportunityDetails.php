@@ -39,6 +39,41 @@ class ViewOpportunityDetails extends ViewRecord
         return '';
     }
 
+    protected function getHeaderActions(): array
+    {
+        return [
+            \Filament\Actions\Action::make('createTask')
+                ->label('Nouvelle Tâche')
+                ->form([
+                    \Filament\Forms\Components\TextInput::make('title')
+                        ->label('Titre')
+                        ->required(),
+                    \Filament\Forms\Components\Textarea::make('description')
+                        ->label('Description'),
+                    \Filament\Forms\Components\DatePicker::make('due_date')
+                        ->label('Date d\'échéance'),
+                    // Add more fields as needed for your task
+                ])
+                ->action(function (array $data) {
+                    \App\Models\Activity::create([
+                        'opportunity_id' => $this->record->id, // Assuming $this->record is the current opportunity
+                        'type' => 'task', // Or a specific type for tasks
+                        'title' => $data['title'],
+                        'description' => $data['description'],
+                        'due_date' => $data['due_date'],
+                        // Add other fields as necessary, e.g., 'user_id' => auth()->id(),
+                    ]);
+
+                    \Filament\Notifications\Notification::make()
+                        ->title('Tâche créée avec succès!')
+                        ->success()
+                        ->send();
+                })
+                ->modalSubmitActionLabel('Créer la tâche')
+                ->modalCancelActionLabel('Annuler'),
+        ];
+    }
+
     public $commentContent;
 
     public function form(Form $form): Form

@@ -28,7 +28,7 @@ class OpportunityResource extends Resource
     protected static ?string $model = Opportunity::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-light-bulb';
-    protected static ?string $navigationActiveIcon = 'elusive-idea';
+    protected static ?string $navigationActiveIcon = 'heroicon-o-light-bulb';
     protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'titre';
