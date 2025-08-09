@@ -35,7 +35,7 @@
             <div x-show="activeFilter === 'activite'">
                 <h3 class="text-lg font-semibold mb-4">Activité</h3>
                 <div x-data="{ activeActionTab: 'tache' }" class="mb-6">
-                    <div class="border-b border-gray-200 dark:border-gray-700">
+                    <div class="border-b border-gray-200 dark:border-gray-700 pb-4">
                                                 <nav class="-mb-px flex" aria-label="Action Tabs">
                             <button
                                 @click="activeActionTab = 'tache'"
@@ -77,8 +77,7 @@
                     </div>
                 </div>
 
-                <div class="mt-8 p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
-                    <h4 class="text-lg font-semibold mb-4">Ajouter un commentaire</h4>
+                <div class="mt-12 p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
                     <form wire:submit.prevent="createComment">
                         {{ $this->form }}
 
