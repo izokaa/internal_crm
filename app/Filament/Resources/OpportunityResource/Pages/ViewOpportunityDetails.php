@@ -105,6 +105,8 @@ class ViewOpportunityDetails extends ViewRecord
                         ->title('Tâche créée avec succès!')
                         ->success()
                         ->send();
+
+                    $this->dispatch('activityCreated');
                 }),
             Action::make('createEvent')
                 ->label('Programmer un évènement')
@@ -177,6 +179,8 @@ class ViewOpportunityDetails extends ViewRecord
                         ->title('Évènement créé avec succès!')
                         ->success()
                         ->send();
+
+                    $this->dispatch('activityCreated');
                 }),
 
             Action::make('createCall')
@@ -230,6 +234,8 @@ class ViewOpportunityDetails extends ViewRecord
                         ->title('Tâche créée avec succès!')
                         ->success()
                         ->send();
+
+                    $this->dispatch('activityCreated');
                 })),
         ];
     }

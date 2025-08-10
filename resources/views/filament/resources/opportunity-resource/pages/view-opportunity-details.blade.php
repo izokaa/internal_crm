@@ -82,6 +82,11 @@
                 <div class="mt-12 p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
                     <livewire:nested-comments::comments :record="$record" />
                 </div>
+
+                <div class="mt-12 p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+                    <h3 class="text-lg font-semibold mb-4">Historique des actions</h3>
+                    <livewire:opportunity-activity-timeline :opportunity="$record" />
+                </div>
             </div>
             <div x-show="activeFilter === 'informations-generales'">
                 <h3 class="text-lg font-semibold mb-4">Informations générales</h3>
