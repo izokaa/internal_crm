@@ -27,7 +27,7 @@ class ListOpportunities extends ListRecords
     public function getTabs(): array
     {
         return [
-            'All' => Tab::make()
+            'Tout' => Tab::make()
                 ->badge(Opportunity::count())
                 ->badgeColor('gray'),
             'Ouverte' => Tab::make()
