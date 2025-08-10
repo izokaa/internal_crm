@@ -22,7 +22,7 @@ return new class () extends Migration {
             $table->boolean('prioritaire')->default(false);
             $table->foreignId('opportunity_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); // User who created/assigned
-            $table->foreignId('contact_id')->constrained()->onDelete('cascade');
+            $table->foreignId('contact_id')->nullable()->constrained()->onDelete('cascade');
             $table->boolean('is_all_day')->nullable(); // Specific to events
             $table->timestamps();
         });

@@ -100,14 +100,15 @@ class OpportunityResource extends Resource
                     ->relationship('source', 'nom')
                     ->required(),
                 Forms\Components\Select::make('pipeline_id')
+                    ->required()
                     ->label('Pipeline')
                     ->options(Pipeline::all()->pluck('nom', 'id'))
                     ->live()
                     ->afterStateUpdated(fn (Set $set) => $set('etape_pipeline_id', null))
                     ->nullable(),
                 Forms\Components\Select::make('etape_pipeline_id') ->label('Étape du Pipeline')
-                    ->options(fn (Get $get): array => Pipeline::find($get('pipeline_id'))?->etapePipelines->pluck('nom', 'id')->toArray() ?? [])
-                    ->nullable(),
+                    ->required()
+                    ->options(fn (Get $get): array => Pipeline::find($get('pipeline_id'))?->etapePipelines->pluck('nom', 'id')->toArray() ?? []),
             ]);
     }
 

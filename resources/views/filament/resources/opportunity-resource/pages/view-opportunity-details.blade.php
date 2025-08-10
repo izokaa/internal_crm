@@ -208,7 +208,7 @@
                     </div>
                     <div>
                         <p class="text-sm text-gray-500 dark:text-gray-400">Contact:</p>
-                        <p class="text-base font-medium text-gray-900 dark:text-gray-100">{{ $record->contact->nom }} {{ $record->contact->prenom }}</p>
+                        <p class="text-base font-medium text-gray-900 dark:text-gray-100">{{ $record->contact->nom  }} {{ $record->contact->prenom }}</p>
                     </div>
                     <div>
                         <p class="text-sm text-gray-500 dark:text-gray-400">Source:</p>
