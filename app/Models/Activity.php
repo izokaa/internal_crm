@@ -16,7 +16,18 @@ class Activity extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-                ->logOnly(['titre', 'statut']);
+                ->logOnly([
+                    'titre',
+                    'statut',
+                    'description',
+                    'date_debut',
+                    'date_fin',
+                    'due_date',
+                    'prioritaire',
+                    'is_all_day',
+                    'label_id',
+                    'contact_id'
+                ]);
     }
 
     protected $fillable = [

@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             SpecialiteSeeder::class,
             BusinessUnitServiceSeeder::class,
             PipelineEtapeSeeder::class,
+            LabelSeeder::class,
         ]);
 
         User::create([

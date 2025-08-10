@@ -19,6 +19,10 @@ class BusinessUnitServiceSeeder extends Seeder
         $buMarketing = BusinessUnit::create(['nom' => 'Marketing']);
         $buRH = BusinessUnit::create(['nom' => 'Ressources Humaines']);
 
+        $slutionsEtLogiciels = BusinessUnit::create(['nom' => 'Solutions & Logiciels']);
+        $corporateServices = BusinessUnit::create(['nom' => 'Corporate Services']);
+        $dataMarket = BusinessUnit::create(['nom' => 'Data & Market']);
+
         Service::create(['nom' => 'Prospection Commerciale', 'business_unit_id' => $buVentes->id]);
         Service::create(['nom' => 'Fidélisation Client', 'business_unit_id' => $buVentes->id]);
         Service::create(['nom' => 'Gestion des Comptes', 'business_unit_id' => $buVentes->id]);

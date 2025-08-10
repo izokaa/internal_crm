@@ -90,34 +90,17 @@
             </div>
             <div x-show="activeFilter === 'informations-generales'">
                 <h3 class="text-lg font-semibold mb-4">Informations générales</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Column 1: Basic Info -->
+                    <div class="col-span-1">
                         <p class="text-sm text-gray-500 dark:text-gray-400">Titre:</p>
                         <p class="text-base font-medium text-gray-900 dark:text-gray-100">{{ $record->titre }}</p>
                     </div>
-                    <div>
+                    <div class="col-span-1">
                         <p class="text-sm text-gray-500 dark:text-gray-400">Identifiant:</p>
                         <p class="text-base font-medium text-gray-900 dark:text-gray-100">{{ $record->prefix }}-{{ $record->id }}</p>
                     </div>
-                    <div class="md:col-span-2">
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Description:</p>
-                        <p class="text-base font-medium text-gray-900 dark:text-gray-100">{{ $record->description }}</p>
-                    </div>
-                    <div class="md:col-span-2">
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Note:</p>
-                        <div class="prose dark:prose-invert">
-                            {!! \Illuminate\Support\Str::markdown($record->note) !!}
-                        </div>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Date d'échéance:</p>
-                        <p class="text-base font-medium text-gray-900 dark:text-gray-100">{{ $record->date_echeance?->format('d/m/Y') ?? 'N/A' }}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Probabilité:</p>
-                        <p class="text-base font-medium text-gray-900 dark:text-gray-100">{{ $record->probabilite }}%</p>
-                    </div>
-                    <div>
+                    <div class="col-span-1">
                         <p class="text-sm text-gray-500 dark:text-gray-400">Statut:</p>
                         @php
                             $statusBgColor = match ($record->status) {
@@ -146,25 +129,61 @@
                             {{ $record->status }}
                         </span>
                     </div>
-                    <div>
+
+                    <!-- Column 2: Financial & Dates -->
+                    <div class="col-span-1">
                         <p class="text-sm text-gray-500 dark:text-gray-400">Montant estimé:</p>
                         <p class="text-base font-medium text-gray-900 dark:text-gray-100">{{ number_format($record->montant_estime, 2) }} {{ $record->devise }}</p>
                     </div>
-                    <div>
+                    <div class="col-span-1">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Probabilité:</p>
+                        <p class="text-base font-medium text-gray-900 dark:text-gray-100">{{ $record->probabilite }}%</p>
+                    </div>
+                    <div class="col-span-1">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Date d'échéance:</p>
+                        <p class="text-base font-medium text-gray-900 dark:text-gray-100">{{ $record->date_echeance?->format('d/m/Y') ?? 'N/A' }}</p>
+                    </div>
+
+                    <!-- Column 3: Relationships -->
+                    <div class="col-span-1">
                         <p class="text-sm text-gray-500 dark:text-gray-400">Contact:</p>
                         <p class="text-base font-medium text-gray-900 dark:text-gray-100">{{ $record->contact->nom  }} {{ $record->contact->prenom }}</p>
                     </div>
-                    <div>
+                    <div class="col-span-1">
                         <p class="text-sm text-gray-500 dark:text-gray-400">Source:</p>
                         <p class="text-base font-medium text-gray-900 dark:text-gray-100">{{ $record->source->nom }}</p>
                     </div>
-                    <div>
+                    <div class="col-span-1">
                         <p class="text-sm text-gray-500 dark:text-gray-400">Pipeline:</p>
                         <p class="text-base font-medium text-gray-900 dark:text-gray-100">{{ $record->pipeline->nom }}</p>
                     </div>
-                    <div>
+                    <div class="col-span-1">
                         <p class="text-sm text-gray-500 dark:text-gray-400">Étape Pipeline:</p>
                         <p class="text-base font-medium text-gray-900 dark:text-gray-100">{{ $record->etapePipeline->nom }}</p>
+                    </div>
+
+                    <!-- Full width for Description and Note -->
+                    <div class="md:col-span-3">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Description:</p>
+                        <p class="text-base font-medium text-gray-900 dark:text-gray-100">{{ $record->description }}</p>
+                    </div>
+                    <div class="md:col-span-3">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Note:</p>
+                        <div class="prose dark:prose-invert">
+                            {!! \Illuminate\Support\Str::markdown($record->note) !!}
+                        </div>
+                    </div>
+
+                    <!-- Business Unit and Service (bold and larger) -->
+                    <div class="md:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div class="col-span-1">
+                            <p class="text-base font-bold text-gray-900 dark:text-gray-100">Business Unit:</p>
+                            <p class="text-lg font-medium text-primary-600 dark:text-primary-400">{{ $record->contact->businessUnit->nom ?? 'N/A' }}</p>
+                        </div>
+                        <div class="col-span-1">
+                            <p class="text-base font-bold text-gray-900 dark:text-gray-100">Service:</p>
+                            <p class="text-lg font-medium text-primary-600 dark:text-primary-400">{{ $record->contact->service->nom ?? 'N/A' }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
