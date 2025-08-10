@@ -3,15 +3,21 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\LabelResource\Pages;
-use App\Filament\Resources\LabelResource\RelationManagers;
 use App\Models\Label;
-use Filament\Forms;
+use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\ColorColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class LabelResource extends Resource
 {
@@ -20,23 +26,37 @@ class LabelResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-tag';
     protected static ?string $navigationGroup = 'Paramètres';
 
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('value')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\ColorPicker::make('couleur')
-                    ->required(),
-                Forms\Components\Toggle::make('for_task')
-                    ->label('Pour Tâche')
-                    ->helperText('Indique si ce label peut être utilisé pour les tâches.')
-                    ->default(false),
-                Forms\Components\Toggle::make('for_event')
-                    ->label('Pour Événement')
-                    ->helperText('Indique si ce label peut être utilisé pour les événements.')
-                    ->default(false),
+                Section::make('')
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('value')
+                                    ->required()
+                                    ->maxLength(255),
+                                ColorPicker::make('couleur')
+                                    ->required(),
+                            ]),
+                        Grid::make(3)
+                            ->schema([
+                                Toggle::make('for_task')
+                                    ->label('Pour Tâche')
+                                    ->helperText('Indique si ce label peut être utilisé pour les tâches.')
+                                    ->default(false),
+                                Toggle::make('for_event')
+                                    ->label('Pour Événement')
+                                    ->helperText('Indique si ce label peut être utilisé pour les événements.')
+                                    ->default(false),
+                                Toggle::make('for_call')
+                                    ->label('Pour Tâche')
+                                    ->helperText('Indique si ce label peut être utilisé pour les appels.')
+                                    ->default(false),
+                            ])
+                    ])
             ]);
     }
 
@@ -44,26 +64,29 @@ class LabelResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('value')
+                TextColumn::make('value')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\ColorColumn::make('couleur'),
-                Tables\Columns\IconColumn::make('for_task')
+                ColorColumn::make('couleur'),
+                IconColumn::make('for_task')
                     ->label('Pour Tâche')
                     ->boolean(),
-                Tables\Columns\IconColumn::make('for_event')
+                IconColumn::make('for_event')
                     ->label('Pour Événement')
+                    ->boolean(),
+                IconColumn::make('for_call')
+                    ->label('Pour Appel')
                     ->boolean(),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

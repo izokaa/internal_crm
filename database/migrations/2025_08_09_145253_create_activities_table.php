@@ -12,7 +12,7 @@ return new class () extends Migration {
     {
         Schema::create('activities', function (Blueprint $table) {
             $table->id();
-            $table->string('titre');
+            $table->string('titre')->nullable();
             $table->text('description')->nullable();
             $table->enum('type', ['task', 'event']);
             $table->string('statut'); // e.g., pending, completed, cancelled, scheduled

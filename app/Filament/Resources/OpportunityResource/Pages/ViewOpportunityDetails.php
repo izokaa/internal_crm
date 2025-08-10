@@ -70,20 +70,19 @@ class ViewOpportunityDetails extends ViewRecord
                         ->extraAttributes(['class' => 'h-6 w-6'])
                         ->label('Priorité'),
                     Select::make('user_id')
-                        ->relationship('user')
-                        ->options(User::all()->map(function (User $user) {
-                            if ($user->id == auth()->id()) {
-                                $newUser = $user;
-                                $newUser->name = $newUser->name . ' (moi)';
-                                return $newUser;
-                            } else {
-                                return $user;
-                            }
-                        })->pluck('name', 'id')->toArray())
+                        ->label('Responsable')
+                        ->options(function () {
+                            return User::all()->mapWithKeys(function (User $user) {
+                                $name = $user->id == auth()->id()
+                                ? $user->name . ' (moi)'
+                                : $user->name;
+                                return [$user->id => $name];
+                            });
+                        })
                         ->searchable()
                         ->preload()
-                        ->label('Responsable'),
-                    DatePicker::make('due_date')
+                        ->default(auth()->id()),
+                        DatePicker::make('due_date')
                         ->label('Date d\'échéance'),
                     MarkdownEditor::make('description')
                         ->label('Description'),
@@ -95,7 +94,7 @@ class ViewOpportunityDetails extends ViewRecord
                         'statut' => ActivityStatut::TODO,
                         'titre' => $data['title'],
                         'prioritaire' => $data['prioritaire'],
-                        'user_id' => auth()->id(),
+                        'user_id' => $data['user_id'], // ← Utilisez la valeur du formulaire
                         'description' => $data['description'],
                         'due_date' => $data['due_date'],
                         'label_id' => $data['label_id']
@@ -105,9 +104,7 @@ class ViewOpportunityDetails extends ViewRecord
                         ->title('Tâche créée avec succès!')
                         ->success()
                         ->send();
-                })
-                ->modalSubmitActionLabel('Créer la tâche')
-                ->modalCancelActionLabel('Annuler'),
+                }),
             Action::make('createEvent')
                 ->label('Programmer un évènement')
                 ->form([
@@ -117,18 +114,18 @@ class ViewOpportunityDetails extends ViewRecord
                     Grid::make(2)
                         ->schema([
                             Select::make('user_id')
-                            ->label('Prioritaire')
-                                ->options(User::all()->map(function (User $user) {
-                                    if ($user->id == auth()->id()) {
-                                        $newUser = $user;
-                                        $newUser->name = $newUser->name . ' (moi)';
-                                        return $newUser;
-                                    } else {
-                                        return $user;
-                                    }
-                                })->pluck('name', 'id')->toArray())
-                            ->searchable()
-                            ->preload() ,
+                                ->label('Responsable')
+                                ->options(function () {
+                                    return User::all()->mapWithKeys(function (User $user) {
+                                        $name = $user->id == auth()->id()
+                                        ? $user->name . ' (moi)'
+                                        : $user->name;
+                                        return [$user->id => $name];
+                                    });
+                                })
+                                ->searchable()
+                                ->preload()
+                                ->default(auth()->id()),
                             Select::make('label_id')
                                 ->label('Label')
                                 ->options(Label::eventLabels()->pluck('value', 'id'))
@@ -157,8 +154,8 @@ class ViewOpportunityDetails extends ViewRecord
                     $activityData = [
                         'opportunity_id' => $this->record->id,
                         'type' => 'event',
-                        // NOTE: prioritaire
-                        'user_id' => auth()->id(),
+                        // NOTE: Propriataire
+                        'user_id' => $data['user_id'],
                         'titre' => $data['title'],
                         'description' => $data['description'],
                         'label_id' => $data['label_id'],
@@ -190,25 +187,26 @@ class ViewOpportunityDetails extends ViewRecord
                     Grid::make(2)
                         ->schema([
                             Select::make('user_id')
-                            ->label('Responsable')
-                                ->options(User::all()->map(function (User $user) {
-                                    if ($user->id == auth()->id()) {
-                                        $newUser = $user;
-                                        $newUser->name = $newUser->name . ' (moi)';
-                                        return $newUser;
-                                    } else {
-                                        return $user;
-                                    }
-                                })->pluck('name', 'id')->toArray())
-                            ->searchable()
-                            ->preload() ,
+                                ->label('Responsable')
+                                ->options(function () {
+                                    return User::all()->mapWithKeys(function (User $user) {
+                                        $name = $user->id == auth()->id()
+                                        ? $user->name . ' (moi)'
+                                        : $user->name;
+                                        return [$user->id => $name];
+                                    });
+                                })
+                                ->searchable()
+                                ->preload()
+                                ->default(auth()->id()),
                             Select::make('label_id')
                                 ->label('Label')
-                                ->options(Label::eventLabels()->pluck('value', 'id'))
+                                ->options(Label::callLabels()->pluck('value', 'id'))
                                 ->required()
                                 ->searchable(),
                         ]),
                     DatePicker::make('due_date')
+                        ->required()
                         ->label('Date'),
                     MarkdownEditor::make('description')
                         ->label('Note'),
@@ -216,11 +214,12 @@ class ViewOpportunityDetails extends ViewRecord
                 ->action((function (array $data) {
                     Activity::create([
                         'opportunity_id' => $this->record->id,
+                        'titre' => 'empty cause it\'s event',
                         'type' => 'call',
                         'statut' => ActivityStatut::TODO,
                         'prioritaire' => $data['prioritaire'],
-                        // NOTE: responsable
-                        'user_id' => auth()->id(),
+                        // HACK: responsable
+                        'user_id' => $data['user_id'],
                         'description' => $data['description'],
                         'due_date' => $data['due_date'],
                         'label_id' => $data['label_id']
