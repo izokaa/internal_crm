@@ -105,8 +105,7 @@ class OpportunityResource extends Resource
                     ->live()
                     ->afterStateUpdated(fn (Set $set) => $set('etape_pipeline_id', null))
                     ->nullable(),
-                Forms\Components\Select::make('etape_pipeline_id')
-                    ->label('Étape du Pipeline')
+                Forms\Components\Select::make('etape_pipeline_id') ->label('Étape du Pipeline')
                     ->options(fn (Get $get): array => Pipeline::find($get('pipeline_id'))?->etapePipelines->pluck('nom', 'id')->toArray() ?? [])
                     ->nullable(),
             ]);

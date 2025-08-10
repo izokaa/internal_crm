@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Enums\ActivityStatut;
 
 class Activity extends Model
 {
@@ -12,15 +14,16 @@ class Activity extends Model
         'titre',
         'description',
         'type',
-        'statut',
+        'statut', // WARNING: event, task or call 'type',
         'date_debut',
         'date_fin',
         'due_date',
         'prioritaire',
         'opportunity_id',
         'user_id',
-        'location',
         'is_all_day',
+        'label_id',
+        'contact_id'
     ];
 
     protected $casts = [
@@ -29,6 +32,7 @@ class Activity extends Model
         'due_date' => 'datetime',
         'prioritaire' => 'boolean',
         'is_all_day' => 'boolean',
+        'statut' => ActivityStatut::class
     ];
 
     public function opportunity()
@@ -41,8 +45,14 @@ class Activity extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function labels()
+    public function label()
     {
-        return $this->belongsToMany(Label::class);
+        return $this->belongsTo(Label::class);
     }
+
+    public function contact()
+    {
+        return $this->belongsTo(Contact::class);
+    }
+
 }

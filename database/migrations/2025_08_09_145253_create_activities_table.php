@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     /**
      * Run the migrations.
      */
@@ -17,13 +16,13 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->enum('type', ['task', 'event']);
             $table->string('statut'); // e.g., pending, completed, cancelled, scheduled
-            $table->dateTime('date_debut');
+            $table->dateTime('date_debut')->nullable();
             $table->dateTime('date_fin')->nullable();
             $table->dateTime('due_date')->nullable();
             $table->boolean('prioritaire')->default(false);
-            $table->foreignId('opportunity_id')->constrained()->onDelete('cascade');
+            $table->foreignId('opportunity_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); // User who created/assigned
-            $table->string('location')->nullable(); // Specific to events
+            $table->foreignId('contact_id')->constrained()->onDelete('cascade');
             $table->boolean('is_all_day')->nullable(); // Specific to events
             $table->timestamps();
         });

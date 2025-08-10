@@ -50,4 +50,9 @@ class Contact extends Model
     {
         return $this->hasMany(Contrat::class, 'client_id');
     }
+
+    public function calls()
+    {
+        return $this->hasMany(Activity::class);
+    }
 }

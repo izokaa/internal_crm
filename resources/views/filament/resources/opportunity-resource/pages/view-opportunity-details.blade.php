@@ -47,6 +47,7 @@
                             </button>
                             <button
                                 @click="activeActionTab = 'evenement'"
+                                wire:click="mountAction('createEvent')"
                                 class="whitespace-nowrap py-2 px-4 rounded-md font-medium text-sm focus:outline-none flex items-center gap-2 space-x-2 transition-colors duration-200"
                                 style="background-color: #A855F7; color: #FFFFFF; margin-right: 1rem;" /* bg-green-500 text-white */
                             >
@@ -55,6 +56,7 @@
                             </button>
                             <button
                                 @click="activeActionTab = 'appel'"
+                                wire:click="mountAction('createCall')"
                                 class="whitespace-nowrap py-2 px-4 rounded-md font-medium text-sm focus:outline-none flex items-center gap-2 space-x-2 transition-colors duration-200"
                                 style="background-color: #22C55E; color: #FFFFFF; " /* bg-purple-500 text-white */
                             >

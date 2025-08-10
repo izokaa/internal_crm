@@ -10,14 +10,8 @@ return new class () extends Migration {
      */
     public function up(): void
     {
-        Schema::create('labels', function (Blueprint $table) {
-            $table->id();
-            $table->string('value');
-            $table->string('couleur');
-            $table->boolean('for_task')->default(false);
-            $table->boolean('for_event')->default(false);
+        Schema::table('labels', function (Blueprint $table) {
             $table->boolean('for_call')->default(false);
-            $table->timestamps();
         });
     }
 
@@ -26,6 +20,8 @@ return new class () extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('labels');
+        Schema::table('labels', function (Blueprint $table) {
+            $table->dropColumn('for_call');
+        });
     }
 };
