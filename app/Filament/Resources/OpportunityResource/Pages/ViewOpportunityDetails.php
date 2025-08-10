@@ -17,7 +17,8 @@ use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
@@ -232,40 +233,5 @@ class ViewOpportunityDetails extends ViewRecord
                 })),
         ];
     }
-
-    public $commentContent;
-
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                MarkdownEditor::make('commentContent')
-                    ->label('Commentaire')
-                    ->placeholder('Écrivez votre commentaire ici...')
-                    ->id('commentEditor')
-                    ->required()
-                    ->columnSpanFull(),
-            ]);
-    }
-
-    public function createComment()
-    {
-        $data = $this->form->getState();
-
-        // Here you would save the comment to the database
-        // For now, just a placeholder
-        session()->flash('message', 'Commentaire envoyé : ' . $data['commentContent']);
-
-        $this->form->fill(); // Clear the form after submission
-    }
-
-    public function clearComment()
-    {
-        $this->form->fill(); // Clear the form
-    }
-
-    public function getFormStatePath(): ?string
-    {
-        return null;
-    }
 }
+

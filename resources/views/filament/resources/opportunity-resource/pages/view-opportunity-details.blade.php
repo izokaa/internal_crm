@@ -80,69 +80,8 @@
                 </div>
 
                 <div class="mt-12 p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
-                    <form wire:submit.prevent="createComment">
-                        {{ $this->form }}
-
-                        <div class="mt-6 text-right space-x-2">
-                            <button
-                                type="button"
-                                wire:click="clearComment"
-                                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600"
-                            >
-                                Annuler
-                            </button>
-                            <button
-                                type="submit"
-                                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:bg-primary-500 dark:hover:bg-primary-600"
-                            >
-                                Envoyer le commentaire
-                            </button>
-                        </div>
-                    </form>
+                    <livewire:nested-comments::comments :record="$record" />
                 </div>
-
-                @push('scripts')
-                    <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
-                    <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
-                    <script>
-                        let easyMDE = null;
-
-                        function initializeEasyMDE() {
-                            if (easyMDE) {
-                                easyMDE.toTextArea();
-                                easyMDE = null;
-                            }
-                            easyMDE = new EasyMDE({
-                                element: document.getElementById('commentEditor'),
-                                spellChecker: false,
-                                autosave: {
-                                    enabled: false,
-                                },
-                                status: false, // Hide the status bar
-                                toolbar: [
-                                    "bold", "italic", "heading", "|",
-                                    "quote", "unordered-list", "ordered-list", "|",
-                                    "link", "image", "|",
-                                    "preview", "guide"
-                                ],
-                            });
-
-                            easyMDE.codemirror.on("change", function() {
-                                @this.set('commentContent', easyMDE.value());
-                            });
-                        }
-
-                        document.addEventListener('livewire:load', function () {
-                            initializeEasyMDE();
-                        });
-
-                        Livewire.hook('message.processed', (message, component) => {
-                            if (component.name === 'opportunity-pipeline-timeline') { // Ensure it's our component
-                                initializeEasyMDE();
-                            }
-                        });
-                    </script>
-                @endpush
             </div>
             <div x-show="activeFilter === 'informations-generales'">
                 <h3 class="text-lg font-semibold mb-4">Informations générales</h3>

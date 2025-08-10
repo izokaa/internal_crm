@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use Coolsam\NestedComments\Concerns\HasComments;
+use Coolsam\NestedComments\Concerns\HasReactions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Opportunity extends Model
 {
     use HasFactory;
+    use HasComments;
+    use HasReactions;
 
     protected $fillable = [
         'titre',
