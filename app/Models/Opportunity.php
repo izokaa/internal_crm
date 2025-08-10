@@ -6,6 +6,7 @@ use Coolsam\NestedComments\Concerns\HasComments;
 use Coolsam\NestedComments\Concerns\HasReactions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Opportunity extends Model
 {
@@ -63,4 +64,10 @@ class Opportunity extends Model
     {
         return $this->hasMany(Activity::class);
     }
+
+    public function piecesJointes()
+    {
+        return $this->hasMany(PieceJointe::class);
+    }
+
 }

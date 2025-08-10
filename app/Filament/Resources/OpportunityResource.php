@@ -109,6 +109,23 @@ class OpportunityResource extends Resource
                 Forms\Components\Select::make('etape_pipeline_id') ->label('Étape du Pipeline')
                     ->required()
                     ->options(fn (Get $get): array => Pipeline::find($get('pipeline_id'))?->etapePipelines->pluck('nom', 'id')->toArray() ?? []),
+
+                Forms\Components\Section::make('Pièces Jointes')
+                    ->schema([
+                        Forms\Components\Repeater::make('piecesJointes')
+                            ->relationship()
+                            ->schema([
+                                Forms\Components\TextInput::make('nom_fichier')
+                                    ->required(),
+                                Forms\Components\FileUpload::make('chemin_fichier')
+                                    ->directory('opportunity')
+                                    ->disk('public')
+                                    ->visibility('public')
+                                    ->downloadable()
+                                    ->required(),
+                            ])
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 

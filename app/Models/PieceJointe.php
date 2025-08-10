@@ -18,6 +18,12 @@ class PieceJointe extends Model
         return $this->belongsTo(Contrat::class);
     }
 
+    public function opportunity(): BelongsTo
+    {
+        return $this->belongsTo(Opportunity::class);
+    }
+
+
     protected static function booted(): void
     {
         static::deleting(function (PieceJointe $pieceJointe) {
