@@ -188,8 +188,7 @@
                 </div>
             </div>
             <div x-show="activeFilter === 'documents-lies'">
-                <h3 class="text-lg font-semibold mb-4">Documents liés</h3>
-                <p>Contenu de l'onglet Documents liés.</p>
+                {{ $this->infolist }}
             </div>
         </div>
     </div>
