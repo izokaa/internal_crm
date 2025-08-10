@@ -243,7 +243,7 @@ class ViewOpportunityDetails extends ViewRecord
                 MarkdownEditor::make('commentContent')
                     ->label('Commentaire')
                     ->placeholder('Écrivez votre commentaire ici...')
-                    // ->id('commentEditor')
+                    ->id('commentEditor')
                     ->required()
                     ->columnSpanFull(),
             ]);
