@@ -1,4 +1,3 @@
-@vite('resources/css/app.css')
 <x-filament-panels::page>
     <div class="mb-4">
         <livewire:opportunity-pipeline-timeline :opportunity="$record" />
