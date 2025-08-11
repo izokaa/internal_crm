@@ -2,6 +2,14 @@
 
 namespace App\Livewire;
 
+use App\Models\Activity as AppActivity;
+use App\Models\User;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Concerns\InteractsWithInfolists;
+use Filament\Infolists\Contracts\HasInfolists;
+use Filament\Infolists\Infolist;
 use Livewire\Component;
 use App\Models\Opportunity;
 use Spatie\Activitylog\Models\Activity;
@@ -11,13 +19,19 @@ use App\Models\Label;
 use App\Models\Contact;
 use Carbon\Carbon;
 
-class OpportunityActivityTimeline extends Component
+class OpportunityActivityTimeline extends Component implements HasForms, HasInfolists
 {
+    use InteractsWithInfolists;
+    use InteractsWithForms;
+
+
+    public $record;
     public Opportunity $opportunity;
 
     public function mount(Opportunity $opportunity)
     {
         $this->opportunity = $opportunity;
+        $this->record = $opportunity;
     }
 
     #[On('activityCreated')] // Listen for the 'activityCreated' event
@@ -42,135 +56,17 @@ class OpportunityActivityTimeline extends Component
         ->latest()
         ->get();
 
-        return $activities->map(function ($activity) {
-            $displayProperties = collect();
-            $attributesToDisplay = [];
 
-            // Define attributes to display based on activity type
-            switch ($activity->type) {
-                case 'task':
-                    $attributesToDisplay = ['titre', 'description', 'statut', 'due_date', 'prioritaire', 'label_id'];
-                    break;
-                case 'event':
-                    $attributesToDisplay = ['titre', 'description', 'statut', 'date_debut', 'date_fin', 'is_all_day', 'label_id'];
-                    break;
-                case 'call':
-                    $attributesToDisplay = ['description', 'statut', 'due_date', 'prioritaire', 'contact_id', 'label_id'];
-                    break;
-                default:
-                    // For other types or general logs, display all logged attributes
-                    $attributesToDisplay = array_keys($activity->properties['attributes'] ?? []);
-                    break;
-            }
+        return $activities->map(function ($activityLog) {
+            $activity = AppActivity::find($activityLog->subject_id);
 
-            // Process 'attributes' (new values)
-            if ($activity->properties->has('attributes')) {
-                foreach ($attributesToDisplay as $attribute) {
-                    if (isset($activity->properties['attributes'][$attribute])) {
-                        $newValue = $activity->properties['attributes'][$attribute];
+            $activityAction = collect([
+                'activity' => $activity ,
+                'causer' => User::find($activityLog->causer_id),
+            ]);
 
-                        $displayKey = $attribute; // Default display key
-                        $formattedValue = $newValue; // Default formatted value
-
-                        // Special handling for label_id and contact_id
-                        if ($attribute === 'label_id') {
-                            $label = \App\Models\Label::find($newValue);
-                            $displayKey = 'label';
-                            $formattedValue = $label ? $label->value : 'N/A';
-                        } elseif ($attribute === 'contact_id') {
-                            $contact = \App\Models\Contact::find($newValue);
-                            $displayKey = 'contact';
-                            $formattedValue = $contact ? $contact->nom . ' ' . $contact->prenom : 'N/A';
-                        } else {
-                            $formattedValue = $this->formatPropertyValue($attribute, $newValue, $activity->type);
-                        }
-
-                        if ($activity->event === 'updated' && $activity->properties->has('old') && isset($activity->properties['old'][$attribute])) {
-                            $oldValue = $activity->properties['old'][$attribute];
-                            $formattedOldValue = $this->formatPropertyValue($attribute, $oldValue, $activity->type);
-
-                            // Re-resolve old label/contact if it was an ID
-                            if ($attribute === 'label_id') {
-                                $oldLabel = \App\Models\Label::find($oldValue);
-                                $formattedOldValue = $oldLabel ? $oldLabel->value : 'N/A';
-                            } elseif ($attribute === 'contact_id') {
-                                $oldContact = \App\Models\Contact::find($oldValue);
-                                $formattedOldValue = $oldContact ? $oldContact->nom . ' ' . $oldContact->prenom : 'N/A';
-                            }
-
-                            if ($formattedOldValue !== $formattedValue) { // Only show if value actually changed
-                                $displayProperties->put($displayKey, ['old' => $formattedOldValue, 'new' => $formattedValue]);
-                            }
-                        } else {
-                            $displayProperties->put($displayKey, $formattedValue);
-                        }
-                    }
-                }
-            }
-
-            // For 'created' events, ensure all relevant attributes are displayed
-            if ($activity->event === 'created' && $activity->properties->has('attributes')) {
-                foreach ($attributesToDisplay as $attribute) {
-                    if (isset($activity->properties['attributes'][$attribute]) && !$displayProperties->has($attribute)) {
-                        $newValue = $activity->properties['attributes'][$attribute];
-                        $displayKey = $attribute;
-                        $formattedValue = $newValue;
-
-                        // Special handling for label_id and contact_id
-                        if ($attribute === 'label_id') {
-                            $label = \App\Models\Label::find($newValue);
-                            $displayKey = 'label';
-                            $formattedValue = $label ? $label->value : 'N/A';
-                        } elseif ($attribute === 'contact_id') {
-                            $contact = \App\Models\Contact::find($newValue);
-                            $displayKey = 'contact';
-                            $formattedValue = $contact ? $contact->nom . ' ' . $contact->prenom : 'N/A';
-                        } else {
-                            $formattedValue = $this->formatPropertyValue($attribute, $newValue, $activity->type);
-                        }
-                        $displayProperties->put($displayKey, $formattedValue);
-                    }
-                }
-            }
-
-            $activity->displayProperties = $displayProperties;
-            return $activity;
+            return $activityAction;
         });
-    }
-
-    private function formatPropertyValue($attribute, $value, $activityType = null)
-    {
-        if (is_null($value)) {
-            return 'N/A';
-        }
-
-        // Handle boolean values
-        if (in_array($attribute, ['prioritaire', 'is_all_day'])) {
-            return $value ? 'Oui' : 'Non';
-        }
-
-        // Handle date attributes
-        if (in_array($attribute, ['date_debut', 'date_fin', 'due_date'])) {
-            try {
-                return Carbon::parse($value)->format('d/m/Y H:i');
-            } catch (\Exception $e) {
-                return $value; // Return original if parsing fails
-            }
-        }
-
-        // Handle label_id
-        if ($attribute === 'label_id') {
-            $label = \App\Models\Label::find($value);
-            return $label ? $label->value : 'N/A';
-        }
-
-        // Handle contact_id
-        if ($attribute === 'contact_id') {
-            $contact = \App\Models\Contact::find($value);
-            return $contact ? $contact->nom . ' ' . $contact->prenom : 'N/A';
-        }
-
-        return $value;
     }
 
     public function render()

@@ -218,6 +218,7 @@ class OpportunityResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('probabilite')
                     ->numeric()
+                    ->suffix('%')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->searchable()

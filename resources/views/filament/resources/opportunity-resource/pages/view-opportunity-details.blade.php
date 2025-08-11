@@ -1,3 +1,4 @@
+@vite('resources/css/app.css')
 <x-filament-panels::page>
     <div class="mb-4">
         <livewire:opportunity-pipeline-timeline :opportunity="$record" />
@@ -34,49 +35,8 @@
         <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
             <div x-show="activeFilter === 'activite'">
                 <h3 class="text-lg font-semibold mb-4">Activité</h3>
-                <div x-data="{ activeActionTab: 'tache' }" class="mb-6">
-                    <div class="border-b border-gray-200 dark:border-gray-700 pb-4">
-                                                <nav class="-mb-px flex" aria-label="Action Tabs">
-                            <button
-                                wire:click="mountAction('createTask')"
-                                class="whitespace-nowrap flex items-center gap-2 py-2 px-4 rounded-md font-medium text-sm focus:outline-none s-center space-x-2 transition-colors duration-200"
-                                style="background-color: #3B82F6; color: #FFFFFF; margin-right: 1rem;" /* bg-blue-500 text-white */
-                            >
-                                <x-heroicon-o-clipboard-document-check class="h-5 w-5" />
-                                <span>Tâche</span>
-                            </button>
-                            <button
-                                @click="activeActionTab = 'evenement'"
-                                wire:click="mountAction('createEvent')"
-                                class="whitespace-nowrap py-2 px-4 rounded-md font-medium text-sm focus:outline-none flex items-center gap-2 space-x-2 transition-colors duration-200"
-                                style="background-color: #A855F7; color: #FFFFFF; margin-right: 1rem;" /* bg-green-500 text-white */
-                            >
-                                <x-heroicon-o-calendar class="h-5 w-5" />
-                                <span>Événement</span>
-                            </button>
-                            <button
-                                @click="activeActionTab = 'appel'"
-                                wire:click="mountAction('createCall')"
-                                class="whitespace-nowrap py-2 px-4 rounded-md font-medium text-sm focus:outline-none flex items-center gap-2 space-x-2 transition-colors duration-200"
-                                style="background-color: #22C55E; color: #FFFFFF; " /* bg-purple-500 text-white */
-                            >
-                                <x-heroicon-o-phone class="h-5 w-5" />
-                                <span>Appel</span>
-                            </button>
-                        </nav>
-                    </div>
-
-                    <div class="mt-10">
-                        <div x-show="activeActionTab === 'tache'">
-                            <!-- Formulaire pour programmer une tâche. -->
-                        </div>
-                        <div x-show="activeActionTab === 'evenement'">
-                            <!-- Formulaire pour programmer un événement. -->
-                        </div>
-                        <div x-show="activeActionTab === 'appel'">
-                            <!-- Formulaire pour programmer un appel. -->
-                        </div>
-                    </div>
+                <div class="mb-6">
+                    @livewire('activity-actions')
                 </div>
 
                 <div class="mt-12 p-4 bg-white dark:bg-gray-800 rounded-lg shadow">

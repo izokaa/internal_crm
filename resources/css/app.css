@@ -1,1 +1,4 @@
-/* Custom CSS for your components will go here */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;

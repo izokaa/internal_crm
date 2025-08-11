@@ -34,4 +34,8 @@ class ViewOpportunity extends ViewRecord
     {
         return [];
     }
+
+
+
+
 }

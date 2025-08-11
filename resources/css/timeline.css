@@ -1,6 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 /* General Wrapper */
 .timeline-wrapper {
@@ -250,38 +247,3 @@
     }
 }
 
-/* Tailwind Safelist for dynamically generated badge classes */
-/* This ensures these classes are always included in the CSS output */
-.safelist-classes-for-badges {
-    /* Badge background colors */
-    @apply bg-blue-100;
-    @apply bg-green-100;
-    @apply bg-red-100;
-    @apply bg-yellow-100;
-    @apply bg-gray-100;
-    @apply bg-purple-100;
-
-    /* Badge text colors */
-    @apply text-blue-800;
-    @apply text-green-800;
-    @apply text-red-800;
-    @apply text-yellow-800;
-    @apply text-gray-800;
-    @apply text-purple-800;
-
-    /* Dark mode badge background colors */
-    @apply dark:bg-blue-900;
-    @apply dark:bg-green-900;
-    @apply dark:bg-red-900;
-    @apply dark:bg-yellow-900;
-    @apply dark:bg-gray-700;
-    @apply dark:bg-purple-900;
-
-    /* Dark mode badge text colors */
-    @apply dark:text-blue-200;
-    @apply dark:text-green-200;
-    @apply dark:text-red-200;
-    @apply dark:text-yellow-200;
-    @apply dark:text-gray-200;
-    @apply dark:text-purple-200;
-}
