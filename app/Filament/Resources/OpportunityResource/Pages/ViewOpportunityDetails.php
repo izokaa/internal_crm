@@ -111,7 +111,7 @@ class ViewOpportunityDetails extends ViewRecord
         return [];
     }
 
-    public function getTitle(): string | \Illuminate\Contracts\Support\Htmlable
+    public function getTitle(): string
     {
         return '';
     }
