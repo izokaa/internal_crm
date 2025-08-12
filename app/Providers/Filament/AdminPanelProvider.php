@@ -23,6 +23,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Illuminate\Support\Facades\Vite;
+use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -75,7 +76,19 @@ class AdminPanelProvider extends PanelProvider
                 'Paramètres',
             ])
             ->plugins([
-                GlobalSearchModalPlugin::make()
+                GlobalSearchModalPlugin::make(),
+                FilamentFullCalendarPlugin::make()
+                    ->selectable(true)
+                    ->editable(true)
+                    ->config([
+                        'initialView' => 'dayGridMonth',
+                        'headerToolbar' => [
+                            'left'   => 'prev,next today',
+                            'center' => 'title',
+                            'right'  => 'dayGridMonth,timeGridWeek,timeGridDay',
+                        ],
+                        'firstDay' => 1, // semaine commence le lundi
+                    ])
             ]);
     }
 }

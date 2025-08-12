@@ -95,7 +95,7 @@
                 <div class="text-sm text-gray-600 dark:text-gray-400">
                     @if($activityAction['activity']->type == 'task')
                         @if($activityAction['activity']->due_date)
-                            <p>Date d\'échéance: {{ $activityAction['activity']->due_date->format('d M Y H:i') }}</p>
+                            <p>Date d'échéance: {{ $activityAction['activity']->due_date->format('d M Y H:i') }}</p>
                         @endif
                     @elseif($activityAction['activity']->type == 'event')
                         @if($activityAction['activity']->date_debut && $activityAction['activity']->date_fin)
@@ -109,7 +109,7 @@
                         @endif
                     @elseif($activityAction['activity']->type == 'call')
                         @if($activityAction['activity']->due_date)
-                            <p>Date de l\'appel: {{ $activityAction['activity']->due_date->format('d M Y H:i') }}</p>
+                            <p>Date de l'appel: {{ $activityAction['activity']->due_date->format('d M Y H:i') }}</p>
                         @endif
                     @endif
 
