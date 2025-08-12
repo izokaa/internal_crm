@@ -58,10 +58,10 @@ class OpportunityActivityTimeline extends Component implements HasForms, HasInfo
 
 
         return $activities->map(function ($activityLog) {
-            $activity = AppActivity::find($activityLog->subject_id);
+            $activity = AppActivity::with(['label'])->find($activityLog->subject_id);
 
             $activityAction = collect([
-                'activity' => $activity ,
+                'activity' => $activity,
                 'causer' => User::find($activityLog->causer_id),
             ]);
 

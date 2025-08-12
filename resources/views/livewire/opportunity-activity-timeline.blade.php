@@ -4,6 +4,7 @@
     @php
         $attributeLabels = [
             'titre' => 'Titre',
+            'label' => 'Label',
             'description' => 'Description',
             'statut' => 'Statut',
             'due_date' => 'Date d\'échéance',
@@ -56,7 +57,7 @@
 
             <div class="p-4 bg-white rounded-lg shadow-sm dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                 <h4 class="text-md font-semibold text-gray-900 dark:text-white mb-2">
-                    {{ $activityAction['activity']->titre }}
+                    {{ $activityAction['activity']->titre }} - {{ $activityAction['activity']->label->value ?? '' }}
                 </h4>
 
                 @if($activityAction['activity']->description)

@@ -3,10 +3,12 @@
 namespace App\Filament\Resources\ActivityResource\Widgets;
 
 use App\Models\Activity;
+use App\Models\User;
 use Filament\Forms;
 use Illuminate\Database\Eloquent\Model;
 use Saade\FilamentFullCalendar\Data\EventData;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
+use App\Enums\ActivityStatut;
 use Saade\FilamentFullCalendar\Actions;
 
 class CalendarWidget extends FullCalendarWidget
@@ -76,41 +78,71 @@ class CalendarWidget extends FullCalendarWidget
 
             Forms\Components\Select::make('type')
                 ->label('Type')
+                ->default('event')
                 ->options([
                     'event' => 'Événement',
                     'call'  => 'Appel',
                     'task'  => 'Tâche',
                 ])
-                ->required(),
+                ->required()
+                ->live(), // Add live() to react to changes
 
             Forms\Components\Select::make('label_id')
                 ->label('Label')
-                ->relationship('label', 'name')
+                ->options(function (Forms\Get $get) {
+                    $type = $get('type');
+                    if ($type === 'task') {
+                        return \App\Models\Label::taskLabels()->pluck('value', 'id');
+                    } elseif ($type === 'event') {
+                        return \App\Models\Label::eventLabels()->pluck('value', 'id');
+                    } elseif ($type === 'call') {
+                        return \App\Models\Label::callLabels()->pluck('value', 'id');
+                    }
+                    return \App\Models\Label::all()->pluck('value', 'id'); // Default if no type selected
+                })
                 ->searchable(),
 
+            Forms\Components\Select::make('user_id')
+                ->label('Responsable')
+                ->options(function () {
+                    return User::all()->mapWithKeys(function (User $user) {
+                        $name = $user->id == auth()->id()
+                        ? $user->name . ' (moi)'
+                        : $user->name;
+                        return [$user->id => $name];
+                    });
+                })
+                ->searchable()
+                ->preload()
+                ->default(auth()->id()),
+
             Forms\Components\DateTimePicker::make('date_debut')
-                ->label('Date début'),
+                ->label('Date début')
+                ->withoutTime(fn ($get) => $get('is_all_day'))
+                ->hidden(fn (Forms\Get $get) => in_array($get('type'), ['task', 'call'])),
 
             Forms\Components\DateTimePicker::make('date_fin')
-                ->label('Date fin'),
+                ->label('Date fin')
+                ->withoutTime(fn ($get) => $get('is_all_day'))
+                ->hidden(fn (Forms\Get $get) => in_array($get('type'), ['task', 'call'])),
 
             Forms\Components\DateTimePicker::make('due_date')
-                ->label('Date d’échéance'),
+                ->label('Date d’échéance')
+                ->hidden(fn (Forms\Get $get) => $get('type') === 'event'),
 
-            Forms\Components\Toggle::make('is_all_day')
+            Forms\Components\Checkbox::make('is_all_day')
+                ->live()
+                ->hidden(fn (Forms\Get $get) => $get('type') === 'task' || $get('type') == 'appel')
                 ->label('Toute la journée'),
 
             Forms\Components\Toggle::make('prioritaire')
-                ->label('Prioritaire'),
+                ->hidden(fn (Forms\Get $get) => $get('type') === 'event')
+                ->label('Priorité'),
 
             Forms\Components\Select::make('statut')
                 ->label('Statut')
-                ->options([
-                    'To Do' => 'À faire',
-                    'In Progress' => 'En cours',
-                    'Done' => 'Terminé',
-                    'Canceled' => 'Annulé',
-                ]),
+                ->default(ActivityStatut::TODO)
+                ->options(ActivityStatut::class),
         ];
     }
 
