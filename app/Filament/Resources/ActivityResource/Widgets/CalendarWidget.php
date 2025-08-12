@@ -13,12 +13,9 @@ use Saade\FilamentFullCalendar\Actions;
 
 class CalendarWidget extends FullCalendarWidget
 {
-    // protected static string $view = 'filament.resources.activity-resource.widgets.calendar-widget';
-
     protected static ?string $heading = 'Calendrier des activités';
 
     public Model | string | null $model = Activity::class;
-
 
     public function fetchEvents(array $fetchInfo): array
     {
@@ -49,9 +46,14 @@ class CalendarWidget extends FullCalendarWidget
                 default => '#4B5563', // gris
             };
 
+            // Correction 1 : Fix de l'interpolation HTML
+            $badgeColor = $activity->statut->getBadge();
+            $statusLabel = $activity->statut->getLabel();
+            $title = $activity->label?->value .  '[' . $activity->statut->getLabel() . ' ]';
+
             return EventData::make()
                 ->id($activity->id)
-                ->title($activity->label?->value ?? $activity->titre)
+                ->title($title)
                 ->start($activity->date_debut ?? $activity->due_date)
                 ->end($activity->date_fin ?? $activity->due_date)
                 ->allDay((bool) $activity->is_all_day)
@@ -85,7 +87,7 @@ class CalendarWidget extends FullCalendarWidget
                     'task'  => 'Tâche',
                 ])
                 ->required()
-                ->live(), // Add live() to react to changes
+                ->live(),
 
             Forms\Components\Select::make('label_id')
                 ->label('Label')
@@ -98,7 +100,7 @@ class CalendarWidget extends FullCalendarWidget
                     } elseif ($type === 'call') {
                         return \App\Models\Label::callLabels()->pluck('value', 'id');
                     }
-                    return \App\Models\Label::all()->pluck('value', 'id'); // Default if no type selected
+                    return \App\Models\Label::all()->pluck('value', 'id');
                 })
                 ->searchable(),
 
@@ -127,12 +129,12 @@ class CalendarWidget extends FullCalendarWidget
                 ->hidden(fn (Forms\Get $get) => in_array($get('type'), ['task', 'call'])),
 
             Forms\Components\DateTimePicker::make('due_date')
-                ->label('Date d’échéance')
+                ->label('Date d\'échéance')
                 ->hidden(fn (Forms\Get $get) => $get('type') === 'event'),
 
             Forms\Components\Checkbox::make('is_all_day')
                 ->live()
-                ->hidden(fn (Forms\Get $get) => $get('type') === 'task' || $get('type') == 'appel')
+                ->hidden(fn (Forms\Get $get) => $get('type') === 'task' || $get('type') == 'call') // Correction: 'call' au lieu de 'appel'
                 ->label('Toute la journée'),
 
             Forms\Components\Toggle::make('prioritaire')
@@ -158,14 +160,45 @@ class CalendarWidget extends FullCalendarWidget
     }
 
     /**
-     * Actions de l’en-tête du calendrier
+     * Actions de l'en-tête du calendrier
      */
     protected function headerActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+             ->mountUsing(
+                 function (Forms\Form $form, array $arguments) {
+                     $form->fill([
+                        'date_debut' => $arguments['start'] ?? null,
+                        'date_fin' => $arguments['end'] ?? null,
+                        'due_date' => $arguments['type'] == 'appel' || $arguments['type'] == 'task' ? $arguments['start'] : null
+                     ]);
+                 }
+             )
         ];
     }
 
+    // Correction 3 : Ajouter cette méthode pour mieux gérer la création d'événements
+    public function getHeaderActions(): array
+    {
+        return [
+            Actions\CreateAction::make()
+                ->slideOver() // Optionnel : pour un meilleur UX
+                ->mutateFormDataUsing(function (array $data, array $arguments) {
+                    // Pré-remplir les dates selon le type d'activité
+                    if (isset($arguments['start'])) {
+                        $startDate = $arguments['start'];
 
+                        if (in_array($data['type'] ?? 'event', ['task', 'call'])) {
+                            $data['due_date'] = $startDate;
+                        } else {
+                            $data['date_debut'] = $startDate;
+                            $data['date_fin'] = $arguments['end'] ?? $startDate;
+                        }
+                    }
+
+                    return $data;
+                }),
+        ];
+    }
 }

@@ -20,4 +20,17 @@ enum ActivityStatut: string implements HasLabel
             self::COMPLETED => 'Terminé',
         };
     }
+
+
+    public function getBadge(): ?string
+    {
+        return match ($this) {
+            self::OVERDUE => '#EAB308',
+            self::TODO => '#3B82F6',
+            self::UPCOMING => '#3B02A6',
+            self::COMPLETED => '#22C55E',
+        };
+    }
+
+
 }
