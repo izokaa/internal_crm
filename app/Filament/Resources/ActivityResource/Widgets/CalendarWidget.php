@@ -120,22 +120,23 @@ class CalendarWidget extends FullCalendarWidget
 
             Forms\Components\DateTimePicker::make('date_debut')
                 ->label('Date début')
-                ->withoutTime(fn ($get) => $get('is_all_day'))
+                ->withoutTime(true)
                 ->hidden(fn (Forms\Get $get) => in_array($get('type'), ['task', 'call'])),
 
             Forms\Components\DateTimePicker::make('date_fin')
+                // ->withoutTime(fn ($get) => $get('is_all_day'))
                 ->label('Date fin')
-                ->withoutTime(fn ($get) => $get('is_all_day'))
+                ->withoutTime(true)
                 ->hidden(fn (Forms\Get $get) => in_array($get('type'), ['task', 'call'])),
 
             Forms\Components\DateTimePicker::make('due_date')
                 ->label('Date d\'échéance')
                 ->hidden(fn (Forms\Get $get) => $get('type') === 'event'),
 
-            Forms\Components\Checkbox::make('is_all_day')
-                ->live()
-                ->hidden(fn (Forms\Get $get) => $get('type') === 'task' || $get('type') == 'call') // Correction: 'call' au lieu de 'appel'
-                ->label('Toute la journée'),
+            // Forms\Components\Checkbox::make('is_all_day')
+            //     ->live()
+            //     ->hidden(fn (Forms\Get $get) => $get('type') === 'task' || $get('type') == 'call') // Correction: 'call' au lieu de 'appel'
+            //     ->label('Toute la journée'),
 
             Forms\Components\Toggle::make('prioritaire')
                 ->hidden(fn (Forms\Get $get) => $get('type') === 'event')

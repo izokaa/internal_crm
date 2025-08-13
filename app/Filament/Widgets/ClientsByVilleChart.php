@@ -12,6 +12,9 @@ class ClientsByVilleChart extends ChartWidget
     protected static ?string $maxHeight = '300px';
     protected static string $color = 'success';
 
+    public ?string $startDate = null;
+    public ?string $endDate = null;
+
     protected function getType(): string
     {
         return 'bar';
@@ -19,7 +22,16 @@ class ClientsByVilleChart extends ChartWidget
 
     protected function getData(): array
     {
-        $villes = Ville::withCount('contacts')->get();
+        $query = Ville::withCount(['contacts' => function ($query) {
+            if ($this->startDate) {
+                $query->whereDate('created_at', '>=', $this->startDate);
+            }
+            if ($this->endDate) {
+                $query->whereDate('created_at', '<=', $this->endDate);
+            }
+        }]);
+
+        $villes = $query->get();
 
         return [
             'labels' => $villes->pluck('nom')->toArray(),

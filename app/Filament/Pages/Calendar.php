@@ -10,6 +10,7 @@ class Calendar extends Page
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
     protected static string $view = 'filament.pages.calendar';
     protected static ?string $navigationLabel = 'Calendrier';
+    protected static ?string $title = 'Calendrier';
     protected static ?int $navigationSort = 3;
 
     protected function getHeaderWidgets(): array

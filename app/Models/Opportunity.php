@@ -6,7 +6,7 @@ use Coolsam\NestedComments\Concerns\HasComments;
 use Coolsam\NestedComments\Concerns\HasReactions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Enums\OpportunityStatut;
 
 class Opportunity extends Model
 {
@@ -34,6 +34,7 @@ class Opportunity extends Model
 
     protected $casts = [
         'date_echeance' => 'date',
+        'status' => OpportunityStatut::class
     ];
 
     public function contact()

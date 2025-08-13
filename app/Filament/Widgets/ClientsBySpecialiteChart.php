@@ -12,6 +12,9 @@ class ClientsBySpecialiteChart extends ChartWidget
     protected static ?string $maxHeight = '300px';
     protected static string $color = 'info';
 
+    public ?string $startDate = null;
+    public ?string $endDate = null;
+
     protected function getType(): string
     {
         return 'bar';
@@ -19,7 +22,16 @@ class ClientsBySpecialiteChart extends ChartWidget
 
     protected function getData(): array
     {
-        $specialites = Specialite::withCount('contacts')->get();
+        $query = Specialite::withCount(['contacts' => function ($query) {
+            if ($this->startDate) {
+                $query->whereDate('created_at', '>=', $this->startDate);
+            }
+            if ($this->endDate) {
+                $query->whereDate('created_at', '<=', $this->endDate);
+            }
+        }]);
+
+        $specialites = $query->get();
 
         return [
             'labels' => $specialites->pluck('nom')->toArray(),

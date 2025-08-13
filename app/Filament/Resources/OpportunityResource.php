@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\OpportunityStatut;
 use App\Filament\Resources\OpportunityResource\Pages;
-use App\Filament\Resources\OpportunityResource\RelationManagers;
 use App\Models\Opportunity;
 use App\Models\Pipeline;
 use App\Traits\HasActiveIcon;
@@ -21,6 +21,8 @@ use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Infolist;
+use PhpOption\Option;
+use Illuminate\Support\Facades\Log;
 
 class OpportunityResource extends Resource
 {
@@ -76,20 +78,13 @@ class OpportunityResource extends Resource
                     ->numeric()
                     ->suffix('%'),
                 Forms\Components\Select::make('status')
-                    ->options([
-                        'Ouverte' => 'Ouverte',
-                        'Gagnée' => 'Gagnée',
-                        'Perdue' => 'Perdue',
-                        'En retard' => 'En retard',
-                        'Annulée' => 'Annulée',
-                        'Fermée' => 'Fermée',
-                    ])
+                    ->options(OpportunityStatut::class)
                     ->required()
                     ->live()
-                    ->default('Ouverte'),
+                    ->default(OpportunityStatut::OPEN),
                 Forms\Components\TextInput::make('montant_reel')
                     ->label('Montant Réel')
-                    ->hidden(fn (Get $get) => $get('status') != 'Gagnée')
+                    ->hidden(fn (Get $get) => $get('status')?->value != OpportunityStatut::WON->value)
                     ->required()
                     ->numeric(),
                 Forms\Components\TextInput::make('prefix')
@@ -116,6 +111,7 @@ class OpportunityResource extends Resource
                 Forms\Components\Select::make('etape_pipeline_id') ->label('Étape du Pipeline')
                     ->required()
                     ->options(fn (Get $get): array => Pipeline::find($get('pipeline_id'))?->etapePipelines->pluck('nom', 'id')->toArray() ?? []),
+
 
                 Forms\Components\Section::make('Pièces Jointes')
                     ->schema([
@@ -153,15 +149,7 @@ class OpportunityResource extends Resource
                             ->suffix('%'),
                         TextEntry::make('status')
                             ->badge()
-                            ->color(fn (string $state): string => match ($state) {
-                                'Ouverte' => 'info',
-                                'Gagnée' => 'success',
-                                'Perdue' => 'danger',
-                                'En retard' => 'warning',
-                                'Annulée' => 'gray',
-                                'Fermée' => 'primary',
-                                default => 'gray',
-                            }),
+                            ->color(fn (Opportunity $record): string => $record->status->getBadge()),
                     ])->columns(2),
                 Section::make('Informations Financières')
                     ->schema([
@@ -231,17 +219,11 @@ class OpportunityResource extends Resource
                     ->suffix('%')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
+                    ->label('Statut')
                     ->searchable()
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'Ouverte' => 'info',
-                        'Gagnée' => 'success',
-                        'Perdue' => 'danger',
-                        'En retard' => 'warning',
-                        'Annulée' => 'gray',
-                        'Fermée' => 'primary',
-                        default => 'gray',
-                    }),
+                    ->formatStateUsing(fn (OpportunityStatut $state): string => $state->getLabel())
+                    ->color(fn (OpportunityStatut $state): string => $state->getTailwindBadge()),
                 Tables\Columns\TextColumn::make('contact_info')
                     ->label('Contact')
                     ->getStateUsing(fn (\App\Models\Opportunity $record): string => "{$record->contact->nom} {$record->contact->prenom}")
@@ -285,50 +267,45 @@ class OpportunityResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('status')
-                    ->options([
-                        'Ouverte' => 'Ouverte',
-                        'Gagnée' => 'Gagnée',
-                        'Perdue' => 'Perdue',
-                        'En retard' => 'En retard',
-                        'Annulée' => 'Annulée',
-                        'Fermée' => 'Fermée',
-                    ])
+            Tables\Filters\SelectFilter::make('status')
+                    ->label('Statut')
+                    ->options(collect(OpportunityStatut::cases())->mapWithKeys(
+                        fn (OpportunityStatut $status) => [$status->value => $status->getLabel()]
+                    ))
                     ->query(function (Builder $query, array $data): Builder {
                         if (isset($data['value'])) {
                             $query->where('status', $data['value']);
                         }
                         return $query;
-                    })
-                    ->visible(),
-                Tables\Filters\SelectFilter::make('contact')
+                    }),
+            Tables\Filters\SelectFilter::make('contact')
                     ->relationship('contact', 'nom'),
-                Tables\Filters\SelectFilter::make('source')
+            Tables\Filters\SelectFilter::make('source')
                     ->relationship('source', 'nom'),
-                Tables\Filters\SelectFilter::make('pipeline')
+            Tables\Filters\SelectFilter::make('pipeline')
                     ->relationship('pipeline', 'nom'),
-                Tables\Filters\SelectFilter::make('etapePipeline')
+            Tables\Filters\SelectFilter::make('etapePipeline')
                     ->relationship('etapePipeline', 'nom'),
-                Tables\Filters\SelectFilter::make('contact_type')
+            Tables\Filters\SelectFilter::make('contact_type')
                     ->relationship('contact', 'type')
                     ->label('Type de Contact')
                     ->options([
                         'prospect' => 'Prospect',
                         'client' => 'Client',
                     ]),
-            ])
+        ])
             ->actions([
-                ActionGroup::make([
+            ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
-                ])
             ])
+        ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+            Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+            ]),
+        ]);
     }
 
     public static function getRelations(): array
