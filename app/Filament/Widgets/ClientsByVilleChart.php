@@ -46,3 +46,4 @@ class ClientsByVilleChart extends ChartWidget
         ];
     }
 }
+

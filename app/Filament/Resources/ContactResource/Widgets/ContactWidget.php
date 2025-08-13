@@ -51,7 +51,7 @@ class ContactWidget extends BaseWidget
                 ->chart([7, 2, 10, 3, 15, 4, 17])
                 ->color('success'),
 
-            Stat::make('Total des prospects ', Contact::where('type', 'prospect')->count())
+            Stat::make('Total des prospects ', Contact::whereBetween('created_at', [$startDate, $endDate])->where('type', 'prospect')->count())
                 ->description('total des prospects')
                 ->descriptionIcon('lucide-contact')
                 ->chart([7, 2, 10, 3, 15, 9, 20])
