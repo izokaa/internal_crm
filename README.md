@@ -8,7 +8,7 @@ Ce projet est un petit CRM (Customer Relationship Management) pour la gestion co
 3. Gestion et Suivi des opportunities.
 4. Un calendrie modern pour visulaiser et programmer des activités(Appels, Tâches, Evènements).
 5. Un affichage kanban pour les opportunities.
-6. Un système d'historique des évenements et de commetnaires.
+6. Un système d'historique des évènements et de commentaires.
 7. Paramètres.
 8. Tableau de board.
 
@@ -16,7 +16,7 @@ Ce projet est un petit CRM (Customer Relationship Management) pour la gestion co
 
 **Note**:
 
-*Il faut Respecter l'ordre de l'installation !!**
+*Il faut Respecter l'ordre de l'installation !!*
 
 1. `git clone git@github.com:aitaddihamza/filament-crm-.git`
 2. `npm install`
@@ -29,7 +29,7 @@ Ce projet est un petit CRM (Customer Relationship Management) pour la gestion co
 
 Framework Filament v^3.3.
 
-## Dépéndances et Plugins
+## Dépendances et Plugins
 
 * charrafimed/global-search-modal": "^3.7",
 * codeat3/blade-clarity-icons": "^1.10",
@@ -41,3 +41,4 @@ Framework Filament v^3.3.
 * mallardduck/blade-lucide-icons": "^1.23",
 * saade/filament-fullcalendar": "^3.2",
 * spatie/laravel-activit
+
