@@ -24,7 +24,10 @@ class Dashboard extends Page
         return [
             ContactWidget::class,
             ContratWidget::class,
-            OpportunityWidget::class
+            OpportunityWidget::class,
+            \App\Filament\Widgets\WonRevenueOverview::class,
+            \App\Filament\Widgets\ClientsBySpecialiteChart::class,
+            \App\Filament\Widgets\ClientsByVilleChart::class,
         ];
     }
 }

@@ -85,7 +85,13 @@ class OpportunityResource extends Resource
                         'Fermée' => 'Fermée',
                     ])
                     ->required()
+                    ->live()
                     ->default('Ouverte'),
+                Forms\Components\TextInput::make('montant_reel')
+                    ->label('Montant Réel')
+                    ->hidden(fn (Get $get) => $get('status') != 'Gagnée')
+                    ->required()
+                    ->numeric(),
                 Forms\Components\TextInput::make('prefix')
                     ->required()
                     ->maxLength(255)
@@ -161,7 +167,7 @@ class OpportunityResource extends Resource
                     ->schema([
                         TextEntry::make('montant_estime')
                             ->label('Montant Potentiel')
-                            ->money('EUR'), // Assuming EUR as default currency
+                            ->money('MAD'),
                         TextEntry::make('devise'),
                     ])->columns(2),
                 Section::make('Détails du Contact et Source')
@@ -212,7 +218,11 @@ class OpportunityResource extends Resource
                 Tables\Columns\TextColumn::make('montant_estime')
                     ->numeric()
                     ->sortable()
-                    ->formatStateUsing(fn (string $state, Opportunity $record): string => "{$state} {$record->devise}"),
+                    ->formatStateUsing(fn (string $state, Opportunity $record): string => $state != null ? "{$state} {$record->devise}" : "Non précisé"),
+                Tables\Columns\TextColumn::make('montant_reel')
+                    ->numeric()
+                    ->sortable()
+                    ->formatStateUsing(fn (string $state, Opportunity $record): string => $state != null && $state !== '' ? "{$state} {$record->devise}" : "Non précisé"),
                 Tables\Columns\TextColumn::make('date_echeance')
                     ->date()
                     ->sortable(),

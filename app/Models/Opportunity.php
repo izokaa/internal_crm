@@ -19,6 +19,7 @@ class Opportunity extends Model
         'description',
         'note',
         'montant_estime',
+        'montant_reel',
         'devise',
         'date_echeance',
         'probabilite',
