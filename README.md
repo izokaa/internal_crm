@@ -22,8 +22,15 @@ Ce projet est un petit CRM (Customer Relationship Management) pour la gestion co
 2. `npm install`
 3. `composer install`
 4. `npm run build && npm run dev`
-5. `php artisan db:seed`
-6. `php artisan server`
+5. `cp .env.example .env`
+6. `php artisan migrate`
+7. `php artisan db:seed`
+8. `php artisan server`
+
+* login :
+
+**Email**: `admin@gmail.com`
+**Password**: `password`
 
 ## Tech stack
 
@@ -41,4 +48,3 @@ Framework Filament v^3.3.
 * mallardduck/blade-lucide-icons": "^1.23",
 * saade/filament-fullcalendar": "^3.2",
 * spatie/laravel-activit
-
