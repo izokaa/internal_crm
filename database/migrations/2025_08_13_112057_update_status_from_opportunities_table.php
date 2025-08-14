@@ -13,7 +13,7 @@ return new class () extends Migration {
         Schema::table('opportunities', function (Blueprint $table) {
             if (Schema::hasColumn('opportunities', 'status')) {
                 $table->dropColumn('status');
-                $table->enum('status', ['Lost','Negotiation','Proposal','Qualification','Open'])->default('Open');
+                $table->enum('status', ['Lost','Negotiation','Proposal','Qualification','Open', 'Won'])->default('Open');
             }
         });
     }

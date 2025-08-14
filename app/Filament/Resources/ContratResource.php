@@ -20,6 +20,7 @@ class ContratResource extends Resource
 
     protected static ?string $navigationIcon = 'clarity-contract-line';
     protected static ?string $navigationActiveIcon = 'clarity-contract-solid';
+    protected static ?string $navigationGroup = 'CRM';
 
 
     public static function form(Form $form): Form

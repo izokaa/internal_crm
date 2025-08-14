@@ -33,6 +33,7 @@ class OpportunityResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-light-bulb';
     protected static ?string $navigationActiveIcon = 'heroicon-o-light-bulb';
     protected static ?int $navigationSort = 1;
+    protected static ?string $navigationGroup = 'CRM';
 
     protected static ?string $recordTitleAttribute = 'titre';
 
@@ -84,8 +85,10 @@ class OpportunityResource extends Resource
                     ->default(OpportunityStatut::OPEN),
                 Forms\Components\TextInput::make('montant_reel')
                     ->label('Montant Réel')
-                    ->hidden(fn (Get $get) => $get('status')?->value != OpportunityStatut::WON->value)
-                    ->required()
+                    ->hidden(function (Get $get) {
+                        Log::info($get('status') . OpportunityStatut::WON->value);
+                        return $get('status') != OpportunityStatut::WON->value;
+                    })
                     ->numeric(),
                 Forms\Components\TextInput::make('prefix')
                     ->required()
@@ -270,7 +273,7 @@ class OpportunityResource extends Resource
             Tables\Filters\SelectFilter::make('status')
                     ->label('Statut')
                     ->options(collect(OpportunityStatut::cases())->mapWithKeys(
-                        fn (OpportunityStatut $status) => [$status->value => $status->getLabel()]
+                        fn (OpportunityStatut $status) => [$status?->value => $status->getLabel()]
                     ))
                     ->query(function (Builder $query, array $data): Builder {
                         if (isset($data['value'])) {

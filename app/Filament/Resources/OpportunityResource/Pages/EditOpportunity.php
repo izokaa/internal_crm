@@ -21,9 +21,9 @@ class EditOpportunity extends EditRecord
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        $contratData = collect($data)->except('piecesJointes')->toArray();
+        $opportunityData = collect($data)->except('piecesJointes')->toArray();
 
-        $record->update($contratData);
+        $record->update($opportunityData);
 
         if (isset($data['piecesJointes'])) {
             $record->piecesJointes()->delete();

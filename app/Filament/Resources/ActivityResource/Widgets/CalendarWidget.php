@@ -6,6 +6,7 @@ use App\Models\Activity;
 use App\Models\User;
 use Filament\Forms;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Event;
 use Saade\FilamentFullCalendar\Data\EventData;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 use App\Enums\ActivityStatut;
@@ -39,17 +40,9 @@ class CalendarWidget extends FullCalendarWidget
             ->get();
 
         return $activities->map(function (Activity $activity) {
-            $color = match ($activity->type) {
-                'event' => '#7C3AED', // violet
-                'call'  => '#F97316', // orange
-                'task'  => '#2563EB', // bleu
-                default => '#4B5563', // gris
-            };
 
-            // Correction 1 : Fix de l'interpolation HTML
-            $badgeColor = $activity->statut->getBadge();
             $statusLabel = $activity->statut->getLabel();
-            $title = $activity->label?->value .  '[' . $activity->statut->getLabel() . ' ]';
+            $title = $activity->label?->value .  ' [' . $activity->statut->getLabel() . ' ]';
 
             return EventData::make()
                 ->id($activity->id)
@@ -57,7 +50,6 @@ class CalendarWidget extends FullCalendarWidget
                 ->start($activity->date_debut ?? $activity->due_date)
                 ->end($activity->date_fin ?? $activity->due_date)
                 ->allDay((bool) $activity->is_all_day)
-                ->backgroundColor($color)
                 ->extendedProps([
                     'type'       => $activity->type,
                     'statut'     => $activity->statut,
@@ -155,7 +147,17 @@ class CalendarWidget extends FullCalendarWidget
     protected function modalActions(): array
     {
         return [
-            Actions\EditAction::make(),
+            Actions\EditAction::make()
+                ->mountUsing(
+                    function (Activity $record, Forms\Form $form, array $arguments) {
+                        $form->fill([
+                            'type' => 'event',
+                            'date_debut' => $arguments['start'] ?? null,
+                            'date_fin' => $arguments['end'] ?? null,
+                        ]);
+                    }
+                )
+            ,
             Actions\DeleteAction::make(),
         ];
     }
@@ -170,14 +172,16 @@ class CalendarWidget extends FullCalendarWidget
              ->mountUsing(
                  function (Forms\Form $form, array $arguments) {
                      $form->fill([
+                        'type' => 'event',
                         'date_debut' => $arguments['start'] ?? null,
-                        'date_fin' => $arguments['end'] ?? null,
-                        'due_date' => $arguments['type'] == 'appel' || $arguments['type'] == 'task' ? $arguments['start'] : null
+                        'date_fin' => $arguments['end'] ?? null
                      ]);
                  }
              )
         ];
     }
+
+
 
     // Correction 3 : Ajouter cette méthode pour mieux gérer la création d'événements
     public function getHeaderActions(): array

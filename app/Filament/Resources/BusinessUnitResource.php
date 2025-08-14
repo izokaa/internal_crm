@@ -23,8 +23,7 @@ class BusinessUnitResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
     protected static ?string $navigationActiveIcon = 'heroicon-s-building-office-2';
 
-    protected static ?string $navigationGroup = 'Paramètres > Business';
-    protected static ?int $navigationSort = 1;
+    protected static ?string $navigationGroup = 'Paramètres';
 
     public static function form(Form $form): Form
     {

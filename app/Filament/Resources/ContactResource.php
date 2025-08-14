@@ -27,6 +27,7 @@ class ContactResource extends Resource
     protected static ?string $navigationIcon = 'lucide-contact';
     protected static ?string $navigationActiveIcon = 'bxs-contact';
     protected static ?string $recordTitleAttribute = 'nom';
+    protected static ?string $navigationGroup = 'CRM';
 
     public static function getGloballySearchableAttributes(): array
     {

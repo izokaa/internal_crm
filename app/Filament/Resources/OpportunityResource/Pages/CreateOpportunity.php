@@ -14,17 +14,17 @@ class CreateOpportunity extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
-        $contratData = collect($data)->except('piecesJointes')->toArray();
+        $opportunityData = collect($data)->except('piecesJointes')->toArray();
 
-        $contrat = static::getModel()::create($contratData);
+        $contrat = static::getModel()::create($opportunityData);
 
         if (isset($data['piecesJointes'])) {
             foreach ($data['piecesJointes'] as $pieceJointeData) {
-                $contrat->piecesJointes()->create($pieceJointeData);
+                $opportunity->piecesJointes()->create($pieceJointeData);
             }
         }
 
-        return $contrat;
+        return $opportunity;
     }
 
 }

@@ -71,9 +71,8 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->navigationGroups([
-                'Contacts & Abonnements',
-                'Opportunités',
-                'Paramètres',
+                 1 => 'CRM',
+                 2 => 'Paramètres',
             ])
             ->plugins([
                 GlobalSearchModalPlugin::make(),

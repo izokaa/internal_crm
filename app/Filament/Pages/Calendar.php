@@ -12,6 +12,7 @@ class Calendar extends Page
     protected static ?string $navigationLabel = 'Calendrier';
     protected static ?string $title = 'Calendrier';
     protected static ?int $navigationSort = 3;
+    protected static ?string $navigationGroup = 'CRM';
 
     protected function getHeaderWidgets(): array
     {
@@ -19,5 +20,7 @@ class Calendar extends Page
             CalendarWidget::class,
         ];
     }
+
+
 
 }

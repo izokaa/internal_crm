@@ -18,8 +18,7 @@ class PaysResource extends Resource
     protected static ?string $model = Pays::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-flag';
-    protected static ?string $navigationGroup = 'Paramètres > Clients';
-    protected static ?int $navigationSort = 1;
+    protected static ?string $navigationGroup = 'Paramètres';
 
     public static function form(Form $form): Form
     {

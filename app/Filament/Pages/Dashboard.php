@@ -77,7 +77,6 @@ class Dashboard extends Page implements HasForms
             OpportunityWidget::class,
             \App\Filament\Widgets\ClientsBySpecialiteChart::class,
             \App\Filament\Widgets\ClientsByVilleChart::class,
-            \App\Filament\Widgets\WonRevenueOverview::class,
         ];
     }
 

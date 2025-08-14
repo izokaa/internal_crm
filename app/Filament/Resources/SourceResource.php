@@ -23,8 +23,7 @@ class SourceResource extends Resource
     protected static ?string $navigationActiveIcon = 'heroicon-s-globe-alt';
     protected static ?string $navigationIcon = 'heroicon-o-globe-alt';
 
-    protected static ?string $navigationGroup = 'Paramètres > Opportunités';
-    protected static ?int $navigationSort = 3;
+    protected static ?string $navigationGroup = 'Paramètres';
 
 
     public static function form(Form $form): Form
