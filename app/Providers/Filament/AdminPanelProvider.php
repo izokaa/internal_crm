@@ -71,9 +71,11 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->navigationGroups([
-                 1 => 'CRM',
-                 2 => 'Paramètres',
+                1 => 'CRM',
+                2 => 'Gestion Commerciale',
+                3 => 'Paramètres',
             ])
+            ->globalSearch(false)
             ->plugins([
                 GlobalSearchModalPlugin::make(),
                 FilamentFullCalendarPlugin::make()

@@ -22,7 +22,6 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Infolist;
 use PhpOption\Option;
-use Illuminate\Support\Facades\Log;
 
 class OpportunityResource extends Resource
 {
@@ -86,7 +85,6 @@ class OpportunityResource extends Resource
                 Forms\Components\TextInput::make('montant_reel')
                     ->label('Montant Réel')
                     ->hidden(function (Get $get) {
-                        Log::info($get('status') . OpportunityStatut::WON->value);
                         return $get('status') != OpportunityStatut::WON->value;
                     })
                     ->numeric(),
