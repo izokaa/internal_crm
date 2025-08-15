@@ -18,7 +18,7 @@ return new class () extends Migration {
             // écheance paiement
             $table->date('echeance_payment')->nullable();
             $table->decimal('montant_ht');
-            $table->decimal('montnat_ttc');
+            $table->decimal('montant_ttc');
             $table->decimal('tva')->default(20);
             $table->enum('status', array_column(FactureStatus::cases(), 'value'))->defaul(FactureStatus::PENDING);
             $table->foreignId('contrat_id')->constrained('contrats');

@@ -7,8 +7,6 @@ use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 
-
-
 class CreateFacture extends CreateRecord
 {
     protected static string $resource = FactureResource::class;
@@ -19,7 +17,7 @@ class CreateFacture extends CreateRecord
 
         if (isset($data['piecesJointes'])) {
             foreach ($data['piecesJointes'] as $pieceJointeData) {
-                $devis->piecesJointes()->create($pieceJointeData);
+                $facture->piecesJointes()->create($pieceJointeData);
             }
         }
 
@@ -27,17 +25,17 @@ class CreateFacture extends CreateRecord
         $tva = $factureData['tva'];
         $factureData['montant_ttc'] = $montantHt * (1 + ($tva / 100));
 
-        $devis = static::getModel()::create($factureData);
+        $facture = static::getModel()::create($factureData);
 
 
         if (isset($data['piecesJointes'])) {
             foreach ($data['piecesJointes'] as $pieceJointeData) {
-                $devis->piecesJointes()->create($pieceJointeData);
+                $facture->piecesJointes()->create($pieceJointeData);
             }
         }
 
 
-        return $devis;
+        return $facture;
     }
 
 

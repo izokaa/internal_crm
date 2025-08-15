@@ -10,15 +10,14 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Traits\HasActiveIcon;
+use App\Enums\FactureStatus;
+use Filament\Tables\Actions\ActionGroup;
 
 class FactureResource extends Resource
 {
-    protected static ?string $model = Facture::class;
-
     use HasActiveIcon;
+    protected static ?string $model = Facture::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
     protected static ?string $navigationActiveIcon = 'heroicon-s-document-text';
@@ -30,24 +29,33 @@ class FactureResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('numero_facture'),
                 Forms\Components\DatePicker::make('date_facture'),
-                Forms\Components\DatePicker::make('echeance_payment'),
+                Forms\Components\DatePicker::make('echeance_payment')
+                ->label('Echeance paiement'),
                 Forms\Components\TextInput::make('montant_ht')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('montnat_ttc')
                     ->required()
                     ->numeric(),
                 Forms\Components\TextInput::make('tva')
                     ->required()
                     ->numeric()
                     ->default(20),
-                Forms\Components\TextInput::make('status')
-                    ->required(),
-                Forms\Components\TextInput::make('contrat_id')
+                Forms\Components\Select::make('devise')
+                    ->options([
+                        'MAD' => 'MAD',
+                        'EUR' => 'EUR',
+                        'USD' => 'USD',
+                    ])
                     ->required()
-                    ->numeric(),
+                    ->default('EUR'),
+                Forms\Components\Select::make('status')
+                    ->options(FactureStatus::class)
+                    ->required(),
+                    Forms\Components\Select::make('contrat_id')
+                    ->relationship('contrat', 'numero_contrat')
+                    ->required()
+                    ->preload()
+                    ->label('Numéro de Contrat')
+                    ->searchable(),
                     Forms\Components\Section::make('Pièces Jointes')
                     ->schema([
                         Forms\Components\Repeater::make('piecesJointes')
@@ -78,21 +86,30 @@ class FactureResource extends Resource
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('echeance_payment')
+                    ->label('Echeance paimenet')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('montant_ht')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('montnat_ttc')
+                Tables\Columns\TextColumn::make('montant_ttc')
                     ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('devise')
+                    ->label('Devise')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('tva')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->searchable(),
+                ->badge()
+                ->color(fn (Facture $record): string => $record->status->getFilamentBadge())
+                ->searchable(),
                 Tables\Columns\TextColumn::make('contrat_id')
+                    ->getStateUsing(fn ($record) => $record->contrat->numero_contrat)
                     ->numeric()
+                    ->label('Numéro de Contrat')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -107,7 +124,11 @@ class FactureResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -129,6 +150,7 @@ class FactureResource extends Resource
             'index' => Pages\ListFactures::route('/'),
             'create' => Pages\CreateFacture::route('/create'),
             'edit' => Pages\EditFacture::route('/{record}/edit'),
+            'view' => Pages\ViewFacture::route('/{record}')
         ];
     }
 }
