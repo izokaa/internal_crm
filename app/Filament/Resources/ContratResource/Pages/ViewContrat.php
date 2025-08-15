@@ -50,10 +50,10 @@ class ViewContrat extends ViewRecord
                             ->formatStateUsing(fn ($record) => $record->client->prenom)
                             ->label('Prénom'),
                         TextEntry::make('client_id')
-                            ->formatStateUsing(fn ($record) => $record->client->ville->pays->nom)
+                            ->formatStateUsing(fn ($record) => $record->client?->ville?->pays?->nom ?? ' -')
                             ->label('Pays'),
                         TextEntry::make('client_id')
-                            ->formatStateUsing(fn ($record) => $record->client->ville->nom)
+                            ->formatStateUsing(fn ($record) => $record->client?->ville?->nom ?? ' - ')
                             ->label('Ville'),
                         TextEntry::make('client_id')
                             ->formatStateUsing(fn ($record) => $record->client->businessUnit->nom)
