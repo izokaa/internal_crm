@@ -23,8 +23,34 @@ enum DevisStatus: string implements HasLabel
             self::REJECTED => 'Rejeté',
             self::NEGOTIATION => 'Négociation',
             self::EXPIRED => 'Expiré',
-            
+
         };
     }
+
+    public function getBadge(): ?string
+    {
+        return match($this) {
+            self::DRAFT => '#6B7280',
+            self::SENT => '#3B82F6',
+            self::ACCEPTED => '#22C55E',
+            self::REJECTED => '#EF4444',
+            self::NEGOTIATION => '#F97316',
+            self::EXPIRED => '#D97706',
+        };
+    }
+
+    public function getFilamentBadge(): ?string
+    {
+        return match($this) {
+            self::DRAFT => 'info',
+            self::SENT => 'primary',
+            self::ACCEPTED => 'success',
+            self::REJECTED => 'danger',
+            self::NEGOTIATION => 'warning',
+            self::EXPIRED => 'warning',
+        };
+    }
+
+
 
 }

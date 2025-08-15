@@ -130,6 +130,7 @@ class DevisResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
+                    ->color(fn (Devis $record): string => $record->status->getFilamentBadge())
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

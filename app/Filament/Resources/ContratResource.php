@@ -32,6 +32,7 @@ class ContratResource extends Resource
                         Forms\Components\DatePicker::make('date_contrat')
                             ->required(),
                         Forms\Components\DatePicker::make('date_debut')
+                            ->label('Date début abonnement')
                             ->required()
                             ->afterOrEqual('date_contrat')
                             ->live()
@@ -59,6 +60,7 @@ class ContratResource extends Resource
                             }),
                         Forms\Components\DatePicker::make('date_fin')
                             ->required()
+                            ->label('Date fin abonnement')
                             ->afterOrEqual('date_debut')
                             ->live()
                             ->afterStateUpdated(function ($state, callable $set, Get $get) {
