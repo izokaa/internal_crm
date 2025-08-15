@@ -32,5 +32,4 @@ enum ActivityStatut: string implements HasLabel
         };
     }
 
-
 }

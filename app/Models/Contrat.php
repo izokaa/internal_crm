@@ -10,6 +10,7 @@ use App\Enums\ModePayment;
 class Contrat extends Model
 {
     protected $fillable = [
+        'numero_contrat',
         'date_contrat',
         'date_debut',
         'date_fin',
@@ -42,6 +43,20 @@ class Contrat extends Model
     public function piecesJointes(): HasMany
     {
         return $this->hasMany(PieceJointe::class);
+    }
+
+
+    protected static function booted()
+    {
+        static::creating(function ($contrat) {
+            $lastId = self::max('id') + 1;
+            $contrat->numero_contrat = 'CONTRAT-' . date('Y') . '-' . str_pad($lastId, 4, '0', STR_PAD_LEFT);
+        });
+    }
+
+    public function factures()
+    {
+        return $this->hasMany(Facture::class);
     }
 
 }

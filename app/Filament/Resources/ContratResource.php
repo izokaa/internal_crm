@@ -177,6 +177,9 @@ class ContratResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('numero_contrat')
+                    ->label('Numéro de contrat')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('date_contrat')
                     ->date()
                     ->sortable()
