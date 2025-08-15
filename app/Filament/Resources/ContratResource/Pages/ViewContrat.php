@@ -35,47 +35,55 @@ class ViewContrat extends ViewRecord
                         TextEntry::make('date_contrat')
                             ->date()
                             ->label('Date de contrat'),
-                        TextEntry::make('date_debut')->date(),
-                        TextEntry::make('date_fin')->date(),
+                        TextEntry::make('date_debut')
+                            ->date()
+                            ->label('Date début d\'abonnement'),
+                        TextEntry::make('date_fin')
+                            ->date()
+                            ->label('Date fin d\'abonnement'),
                         TextEntry::make('periode_contrat')
                             ->formatStateUsing(fn ($record) => $record->periode_contrat . ' ' . $record->periode_unite),
+                        TextEntry::make('status')
+                            ->label('Statut du Contrat')
+                            ->badge()
+                            ->color(fn ($record) => $record->status->getFilamentBadge()),
+                        TextEntry::make('mode_payment')
+                            ->label('Mode de Paiement')
+                            ->badge()
+                            ->color(fn ($record) => $record->mode_payment->getFilamentBadge()),
                     ])->columns(2),
 
                 Section::make('Informations client')
                     ->schema([
-                        TextEntry::make('client_id')
-                            ->formatStateUsing(fn ($record) => $record->client->nom)
+                        TextEntry::make('client.nom')
                             ->label('Nom'),
-                        TextEntry::make('client_id')
-                            ->formatStateUsing(fn ($record) => $record->client->prenom)
+                        TextEntry::make('client.prenom')
                             ->label('Prénom'),
-                        TextEntry::make('client_id')
-                            ->formatStateUsing(fn ($record) => $record->client?->ville?->pays?->nom ?? ' -')
+                        TextEntry::make('client.ville.pays.nom')
                             ->label('Pays'),
-                        TextEntry::make('client_id')
-                            ->formatStateUsing(fn ($record) => $record->client?->ville?->nom ?? ' - ')
+                        TextEntry::make('client.ville.nom')
                             ->label('Ville'),
-                        TextEntry::make('client_id')
-                            ->formatStateUsing(fn ($record) => $record->client->businessUnit->nom)
+                        TextEntry::make('client.businessUnit.nom')
                             ->label('Business Unit'),
-                        TextEntry::make('client_id')
-                            ->formatStateUsing(fn ($record) => $record->client->service->nom)
+                        TextEntry::make('client.service.nom')
                             ->label('Service'),
                     ])->columns(2),
                 Section::make('Informations financières')
                     ->schema([
                         TextEntry::make('montant_ht')
                             ->formatStateUsing(fn ($record): string => match($record->devise) {
-                                'EUR' => $record->montant_ht . ' £',
-                                'USD' => $record->montant_ht . ' $',
+                                'EUR' => $record->montant_ht . ' €',
+                                'USD' => $record->montant_ht . '$',
                                 'MAD' => $record->montant_ht . ' MAD',
+                                default => $record->montant_ht . ' ' . $record->devise,
                             })
                             ->label('Montant hors taxe'),
                         TextEntry::make('montant_ttc')
                             ->formatStateUsing(fn ($record): string => match($record->devise) {
-                                'EUR' => $record->montant_ttc . ' £',
-                                'USD' => $record->montant_ttc . ' $',
+                                'EUR' => $record->montant_ttc . ' €',
+                                'USD' => $record->montant_ttc . '$',
                                 'MAD' => $record->montant_ttc . ' MAD',
+                                default => $record->montant_ttc . ' ' . $record->devise,
                             })
                             ->label('Montant TTC'),
                         TextEntry::make('tva')->label('TVA'),
