@@ -41,7 +41,7 @@ enum ModePayment: string implements HasLabel
     {
         return match($this) {
             self::BANK_TRANSFER => 'primary',
-            self::CHECK => 'secondary',
+            self::CHECK => 'info',
             self::CREDIT_CARD => 'success',
             self::DIRECT_DEBIT => 'warning',
             self::CASH => 'danger',

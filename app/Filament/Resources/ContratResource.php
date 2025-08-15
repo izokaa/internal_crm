@@ -235,27 +235,17 @@ class ContratResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('mode_payment')
                     ->label('Mode de Paiement')
-                    ->sortable()
                     ->badge()
                     ->color(fn (Contrat $record) => $record->mode_payment->getFilamentBadge())
                     ->toggleable(isToggledHiddenByDefault: false),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
-                    ->options([
-                        'Actif' => 'Actif',
-                        'Expiré' => 'Expiré',
-                    ])
-                    ->query(function (\Illuminate\Database\Eloquent\Builder $query, array $data): \Illuminate\Database\Eloquent\Builder {
-                        if (isset($data['value'])) {
-                            if ($data['value'] === 'Actif') {
-                                $query->where('date_fin', '>=', now());
-                            } elseif ($data['value'] === 'Expiré') {
-                                $query->where('date_fin', '<', now());
-                            }
-                        }
-                        return $query;
-                    }),
+                    ->options(ContratStatus::class)
+                    ->label('Statut du Contrat'),
+                Tables\Filters\SelectFilter::make('mode_payment')
+                    ->options(ModePayment::class)
+                    ->label('Mode de Paiement'),
                 Tables\Filters\SelectFilter::make('client_id')
                     ->relationship('client', 'nom')
                     ->label('Client'),
