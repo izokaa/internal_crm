@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ContratResource\Pages;
 use App\Models\Contrat;
 use App\Traits\HasActiveIcon;
+use App\Enums\ContratStatus;
+use App\Enums\ModePayment;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -21,7 +23,6 @@ class ContratResource extends Resource
     protected static ?string $navigationIcon = 'clarity-contract-line';
     protected static ?string $navigationActiveIcon = 'clarity-contract-solid';
     protected static ?string $navigationGroup = 'CRM';
-
 
     public static function form(Form $form): Form
     {
@@ -121,6 +122,15 @@ class ContratResource extends Resource
                             ->searchable()
                             ->preload()
                             ->label('Client'),
+                        Forms\Components\Select::make('status')
+                            ->label('Statut du Contrat')
+                            ->default(ContratStatus::ACTIVE->value)
+                            ->options(ContratStatus::class)
+                            ->required(),
+                        Forms\Components\Select::make('mode_payment')
+                            ->label('Mode de Paiement')
+                            ->options(ModePayment::class)
+                            ->required(),
                     ])->columns(2),
 
                 Forms\Components\Section::make('Informations Financières')
@@ -172,10 +182,12 @@ class ContratResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('date_debut')
+                    ->label('Date début abonnement')
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('date_fin')
+                    ->label('Date fin abonnement')
                     ->date()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false),
@@ -216,22 +228,20 @@ class ContratResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('statut_contrat')
+                Tables\Columns\TextColumn::make('status')
                     ->label('Statut du Contrat')
-                    ->getStateUsing(function (\App\Models\Contrat $record): string {
-                        return $record->date_fin->isPast() ? 'Expiré' : 'Actif';
-                    })
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'Expiré' => 'danger',
-                        'Actif' => 'success',
-                        default => 'gray',
-                    })
+                    ->color(fn (Contrat $record) => $record->status->getFilamentBadge())
                     ->toggleable(isToggledHiddenByDefault: false),
-
+                Tables\Columns\TextColumn::make('mode_payment')
+                    ->label('Mode de Paiement')
+                    ->sortable()
+                    ->badge()
+                    ->color(fn (Contrat $record) => $record->mode_payment->getFilamentBadge())
+                    ->toggleable(isToggledHiddenByDefault: false),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('statut_contrat')
+                Tables\Filters\SelectFilter::make('status')
                     ->options([
                         'Actif' => 'Actif',
                         'Expiré' => 'Expiré',

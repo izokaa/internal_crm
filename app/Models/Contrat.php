@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Enums\ContratStatus;
+use App\Enums\ModePayment;
 
 class Contrat extends Model
 {
@@ -17,13 +19,19 @@ class Contrat extends Model
         'montant_ttc',
         'tva',
         'client_id',
-        'devise'
+        'devise',
+        'status',
+        'mode_payment',
+        'renewable_count'
     ];
 
     protected $casts = [
         'date_contrat' => 'date',
         'date_debut' => 'date',
         'date_fin' => 'date',
+        'status' => ContratStatus::class,
+        'mode_payment' => ModePayment::class,
+        'renewable_count' => 'integer',
     ];
 
     public function client()

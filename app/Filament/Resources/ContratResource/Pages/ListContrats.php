@@ -8,6 +8,7 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Pages\ListRecords\Tab;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\Contrat;
+use App\Enums\ContratStatus;
 
 class ListContrats extends ListRecords
 {
@@ -26,14 +27,14 @@ class ListContrats extends ListRecords
             'Tout' => Tab::make()
                 ->badge(Contrat::count())
                 ->badgeColor('gray'),
-            'Actif' => Tab::make()
-                        ->modifyQueryUsing(fn (Builder $query) => $query->where('date_fin', '>', now()))
-                        ->badge(Contrat::where('date_fin', '>', now())->count())
-                        ->badgeColor('success'),
-            'Expiré' => Tab::make()
-                        ->modifyQueryUsing(fn (Builder $query) => $query->where('date_fin', '<=', now()))
-                        ->badge(Contrat::where('date_fin', '<=', now())->count())
-                        ->badgeColor('danger'),
-        ];
+            'Actifs' => Tab::make()
+                ->badge(Contrat::where('status', ContratStatus::ACTIVE->value)->count())
+                ->badgeColor('success')
+                ->query(fn (Builder $query) => $query->where('status', ContratStatus::ACTIVE->value)),
+            'Exirés' => Tab::make()
+                ->badge(Contrat::where('status', ContratStatus::EXPIRED->value)->count())
+                ->badgeColor('danger')
+                ->query(fn (Builder $query) => $query->where('status', ContratStatus::EXPIRED->value)),
+            ];
     }
 }
