@@ -1,3 +1,4 @@
+@vite(['resources/css/app.css'])
 <div class="p-4 filament-kanban-board">
     <div class="mb-4">
         <label for="pipeline-select" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Sélectionner un Pipeline:</label>
@@ -12,45 +13,50 @@
         <div class="flex gap-2 overflow-x-auto pb-4" x-data="kanban()">
             @foreach($currentPipeline->etapePipelines->sortBy('ordre') as $etape)
                 <div
-                    class="flex-shrink-0 w-72 bg-white dark:bg-gray-800 rounded-lg shadow-md flex flex-col kanban-column"
+                    class="flex-shrink-0 w-72 bg-white dark:bg-gray-800 rounded-lg shadow-md flex flex-col"
                     wire:key="stage-{{ $etape->id }}"
                     x-on:drop.prevent="handleDrop($event, {{ $etape->id }})"
                     x-on:dragover.prevent="handleDragOver($event)"
                     data-stage-id="{{ $etape->id }}"
                 >
-                    <div class="p-3 font-semibold text-gray-900 dark:text-white border-b border-gray-300 dark:border-gray-600">
-                        {{ $etape->nom }} {{  $opportunities->get($etape->id, collect())->count() > 0 ? '(' . $opportunities->get($etape->id)->count() . ')' : '' }}
+                    <div class="relative flex items-center p-3 border-b border-gray-300 dark:border-gray-600">
+                        <span class="font-semibold text-gray-900 dark:text-white">
+                            {{ $etape->nom }} {{ $opportunities->get($etape->id, collect())->count() > 0 ? '(' . $opportunities->get($etape->id)->count() . ')' : '' }}
+                        </span>
+                        @if(!$loop->last)
+                            <div class="kanban-step-arrow"></div>
+                        @endif
                     </div>
-                    <div class="p-3 space-y-3 flex-grow overflow-y-auto kanban-cards-container" data-stage-id="{{ $etape->id }}">
+                    <div class="p-3 space-y-3 flex-grow overflow-y-auto" data-stage-id="{{ $etape->id }}">
                         @forelse($opportunities->get($etape->id, collect())->sortBy('sort_order') as $opportunity)
                             @php
                                 $statusColor = $opportunity->status->getTailwindBadge();
                             @endphp
-                            <div
-                                class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 cursor-grab kanban-card"
-                                draggable="true"
-                                wire:key="opportunity-{{ $opportunity->id }}"
-                                x-on:dragstart="handleDragStart($event, {{ $opportunity->id }}, {{ $etape->id }})"
-                                data-opportunity-id="{{ $opportunity->id }}"
+                            <a href="{{ route('filament.admin.resources.opportunities.view', $opportunity->id) }}"
+                               class="block bg-orange-100 dark:bg-orange-700 hover:shadow-md p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 cursor-pointer "
+                               draggable="true"
+                               wire:key="opportunity-{{ $opportunity->id }}"
+                               x-on:dragstart="handleDragStart($event, {{ $opportunity->id }}, {{ $etape->id }})"
+                               data-opportunity-id="{{ $opportunity->id }}"
                             >
                                 <div class="flex justify-between items-start">
                                     <span class="font-semibold text-md text-gray-700 dark:text-gray-300">{{ $opportunity->titre }}</span>
-                                    <span class="text-sm font-mono bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded">{{ $opportunity->prefix }}-{{ $opportunity->id }}</span>
+                                    <span class="text-sm font-mono bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded">{{ $opportunity->prefix }}-{{ $opportunity->id }}</span>
                                 </div>
                                 <div class="mt-3 space-y-2">
                                     <p class="text-sm"><span class="font-semibold text-gray-500 dark:text-gray-400">Contact:</span> {{ $opportunity->contact->nom ?? 'N/A' }} {{ $opportunity->contact->prenom ?? '' }}</p>
                                     <p class="text-sm"><span class="font-semibold text-gray-500 dark:text-gray-400">Montant:</span> <span class="font-medium text-green-600 dark:text-green-400">{{ number_format($opportunity->montant_estime, 2) }} {{ $opportunity->devise }}</span></p>
                                     <p class="text-sm"><span class="font-semibold text-gray-500 dark:text-gray-400">Échéance:</span> {{ $opportunity->date_echeance->format('d/m/Y') }}</p>
                                     <p class="text-sm"><span class="font-semibold text-gray-500 dark:text-gray-400">Probabilité:</span> <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">{{ $opportunity->probabilite }}%</span></p>
-                                    <p class="text-sm flex items-center gap-2"><span class="font-semibold text-gray-500 dark:text-gray-400 mr-2">Statut:</span>
-                                        <span class="px-2 py-1 text-xs font-semibold rounded-full
-                                            
-                                        " style="background-color: {{ $opportunity->status->getBadge() }}; padding-inline: .5rem; color: {{ $opportunity->status->getTextStatusColor() }} ">
-                                            {{ $opportunity->status }}
+                                    <p class="text-sm flex items-center gap-2">
+                                        <span class="font-semibold text-gray-500 dark:text-gray-400 mr-2">Statut:</span>
+                                        <span class="px-2 py-1 text-xs font-semibold rounded-full"
+                                              style="background-color: {{ $opportunity->status->getBadge() }}; padding-inline: .5rem; color: {{ $opportunity->status->getTextStatusColor() }}">
+                                              {{ $opportunity->status }}
                                         </span>
                                     </p>
                                 </div>
-                            </div>
+                            </a>
                         @empty
                             <div class="text-center text-gray-500 dark:text-gray-400 py-4">
                                 Aucune opportunité
@@ -106,6 +112,27 @@
         }
         .kanban-cards-container {
             min-height: 150px;
+        }
+        /* Modern card shape with a cut bottom edge */
+        .kanban-card {
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .kanban-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .kanban-step-arrow {
+            position: absolute;
+            right: 5px; /* arrow inside the container */
+            top: 50%;
+            transform: translate(0, -50%);
+            width: 0;
+            height: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 15px solid #f97316; /* light orange color */
+            z-index: 10;
         }
     </style>
 </div>
