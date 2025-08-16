@@ -17,7 +17,7 @@ class ExpenseCategoryResource extends Resource
 {
     protected static ?string $model = ExpenseCategory::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
+    protected static ?string $navigationIcon = 'polaris-categories-icon';
     protected static ?string $navigationGroup = 'Paramètres';
 
     public static function form(Form $form): Form
