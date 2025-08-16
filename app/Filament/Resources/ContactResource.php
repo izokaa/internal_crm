@@ -19,7 +19,6 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Tables\Actions\ActionGroup;
 
-
 class ContactResource extends Resource
 {
     use HasActiveIcon;
@@ -72,7 +71,7 @@ class ContactResource extends Resource
                             ])
                             ->default('Mr')
                             ->hidden(fn (Get $get): bool => !$get('advanced_mode'))
-                            ->nullable()    
+                            ->nullable()
                             ->required(),
                         Forms\Components\TextInput::make('nom')
                             ->required()
@@ -121,7 +120,7 @@ class ContactResource extends Resource
                             ->nullable()
                             ->maxLength(255),
                     ])->columns(2),
-                            
+
 
                 Forms\Components\Section::make('Localisation')
                     ->schema([
@@ -166,14 +165,14 @@ class ContactResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('profile_picture')
-                ->getStateUsing(fn ($record) => $record->profile_picture 
-                    ? url('storage/' . $record->profile_picture) 
+                ->getStateUsing(fn ($record) => $record->profile_picture
+                    ? url('storage/' . $record->profile_picture)
                     : null)
                 ->label('Photo de Profil')
                 ->size(50)
                 ->circular()
                 ->defaultImageUrl('https://ui-avatars.com/api/?name=Contact&background=random&color=fff'),
-            
+
                 Tables\Columns\TextColumn::make('nom')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: false),
@@ -236,7 +235,9 @@ class ContactResource extends Resource
                     ->options([
                         'prospect' => 'Prospect',
                         'client' => 'Client',
-                    ]),
+                        'partner' => 'Partenaire',
+                        'fournisseur' => 'Fournisseur',
+                    ])->default('client'),
                 Tables\Filters\SelectFilter::make('ville')
                     ->relationship('ville', 'nom'),
                 Tables\Filters\SelectFilter::make('specialite')
