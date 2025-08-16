@@ -9,30 +9,22 @@
     </div>
 
     @if($currentPipeline)
-        <div class="flex space-x-4 overflow-x-auto pb-4" x-data="kanban()">
+        <div class="flex gap-2 overflow-x-auto pb-4" x-data="kanban()">
             @foreach($currentPipeline->etapePipelines->sortBy('ordre') as $etape)
                 <div
-                    class="flex-shrink-0 w-72 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md flex flex-col kanban-column"
+                    class="flex-shrink-0 w-72 bg-white dark:bg-gray-800 rounded-lg shadow-md flex flex-col kanban-column"
                     wire:key="stage-{{ $etape->id }}"
                     x-on:drop.prevent="handleDrop($event, {{ $etape->id }})"
                     x-on:dragover.prevent="handleDragOver($event)"
                     data-stage-id="{{ $etape->id }}"
                 >
-                    <div class="p-3 font-semibold text-gray-900 dark:text-gray-100 border-b border-gray-300 dark:border-gray-600">
-                        {{ $etape->nom }}
+                    <div class="p-3 font-semibold text-gray-900 dark:text-white border-b border-gray-300 dark:border-gray-600">
+                        {{ $etape->nom }} {{  $opportunities->get($etape->id, collect())->count() > 0 ? '(' . $opportunities->get($etape->id)->count() . ')' : '' }}
                     </div>
                     <div class="p-3 space-y-3 flex-grow overflow-y-auto kanban-cards-container" data-stage-id="{{ $etape->id }}">
                         @forelse($opportunities->get($etape->id, collect())->sortBy('sort_order') as $opportunity)
                             @php
-                                $statusColor = match ($opportunity->status) {
-                                    'Ouverte' => 'info',
-                                    'Gagnée' => 'success',
-                                    'Perdue' => 'danger',
-                                    'En retard' => 'warning',
-                                    'Annulée' => 'gray',
-                                    'Fermée' => 'primary',
-                                    default => 'gray',
-                                };
+                                $statusColor = $opportunity->status->getTailwindBadge();
                             @endphp
                             <div
                                 class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 cursor-grab kanban-card"
@@ -50,18 +42,10 @@
                                     <p class="text-sm"><span class="font-semibold text-gray-500 dark:text-gray-400">Montant:</span> <span class="font-medium text-green-600 dark:text-green-400">{{ number_format($opportunity->montant_estime, 2) }} {{ $opportunity->devise }}</span></p>
                                     <p class="text-sm"><span class="font-semibold text-gray-500 dark:text-gray-400">Échéance:</span> {{ $opportunity->date_echeance->format('d/m/Y') }}</p>
                                     <p class="text-sm"><span class="font-semibold text-gray-500 dark:text-gray-400">Probabilité:</span> <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">{{ $opportunity->probabilite }}%</span></p>
-                                    <p class="text-sm flex items-center"><span class="font-semibold text-gray-500 dark:text-gray-400 mr-2">Statut:</span>
+                                    <p class="text-sm flex items-center gap-2"><span class="font-semibold text-gray-500 dark:text-gray-400 mr-2">Statut:</span>
                                         <span class="px-2 py-1 text-xs font-semibold rounded-full
-                                            @switch($opportunity->status)
-                                                @case('Ouverte') bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 @break
-                                                @case('Gagnée') bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 @break
-                                                @case('Perdue') bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 @break
-                                                @case('En retard') bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 @break
-                                                @case('Annulée') bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 @break
-                                                @case('Fermée') bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 @break
-                                                @default bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 @break
-                                            @endswitch
-                                        ">
+                                            
+                                        " style="background-color: {{ $opportunity->status->getBadge() }}; padding-inline: .5rem; color: {{ $opportunity->status->getTextStatusColor() }} ">
                                             {{ $opportunity->status }}
                                         </span>
                                     </p>

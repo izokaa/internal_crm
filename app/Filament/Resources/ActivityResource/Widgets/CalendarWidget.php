@@ -18,6 +18,12 @@ class CalendarWidget extends FullCalendarWidget
 
     public Model | string | null $model = Activity::class;
 
+    // Add listener to handle drag and drop event updates
+    protected $listeners = [
+        'eventDropped' => 'handleEventDropped',
+        // ...existing listeners...
+    ];
+
     public function fetchEvents(array $fetchInfo): array
     {
         $activities = Activity::query()
@@ -136,7 +142,7 @@ class CalendarWidget extends FullCalendarWidget
 
             Forms\Components\Select::make('statut')
                 ->label('Statut')
-                ->default(ActivityStatut::TODO)
+                ->default('To Do')
                 ->options(ActivityStatut::class),
         ];
     }
@@ -181,8 +187,6 @@ class CalendarWidget extends FullCalendarWidget
         ];
     }
 
-
-
     // Correction 3 : Ajouter cette méthode pour mieux gérer la création d'événements
     public function getHeaderActions(): array
     {
@@ -205,5 +209,19 @@ class CalendarWidget extends FullCalendarWidget
                     return $data;
                 }),
         ];
+    }
+
+    public function handleEventDropped(array $data): void
+    {
+        // Assuming $data contains keys: id, start, end.
+        $activity = \App\Models\Activity::find($data['id']);
+        if ($activity) {
+            $activity->update([
+                'date_debut' => $data['start'],
+                'date_fin'   => $data['end'],
+            ]);
+        }
+        // Optionally refresh widget/calendar view.
+        $this->dispatch('$refresh');
     }
 }

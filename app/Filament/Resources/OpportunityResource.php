@@ -31,7 +31,6 @@ class OpportunityResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-light-bulb';
     protected static ?string $navigationActiveIcon = 'heroicon-o-light-bulb';
-    protected static ?int $navigationSort = 1;
     protected static ?string $navigationGroup = 'CRM';
 
     protected static ?string $recordTitleAttribute = 'titre';
@@ -54,7 +53,6 @@ class OpportunityResource extends Resource
                     ->required()
                     ->columnSpanFull(),
                 Forms\Components\MarkdownEditor::make('note')
-                    ->required()
                     ->columnSpanFull(),
                 Forms\Components\Grid::make(2)
                     ->schema([
