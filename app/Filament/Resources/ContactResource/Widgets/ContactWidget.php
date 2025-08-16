@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ContactResource\Widgets;
 
 use App\Models\Contact;
+// Removed: use App\Models\Fournisseur;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Carbon\Carbon;
@@ -30,36 +31,38 @@ class ContactWidget extends BaseWidget
         $this->dispatch('$refresh');
     }
 
-
     protected function getStats(): array
     {
-
         $startDate = Carbon::parse($this->startDate);
-        $endDate = Carbon::parse($this->endDate);
+        $endDate   = Carbon::parse($this->endDate);
 
         return [
             Stat::make('Total de contacts', Contact::whereBetween('created_at', [$startDate, $endDate])->count())
-                ->description('total des contacts')
-                ->descriptionIcon('lucide-contact')
+                ->description('Total des contacts')
+                ->descriptionIcon('heroicon-o-users')
+                ->chart([7, 2, 10, 3, 15, 4, 17])
+                ->color('primary'),
+
+            Stat::make('Total des clients', Contact::whereBetween('created_at', [$startDate, $endDate])
+                ->where('type', 'client')->count())
+                ->description('Total des clients')
+                ->descriptionIcon('heroicon-o-check')
                 ->chart([7, 2, 10, 3, 15, 4, 17])
                 ->color('success'),
 
-
-            Stat::make('Total des clients ', Contact::whereBetween('created_at', [$startDate, $endDate])->where('type', 'client')->count())
-                ->description('total des clients')
-                ->descriptionIcon('lucide-contact')
-                ->chart([7, 2, 10, 3, 15, 4, 17])
-                ->color('success'),
-
-            Stat::make('Total des prospects ', Contact::whereBetween('created_at', [$startDate, $endDate])->where('type', 'prospect')->count())
-                ->description('total des prospects')
-                ->descriptionIcon('lucide-contact')
+            Stat::make('Total des prospects', Contact::whereBetween('created_at', [$startDate, $endDate])
+                ->where('type', 'prospect')->count())
+                ->description('Total des prospects')
+                ->descriptionIcon('heroicon-o-users')
                 ->chart([7, 2, 10, 3, 15, 9, 20])
                 ->color('info'),
 
+            Stat::make('Total des fournisseurs', Contact::whereBetween('created_at', [$startDate, $endDate])
+                ->where('type', 'fournisseur')->count())
+                ->description('Total des fournisseurs')
+                ->descriptionIcon('heroicon-o-truck')
+                ->chart([3, 4, 5, 2, 9, 1, 7])
+                ->color('secondary'),
         ];
-
     }
-
-
 }

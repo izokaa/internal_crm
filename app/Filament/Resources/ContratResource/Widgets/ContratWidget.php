@@ -12,10 +12,6 @@ class ContratWidget extends BaseWidget
     public ?string $startDate = null;
     public ?string $endDate = null;
 
-
-  
-
-
     // Listen for date range updates
     protected $listeners = ['dateRangeUpdated' => 'updateDateRange'];
 
@@ -34,7 +30,6 @@ class ContratWidget extends BaseWidget
         $this->dispatch('$refresh');
     }
 
-
     protected function getStats(): array
     {
         $startDate = Carbon::parse($this->startDate);
@@ -43,21 +38,23 @@ class ContratWidget extends BaseWidget
         return [
             Stat::make('Total des contrats', Contrat::whereBetween('created_at', [$startDate, $endDate])->count())
                 ->description('Total des contrats')
-                ->descriptionIcon('clarity-contract-line')
+                ->descriptionIcon('heroicon-o-document-text')
                 ->chart([7, 2, 10, 3, 15, 4, 17])
-                ->color('sucess'),
+                ->color('primary'),
 
-            Stat::make('Total des contrats actifs', Contrat::whereBetween('created_at', [$startDate, $endDate])->where('date_fin', '>=', now()->toDateString())->count())
+            Stat::make('Total des contrats actifs', Contrat::whereBetween('created_at', [$startDate, $endDate])
+                ->where('date_fin', '>=', now()->toDateString())->count())
                 ->description('Total des contrats actifs')
-                ->descriptionIcon('clarity-contract-line')
+                ->descriptionIcon('heroicon-o-check-circle')
                 ->chart([7, 2, 10, 3, 15, 4, 17])
-                ->color('sucess'),
+                ->color('success'),
 
-            Stat::make('Total des contrats epxirés', Contrat::whereBetween('created_at', [$startDate, $endDate])->where('date_fin', '<', now()->toDateString())->count())
+            Stat::make('Total des contrats expirés', Contrat::whereBetween('created_at', [$startDate, $endDate])
+                ->where('date_fin', '<', now()->toDateString())->count())
                 ->description('Total des contrats expirés')
-                ->descriptionIcon('clarity-contract-line')
+                ->descriptionIcon('heroicon-o-x-circle')
                 ->chart([7, 2, 10, 3, 15, 4, 17])
-                ->color('danger')
+                ->color('danger'),
         ];
     }
 }
