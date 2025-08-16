@@ -58,5 +58,8 @@ class ContactWidget extends BaseWidget
                 ->color('info'),
 
         ];
+
     }
+
+
 }

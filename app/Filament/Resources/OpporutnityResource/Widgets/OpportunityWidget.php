@@ -14,6 +14,8 @@ class OpportunityWidget extends BaseWidget
     public ?string $endDate = null;
 
 
+
+
     // Listen for date range updates
     protected $listeners = ['dateRangeUpdated' => 'updateDateRange'];
 

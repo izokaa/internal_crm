@@ -10,6 +10,7 @@ use Filament\Pages\Page;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Components\Grid;
 
 class Dashboard extends Page implements HasForms
 {
@@ -20,6 +21,11 @@ class Dashboard extends Page implements HasForms
     protected static ?string $navigationActiveIcon = 'clarity-dashboard-solid';
     protected static string $view = 'filament.pages.dashboard';
     protected static ?string $title = 'Tableau de board';
+
+    public function getTitle(): string
+    {
+        return " ";
+    }
 
     public ?string $startDate = null;
     public ?string $endDate = null;
@@ -38,28 +44,31 @@ class Dashboard extends Page implements HasForms
     protected function getFormSchema(): array
     {
         return [
+            Grid::make()
+            ->schema([
             DatePicker::make('startDate')
-                ->label('Date de début')
-                ->default(now()->startOfMonth())
-                ->live()
-                ->afterStateUpdated(function ($state) {
-                    $this->startDate = $state;
-                    $this->dispatch('dateRangeUpdated', [
-                        'startDate' => $this->startDate,
-                        'endDate' => $this->endDate
-                    ]);
-                }),
-            DatePicker::make('endDate')
-                ->label('Date de fin')
-                ->default(now()->endOfMonth())
-                ->live()
-                ->afterStateUpdated(function ($state) {
-                    $this->endDate = $state;
-                    $this->dispatch('dateRangeUpdated', [
-                        'startDate' => $this->startDate,
-                        'endDate' => $this->endDate
-                    ]);
-                }),
+            ->label('Date de début')
+            ->default(now()->startOfMonth())
+            ->live()
+            ->afterStateUpdated(function ($state) {
+                $this->startDate = $state;
+                $this->dispatch('dateRangeUpdated', [
+                    'startDate' => $this->startDate,
+                    'endDate' => $this->endDate
+                ]);
+            })->columns(2),
+        DatePicker::make('endDate')
+            ->label('Date de fin')
+            ->default(now()->endOfMonth())
+            ->live()
+            ->afterStateUpdated(function ($state) {
+                $this->endDate = $state;
+                $this->dispatch('dateRangeUpdated', [
+                    'startDate' => $this->startDate,
+                    'endDate' => $this->endDate
+                ]);
+            }),
+          ])
         ];
     }
 
@@ -93,4 +102,6 @@ class Dashboard extends Page implements HasForms
             'endDate' => $this->endDate,
         ];
     }
+
+
 }

@@ -1,7 +1,7 @@
 <x-filament-panels::page>
     {{ $this->form }}
 
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3" wire:key="widgets-{{ $startDate }}-{{ $endDate }}">
+    <div class="grid grid-cols-2 gap-4 md:grid-cols-2 lg:grid-cols-2" wire:key="widgets-{{ $startDate }}-{{ $endDate }}">
         @foreach ($this->getWidgets() as $widgetClass)
             @livewire($widgetClass, [
                 'startDate' => $this->startDate,
