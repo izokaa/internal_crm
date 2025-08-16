@@ -11,7 +11,6 @@ class OpportunityKanbanBoard extends Component
 {
     public ?int $selectedPipelineId = null;
     public Collection $pipelines;
-
     protected $listeners = ['pipelineSelected'];
 
     public function mount(): void
@@ -71,5 +70,6 @@ class OpportunityKanbanBoard extends Component
             'opportunities' => $this->opportunities,
         ]);
     }
-}
 
+
+}

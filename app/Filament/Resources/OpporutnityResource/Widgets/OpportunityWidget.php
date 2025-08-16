@@ -56,16 +56,10 @@ class OpportunityWidget extends BaseWidget
             return $opportunities->sum('montant_reel');
         });
 
-        foreach ($revenueByCurrency as $currency => $amount) {
-            $stats[] = Stat::make("Chiffre d'Affaire Gagné ({$currency})", number_format($amount, 2) . ' ' . $currency)
-                ->description("Total des opportunités gagnées en {$currency}")
-                ->color('success');
-        }
-
         // New stat: Total revenue gained (aggregated over all won opportunities)
         $totalRevenue = Opportunity::where('status', OpportunityStatut::WON->value)
-            ->when($this->startDate, fn($q) => $q->whereDate('created_at', '>=', $this->startDate))
-            ->when($this->endDate, fn($q) => $q->whereDate('created_at', '<=', $this->endDate))
+            ->when($this->startDate, fn ($q) => $q->whereDate('created_at', '>=', $this->startDate))
+            ->when($this->endDate, fn ($q) => $q->whereDate('created_at', '<=', $this->endDate))
             ->sum('montant_reel');
         $stats[] = Stat::make('Total Chiffre d’Affaire Gagné', number_format($totalRevenue, 2) . ' €')
             ->description('Revenu total des opportunités gagnées')
