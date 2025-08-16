@@ -16,7 +16,7 @@ class CreateOpportunity extends CreateRecord
     {
         $opportunityData = collect($data)->except('piecesJointes')->toArray();
 
-        $contrat = static::getModel()::create($opportunityData);
+        $opportunity = static::getModel()::create($opportunityData);
 
         if (isset($data['piecesJointes'])) {
             foreach ($data['piecesJointes'] as $pieceJointeData) {

@@ -73,7 +73,8 @@ class AdminPanelProvider extends PanelProvider
             ->navigationGroups([
                 1 => 'CRM',
                 2 => 'Gestion Commerciale',
-                3 => 'Paramètres',
+                3 => 'Achats & Fournisseurs',
+                4 => 'Paramètres',
             ])
             ->globalSearch(false)
             ->plugins([

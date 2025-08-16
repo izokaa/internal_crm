@@ -19,6 +19,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Tables\Actions\ActionGroup;
 
+
 class ContactResource extends Resource
 {
     use HasActiveIcon;
@@ -42,8 +43,37 @@ class ContactResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Informations Personnelles')
+                Forms\Components\Section::make('Informations Générales')
                     ->schema([
+                        Forms\Components\FileUpload::make('profile_picture')
+                            ->label('Photo de Profil')
+                            ->image()
+                            ->disk('public')
+                            ->directory('profile')
+                            ->visibility('public')
+                            ->nullable()
+                            ->maxSize(1024) // 1MB
+                            ->acceptedFileTypes(['image/*'])
+                            ->avatar()
+                            ->columnSpanFull(),
+                        Forms\Components\Toggle::make('advanced_mode')
+                            ->dehydrated(false)
+                            ->label('Mode Avancé')
+                            ->default(false)
+                            ->reactive(),
+                        Forms\Components\Select::make('title')
+                            ->label('Titre')
+                            ->options([
+                               'Mr' => 'Mr',
+                                'Mrs' => 'Mrs',
+                                'Ms' => 'Ms',
+                                'Dr' => 'Dr',
+                                'Prof' => 'Prof',
+                            ])
+                            ->default('Mr')
+                            ->hidden(fn (Get $get): bool => !$get('advanced_mode'))
+                            ->nullable()    
+                            ->required(),
                         Forms\Components\TextInput::make('nom')
                             ->required()
                             ->maxLength(255),
@@ -59,12 +89,39 @@ class ContactResource extends Resource
                             ->required()
                             ->maxLength(255),
                         Forms\Components\Select::make('type')
+                            ->label('Type de Contact')
                             ->options([
                                 'prospect' => 'Prospect',
                                 'client' => 'Client',
+                                'partner' => 'Partenaire',
+                                'fournisseur' => 'Fournisseur',
                             ])
                             ->required(),
+                        Forms\Components\Radio::make('company_type')
+                            ->label('Type de Société')
+                            ->options([
+                                'individual' => 'Individuel',
+                                'corporate' => 'Société',
+                            ])
+                            ->inline()
+                            ->default('individual')
+                            ->required()
+                            ->live()
+                            ->hidden(fn (Get $get): bool => !$get('advanced_mode')),
+                        // Nom de la société
+                        Forms\Components\TextInput::make('company_name')
+                            ->label('Nom de la Société')
+                            ->required(fn (Get $get): bool => $get('company_type') === 'corporate')
+                            ->hidden(fn (Get $get): bool => !$get('advanced_mode') || $get('company_type') === 'individual')
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('website')
+                            ->label('Site Web')
+                            ->url()
+                            ->hidden(fn (Get $get): bool => !$get('advanced_mode') || $get('company_type') === 'individual')
+                            ->nullable()
+                            ->maxLength(255),
                     ])->columns(2),
+                            
 
                 Forms\Components\Section::make('Localisation')
                     ->schema([
@@ -78,7 +135,12 @@ class ContactResource extends Resource
                             ->label('Ville')
                             ->options(fn (Get $get): array => Pays::find($get('pays_id'))?->villes->pluck('nom', 'id')->toArray() ?? [])
                             ->nullable(),
-                    ])->columns(2),
+                        // adresse
+                        Forms\Components\TextInput::make('adresse')
+                            ->label('Adresse')
+                            ->nullable()
+                            ->maxLength(255),
+                    ])->columns(3),
 
                 Forms\Components\Section::make('Professionnel')
                     ->schema([
@@ -103,6 +165,15 @@ class ContactResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('profile_picture')
+                ->getStateUsing(fn ($record) => $record->profile_picture 
+                    ? url('storage/' . $record->profile_picture) 
+                    : null)
+                ->label('Photo de Profil')
+                ->size(50)
+                ->circular()
+                ->defaultImageUrl('https://ui-avatars.com/api/?name=Contact&background=random&color=fff'),
+            
                 Tables\Columns\TextColumn::make('nom')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: false),

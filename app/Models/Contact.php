@@ -19,6 +19,17 @@ class Contact extends Model
         'specialite_id',
         'business_unit_id',
         'service_id',
+        'title',
+        'adresse',
+        'profile_picture',
+        'company_type',
+        'company_name',
+        'custom_fields',
+        'website',
+    ];
+
+    protected $casts = [
+        'custom_fields' => 'array',
     ];
 
     public function opportunities()
