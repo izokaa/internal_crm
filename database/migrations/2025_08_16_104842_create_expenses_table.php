@@ -5,8 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use App\Enums\ExpenseStatus;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     /**
      * Run the migrations.
      */
@@ -14,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('expenses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('contact_id')->nullable()->constrained()->cascadeOnDelete(); // optionnel
-            $table->foreignId('opportunity_id')->nullable()->constrained('opportunities')->cascadeOnDelete(); // optionnel
+            $table->foreignId('supplier_id')->nullable()->constrained('contacts')->cascadeOnDelete(); // optionnel
+            $table->foreignId('client_id')->nullable()->constrained('contacts')->cascadeOnDelete(); // optionnel
             $table->decimal('montant_ht');
             $table->decimal('montant_ttc');
             $table->integer('tva');

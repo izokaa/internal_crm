@@ -3,9 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Enums\ExpenseStatus;  
+use App\Enums\ExpenseStatus;
 use App\Models\ExpenseCategory;
-
 
 class Expense extends Model
 {
@@ -29,10 +28,17 @@ class Expense extends Model
     ];
 
 
-    public function contact()
+    public function supplier()
     {
-        return $this->belongsTo(Contact::class, 'contact_id');
+        return $this->belongsTo(Contact::class, 'supplier_id');
     }
+
+
+    public function client()
+    {
+        return $this->belongsTo(Contact::class, 'client_id');
+    }
+
 
     public function opportunity()
     {
@@ -43,5 +49,11 @@ class Expense extends Model
     {
         return $this->belongsTo(ExpenseCategory::class, 'category_id');
     }
+
+    public function piecesJointes()
+    {
+        return $this->hasMany(PieceJointe::class, 'expense_id');
+    }
+
 
 }

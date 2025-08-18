@@ -51,7 +51,7 @@
                                         <span class="font-semibold text-gray-500 dark:text-gray-400 mr-2">Statut:</span>
                                         <span class="px-2 py-1 text-xs font-semibold rounded-full"
                                               style="background-color: {{ $opportunity->status->getBadge() }}; padding-inline: .5rem; color: {{ $opportunity->status->getTextStatusColor() }}">
-                                              {{ $opportunity->status }}
+                                              {{ $opportunity->status->getLabel() }}
                                         </span>
                                     </p>
                                 </div>

@@ -12,8 +12,11 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Forms\Get;
+use Filament\Tables\Filters\Filter;
+use Illuminate\Database\Eloquent\Builder;
 
 class ContratResource extends Resource
 {
@@ -246,6 +249,23 @@ class ContratResource extends Resource
                 Tables\Filters\SelectFilter::make('status')
                     ->options(ContratStatus::class)
                     ->label('Statut du Contrat'),
+                Filter::make('date_debut')
+                    ->form([
+                        Forms\Components\DatePicker::make('date_debut'),
+                        Forms\Components\DatePicker::make('date_fin'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['date_debut'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('date_debut', '>=', $date),
+                            )
+                            ->when(
+                                $data['date_fin'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('date_fin', '<=', $date),
+                            );
+                    }),
+
                 Tables\Filters\SelectFilter::make('mode_payment')
                     ->options(ModePayment::class)
                     ->label('Mode de Paiement'),

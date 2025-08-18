@@ -29,21 +29,21 @@ class ExpenseResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('contact_id')
-            ->relationship('contact')
-            ->placeholder('Sélectionner un contact')
-            ->getOptionLabelFromRecordUsing(fn ($record) => $record->nom . ' ' . $record->prenom . ' - ' . $record->type)
-            ->required()
-            ->searchable()
-            ->preload()
-            ->label('Contact'),
-                Forms\Components\Select::make('opportunity_id')
-                    ->relationship('opportunity')
-                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->prefix . ' - ' . $record->id . ' - ' . $record->title)
-                    ->placeholder('Sélectionner une opportunité')
+                Forms\Components\Select::make('supplier_id')
+                    ->relationship('supplier', modifyQueryUsing: fn (Builder $query) => $query->where('type', 'fournisseur'))
+                    ->placeholder('Sélectionner un fournisseur')
+                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->nom . ' ' . $record->prenom)
+                    ->required()
                     ->searchable()
                     ->preload()
-                    ->label('Opportunité'),
+                    ->label('Fournisseur'),
+                Forms\Components\Select::make('client_id')
+                    ->relationship('client', modifyQueryUsing: fn (Builder $query) => $query->where('type', '!=', 'fournisseur'))
+                    ->placeholder('Sélectionner un client ou un prospect')
+                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->nom . ' ' . $record->prenom)
+                    ->searchable()
+                    ->preload()
+                    ->label('Client'),
                 Forms\Components\TextInput::make('montant_ht')
                     ->label('Montant HT')
                     ->required()
@@ -60,13 +60,13 @@ class ExpenseResource extends Resource
                         'USD' => 'USD',
                     ])
                     ->default('MAD')
-                    ->label('Devise')    
-                ->required(),
+                    ->label('Devise')
+                    ->required(),
                 Forms\Components\DatePicker::make('date_expense')
-                        ->label('date de la dépense')  
+                    ->label('date de la dépense')
                     ->default(now())
                     ->required(),
-                
+
                 Forms\Components\Select::make('category_id')
                     ->relationship('category')
                     ->getOptionLabelFromRecordUsing(fn ($record) => $record->nom)
@@ -78,12 +78,28 @@ class ExpenseResource extends Resource
                     ->options(ExpenseStatus::class)
                     ->default(ExpenseStatus::DRAFT)
                     ->required(),
-                    Forms\Components\MarkdownEditor::make('description')
+                Forms\Components\MarkdownEditor::make('description')
                     ->placeholder('Description de la dépense')
                     ->label('Description')
                     ->columnSpanFull()
                     ->nullable()
                 ,
+                Forms\Components\Section::make('Pièces Jointes')
+                    ->schema([
+                        Forms\Components\Repeater::make('piecesJointes')
+                            ->relationship()
+                            ->schema([
+                                Forms\Components\TextInput::make('nom_fichier')
+                                    ->required(),
+                                Forms\Components\FileUpload::make('chemin_fichier')
+                                    ->directory('expense')
+                                    ->disk('public')
+                                    ->visibility('public')
+                                    ->downloadable()
+                                    ->required(),
+                            ])
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 
@@ -91,14 +107,14 @@ class ExpenseResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('contact_id')
-                ->label('Contact')
-                    ->getStateUsing(fn ($record) => $record->contact ? $record->contact->nom . ' ' . $record->contact->prenom : 'N/A')
+                Tables\Columns\TextColumn::make('supplier_id')
+                    ->label('Fournisseur')
+                    ->getStateUsing(fn ($record) => $record->supplier ? $record->supplier->nom . ' ' . $record->supplier->prenom : 'N/A')
                     ->searchable()
-                ->sortable(),
-                Tables\Columns\TextColumn::make('opportunity_id')
-                    ->label('Opportunité')
-                    ->getStateUsing(fn ($record) => $record->opportunity ? $record->opportunity->prefix . ' - ' . $record->opportunity->id . ' - ' . $record->opportunity->title : 'N/A')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('client_id')
+                    ->label('Client/Prospect')
+                    ->getStateUsing(fn ($record) => $record->client ? $record->client->nom . ' ' . $record->client->prenom : 'N/A')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('montant_ht')
