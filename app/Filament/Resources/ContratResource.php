@@ -12,6 +12,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Forms\Get;
@@ -249,23 +250,6 @@ class ContratResource extends Resource
                 Tables\Filters\SelectFilter::make('status')
                     ->options(ContratStatus::class)
                     ->label('Statut du Contrat'),
-                Filter::make('date_debut')
-                    ->form([
-                        Forms\Components\DatePicker::make('date_debut'),
-                        Forms\Components\DatePicker::make('date_fin'),
-                    ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['date_debut'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('date_debut', '>=', $date),
-                            )
-                            ->when(
-                                $data['date_fin'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('date_fin', '<=', $date),
-                            );
-                    }),
-
                 Tables\Filters\SelectFilter::make('mode_payment')
                     ->options(ModePayment::class)
                     ->label('Mode de Paiement'),
@@ -279,14 +263,26 @@ class ContratResource extends Resource
                         'USD' => 'USD',
                     ])
                     ->label('Devise'),
-                Tables\Filters\SelectFilter::make('periode_unite')
-                    ->options([
-                        'jours' => 'Jours',
-                        'mois' => 'Mois',
-                        'années' => 'Années',
+                Filter::make('date_debut')
+                    ->form([
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\DatePicker::make('date_debut'),
+                                Forms\Components\DatePicker::make('date_fin'),
+                            ])
                     ])
-                    ->label('Unité de Période'),
-            ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['date_debut'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('date_debut', '>=', $date),
+                            )
+                            ->when(
+                                $data['date_fin'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('date_fin', '<=', $date),
+                            );
+                    })->columnSpanFull(),
+            ], layout: FiltersLayout::AboveContentCollapsible)
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\ViewAction::make(),

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Resources\ActivityResource\Widgets\DemoWidget;
 use App\Filament\Resources\ContactResource\Widgets\ContactWidget;
 use App\Filament\Resources\ContratResource\Widgets\ContratWidget;
 use App\Filament\Resources\OpporutnityResource\Widgets\OpportunityWidget;
@@ -81,11 +82,7 @@ class Dashboard extends Page implements HasForms
     protected function getWidgets(): array
     {
         return [
-            ContactWidget::class,
-            ContratWidget::class,
-            OpportunityWidget::class,
-            \App\Filament\Widgets\ClientsBySpecialiteChart::class,
-            \App\Filament\Widgets\ClientsByVilleChart::class,
+            DemoWidget::class
         ];
     }
 

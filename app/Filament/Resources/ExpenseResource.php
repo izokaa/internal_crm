@@ -17,6 +17,8 @@ use App\Enums\ExpenseStatus;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Forms\Components\DatePicker;
+use App\Enums\ModePayment;
+use Filament\Tables\Enums\FiltersLayout;
 
 class ExpenseResource extends Resource
 {
@@ -27,6 +29,8 @@ class ExpenseResource extends Resource
     protected static ?string $navigationActiveIcon = 'heroicon-s-credit-card';
 
     protected static ?string $navigationGroup = 'Achats & Dépenses';
+
+
 
     public static function form(Form $form): Form
     {
@@ -56,6 +60,10 @@ class ExpenseResource extends Resource
                     ->label('TVA (%)')
                     ->default(20)
                     ->numeric(),
+                Forms\Components\Select::make('mode_payment')
+                    ->label('Mode de Paiement')
+                    ->options(ModePayment::class)
+                    ->required(),
                 Forms\Components\Select::make('devise')
                     ->options([
                         'MAD' => 'MAD',
@@ -132,6 +140,11 @@ class ExpenseResource extends Resource
                     ->label('TVA (%)')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('mode_payment')
+                    ->label('Mode de Paiement')
+                    ->badge()
+                    ->color(fn (Expense $record) => $record->mode_payment->getFilamentBadge())
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('devise')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('date_expense')
@@ -160,6 +173,10 @@ class ExpenseResource extends Resource
                     ->options(ExpenseStatus::class)
                     ->multiple()
                     ->label('Statut'),
+                SelectFilter::make('mode_payment')
+                    ->options(ModePayment::class)
+                    ->multiple()
+                    ->label('Mode de paiement'),
                 SelectFilter::make('category_id')
                     ->label('Catégorie')
                     ->relationship('category', 'nom')
@@ -180,8 +197,13 @@ class ExpenseResource extends Resource
                     ->multiple(),
                 Filter::make('date_expense')
                     ->form([
-                        DatePicker::make('date_from')->label('Date de dépense (début)'),
-                        DatePicker::make('date_until')->label('Date de dépense (fin)'),
+                        Forms\Components\Grid::make(2) // 2 columns grid
+                            ->schema([
+                                DatePicker::make('date_from')
+                                    ->label('Date de dépense (début)'),
+                                DatePicker::make('date_until')
+                                    ->label('Date de dépense (fin)'),
+                            ]),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
@@ -193,8 +215,8 @@ class ExpenseResource extends Resource
                                 $data['date_until'],
                                 fn (Builder $query, $date): Builder => $query->whereDate('date_expense', '<=', $date),
                             );
-                    }),
-            ])
+                    })->columnSpanFull(),
+            ], layout: FiltersLayout::AboveContentCollapsible)
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Enums\ExpenseStatus;
 use App\Models\ExpenseCategory;
+use App\Enums\ModePayment;
 
 class Expense extends Model
 {
@@ -18,13 +19,15 @@ class Expense extends Model
         'date_expense',
         'description',
         'category_id',
-        'status'
+        'status',
+        'mode_payment'
     ];
 
 
     protected $casts = [
         'date_expense' => 'date',
         'status' => ExpenseStatus::class,
+        'mode_payment' => ModePayment::class
     ];
 
 

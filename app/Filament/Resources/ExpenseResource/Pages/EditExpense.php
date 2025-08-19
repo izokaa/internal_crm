@@ -22,6 +22,9 @@ class EditExpense extends EditRecord
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         $expenseData = collect($data)->except('piecesJointes')->toArray();
+        $montantHt = $expenseData['montant_ht'];
+        $tva = $expenseData['tva'];
+        $expenseData['montant_ttc'] = $montantHt * (1 + ($tva / 100));
 
         $record->update($expenseData);
 

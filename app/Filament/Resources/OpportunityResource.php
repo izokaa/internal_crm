@@ -12,6 +12,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -266,17 +267,6 @@ class OpportunityResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false),
             ])
             ->filters([
-            Tables\Filters\SelectFilter::make('status')
-                    ->label('Statut')
-                    ->options(collect(OpportunityStatut::cases())->mapWithKeys(
-                        fn (OpportunityStatut $status) => [$status?->value => $status->getLabel()]
-                    ))
-                    ->query(function (Builder $query, array $data): Builder {
-                        if (isset($data['value'])) {
-                            $query->where('status', $data['value']);
-                        }
-                        return $query;
-                    }),
             Tables\Filters\SelectFilter::make('contact')
                     ->relationship('contact', 'nom'),
             Tables\Filters\SelectFilter::make('source')
@@ -292,7 +282,19 @@ class OpportunityResource extends Resource
                         'prospect' => 'Prospect',
                         'client' => 'Client',
                     ]),
-        ])
+
+            Tables\Filters\SelectFilter::make('status')
+                    ->label('Statut')
+                    ->options(collect(OpportunityStatut::cases())->mapWithKeys(
+                        fn (OpportunityStatut $status) => [$status?->value => $status->getLabel()]
+                    ))
+                    ->query(function (Builder $query, array $data): Builder {
+                        if (isset($data['value'])) {
+                            $query->where('status', $data['value']);
+                        }
+                        return $query;
+                    }),
+        ], layout: FiltersLayout::AboveContentCollapsible)
             ->actions([
             ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
