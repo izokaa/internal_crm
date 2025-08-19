@@ -21,13 +21,16 @@ class EditExpense extends EditRecord
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        $expenseData = collect($data)->toArray();
-
-        $montantHt = $expenseData['montant_ht'];
-        $tva = $expenseData['tva'];
-        $expenseData['montant_ttc'] = $montantHt * (1 + ($tva / 100));
+        $expenseData = collect($data)->except('piecesJointes')->toArray();
 
         $record->update($expenseData);
+
+        if (isset($data['piecesJointes'])) {
+            $record->piecesJointes()->delete();
+            foreach ($data['piecesJointes'] as $pieceJointeData) {
+                $record->piecesJointes()->create($pieceJointeData);
+            }
+        }
 
         return $record;
     }

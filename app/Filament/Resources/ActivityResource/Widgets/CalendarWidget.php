@@ -5,12 +5,12 @@ namespace App\Filament\Resources\ActivityResource\Widgets;
 use App\Models\Activity;
 use App\Models\User;
 use Filament\Forms;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Saade\FilamentFullCalendar\Data\EventData;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 use App\Enums\ActivityStatut;
 use Saade\FilamentFullCalendar\Actions;
+use Illuminate\Database\Eloquent\Model;
 
 class CalendarWidget extends FullCalendarWidget
 {

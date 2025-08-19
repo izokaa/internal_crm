@@ -1,11 +1,24 @@
 <div class="p-4 filament-kanban-board">
-    <div class="mb-4">
-        <label for="pipeline-select" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Sélectionner un Pipeline:</label>
-        <select id="pipeline-select" wire:model.live="selectedPipelineId" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-            @foreach($pipelines as $pipeline)
+    <div class="mb-4 flex items-center gap-2">
+        <div>
+            <label for="pipeline-select" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Sélectionner un Pipeline:</label>
+            <select id="pipeline-select" wire:model.live="selectedPipelineId" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                @foreach($pipelines as $pipeline)
                 <option value="{{ $pipeline->id }}">{{ $pipeline->nom }}</option>
-            @endforeach
-        </select>
+                @endforeach
+            </select>
+        </div>
+        <div class="flex items-center justify-between gap-2">
+            <div>
+                <label for="debut" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Date début</label>
+                <input type="date" wire:model.live="dateDebut"  id="debut" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+            </div>
+            <div>
+                <label for="fin" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Date fin</label>
+                <input type="date" wire:model.live="dateFin" id="fin" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+            </div>
+        </div>
+
     </div>
 
     @if($currentPipeline)

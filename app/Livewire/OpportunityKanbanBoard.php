@@ -11,6 +11,8 @@ class OpportunityKanbanBoard extends Component
 {
     public ?int $selectedPipelineId = null;
     public Collection $pipelines;
+    public $dateDebut;
+    public $dateFin;
     protected $listeners = ['pipelineSelected'];
 
     public function mount(): void
@@ -24,12 +26,24 @@ class OpportunityKanbanBoard extends Component
         $this->selectedPipelineId = $pipelineId;
     }
 
+
+    
+
     public function getOpportunitiesProperty(): Collection
     {
         if ($this->selectedPipelineId) {
-            return Opportunity::where('pipeline_id', $this->selectedPipelineId)
-                ->whereNotNull('etape_pipeline_id')
-                ->with('contact')
+            $query = Opportunity::where('pipeline_id', $this->selectedPipelineId)
+                ->whereNotNull('etape_pipeline_id');
+
+            if ($this->dateDebut) {
+                $query->whereDate('created_at', '>=', $this->dateDebut);
+            }
+
+            if ($this->dateFin) {
+                $query->whereDate('created_at', '<=', $this->dateFin);
+            }
+
+            return $query->with('contact')
                 ->orderBy('sort_order')
                 ->get()
                 ->groupBy('etape_pipeline_id');

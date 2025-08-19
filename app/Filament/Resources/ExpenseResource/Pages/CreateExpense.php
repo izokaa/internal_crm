@@ -13,14 +13,16 @@ class CreateExpense extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
-        $expenseData = collect($data)->toArray();
-        $montantHt = $expenseData['montant_ht'];
-        $tva = $expenseData['tva'];
-        $expenseData['montant_ttc'] = $montantHt * (1 + ($tva / 100));
+        $expenseData = collect($data)->except('piecesJointes')->toArray();
 
         $expense = static::getModel()::create($expenseData);
 
-    
+        if (isset($data['piecesJointes'])) {
+            foreach ($data['piecesJointes'] as $pieceJointeData) {
+                $expense->piecesJointes()->create($pieceJointeData);
+            }
+        }
+
         return $expense;
     }
 
