@@ -14,6 +14,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Traits\HasActiveIcon;
 use App\Enums\ExpenseStatus;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Forms\Components\DatePicker;
 
 class ExpenseResource extends Resource
 {
@@ -153,7 +156,44 @@ class ExpenseResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('status')
+                    ->options(ExpenseStatus::class)
+                    ->multiple()
+                    ->label('Statut'),
+                SelectFilter::make('category_id')
+                    ->label('Catégorie')
+                    ->relationship('category', 'nom')
+                    ->searchable()
+                    ->preload()
+                    ->multiple(),
+                SelectFilter::make('supplier_id')
+                    ->label('Fournisseur')
+                    ->relationship('supplier', 'nom', fn (Builder $query) => $query->where('type', 'fournisseur'))
+                    ->searchable()
+                    ->multiple(),
+                SelectFilter::make('devise')
+                    ->options([
+                        'MAD' => 'MAD',
+                        'EUR' => 'EUR',
+                        'USD' => 'USD',
+                    ])
+                    ->multiple(),
+                Filter::make('date_expense')
+                    ->form([
+                        DatePicker::make('date_from')->label('Date de dépense (début)'),
+                        DatePicker::make('date_until')->label('Date de dépense (fin)'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['date_from'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('date_expense', '>=', $date),
+                            )
+                            ->when(
+                                $data['date_until'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('date_expense', '<=', $date),
+                            );
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
