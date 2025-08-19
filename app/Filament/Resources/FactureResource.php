@@ -29,6 +29,8 @@ class FactureResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\TextInput::make('numero_facture')
+                ->placeholder('Optionel, généré automatiquement'),
                 Forms\Components\DatePicker::make('date_facture'),
                 Forms\Components\DatePicker::make('echeance_payment')
                 ->label('Echeance paiement'),

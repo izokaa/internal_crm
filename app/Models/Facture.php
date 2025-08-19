@@ -35,7 +35,9 @@ class Facture extends Model
     {
         static::creating(function ($facture) {
             $lastId = self::max('id') + 1;
-            $facture->numero_facture = 'FACTURE-' . date('Y') . '-' . str_pad($lastId, 4, '0', STR_PAD_LEFT);
+            if (!$facture->numero_facture || empty($facture->numero_facture)) {
+                $facture->numero_facture = 'FACTURE-' . date('Y') . '-' . str_pad($lastId, 4, '0', STR_PAD_LEFT);
+            }
         });
     }
 
