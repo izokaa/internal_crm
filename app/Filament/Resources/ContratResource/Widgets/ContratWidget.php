@@ -6,6 +6,7 @@ use App\Models\Contrat;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Carbon\Carbon;
+use App\Enums\ContratStatus;
 
 class ContratWidget extends BaseWidget
 {
@@ -39,22 +40,24 @@ class ContratWidget extends BaseWidget
             Stat::make('Total des contrats', Contrat::whereBetween('created_at', [$startDate, $endDate])->count())
                 ->description('Total des contrats')
                 ->descriptionIcon('heroicon-o-document-text')
-                ->chart([7, 2, 10, 3, 15, 4, 17])
-                ->color('primary'),
+                ->color('info'),
 
             Stat::make('Total des contrats actifs', Contrat::whereBetween('created_at', [$startDate, $endDate])
-                ->where('date_fin', '>=', now()->toDateString())->count())
+                ->where('status', ContratStatus::ACTIVE->value)->count())
                 ->description('Total des contrats actifs')
                 ->descriptionIcon('heroicon-o-check-circle')
-                ->chart([7, 2, 10, 3, 15, 4, 17])
                 ->color('success'),
 
             Stat::make('Total des contrats expirés', Contrat::whereBetween('created_at', [$startDate, $endDate])
-                ->where('date_fin', '<', now()->toDateString())->count())
+                ->where('status', ContratStatus::EXPIRED->value)->count())
                 ->description('Total des contrats expirés')
                 ->descriptionIcon('heroicon-o-x-circle')
-                ->chart([7, 2, 10, 3, 15, 4, 17])
                 ->color('danger'),
+            Stat::make('Total des contrats renouvelé', Contrat::whereBetween('created_at', [$startDate, $endDate])
+                ->where('status', ContratStatus::RENEWED->value)->count())
+                ->description('Total des contrats renouvelés')
+                ->descriptionIcon('clarity-recycle-line')
+                ->color('success'),
         ];
     }
 }

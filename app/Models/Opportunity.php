@@ -34,7 +34,7 @@ class Opportunity extends Model
 
     protected $casts = [
         'date_echeance' => 'date',
-        'status' => OpportunityStatut::class
+        'status' => OpportunityStatut::class,
     ];
 
     public function contact()

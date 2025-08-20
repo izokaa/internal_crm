@@ -18,6 +18,7 @@ use Filament\Tables\Table;
 use Filament\Forms\Get;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class ContratResource extends Resource
 {
@@ -27,6 +28,8 @@ class ContratResource extends Resource
     protected static ?string $navigationIcon = 'clarity-contract-line';
     protected static ?string $navigationActiveIcon = 'clarity-contract-solid';
     protected static ?string $navigationGroup = 'CRM';
+
+
 
     public static function form(Form $form): Form
     {
@@ -288,11 +291,12 @@ class ContratResource extends Resource
                     Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
-                ])
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    ExportBulkAction::make()
                 ]),
             ]);
     }

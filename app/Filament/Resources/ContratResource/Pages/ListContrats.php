@@ -17,6 +17,9 @@ class ListContrats extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            \EightyNine\ExcelImport\ExcelImportAction::make()
+                ->slideOver()
+                ->color("primary"),
             Actions\CreateAction::make(),
         ];
     }

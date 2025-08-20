@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\OpporutnityResource\Widgets;
+namespace App\Filament\Resources\OpportunityResource\Widgets;
 
 use App\Enums\OpportunityStatut;
 use App\Models\Opportunity;

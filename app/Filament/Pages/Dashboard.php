@@ -5,7 +5,8 @@ namespace App\Filament\Pages;
 use App\Filament\Resources\ActivityResource\Widgets\DemoWidget;
 use App\Filament\Resources\ContactResource\Widgets\ContactWidget;
 use App\Filament\Resources\ContratResource\Widgets\ContratWidget;
-use App\Filament\Resources\OpporutnityResource\Widgets\OpportunityWidget;
+use App\Filament\Resources\DevisResource\Widgets\DevisWidget;
+use App\Filament\Resources\OpportunityResource\Widgets\OpportunityWidget;
 use App\Traits\HasActiveIcon;
 use Filament\Pages\Page;
 use Filament\Forms\Components\DatePicker;
@@ -82,14 +83,19 @@ class Dashboard extends Page implements HasForms
     protected function getWidgets(): array
     {
         return [
-            DemoWidget::class
+            DemoWidget::class,
+            DevisWidget::class,
+            ContratWidget::class
         ];
     }
 
-    protected function getHeaderWidgets(): array
+    protected function getFinanceWidgets(): array
     {
-        return [];
+        return [
+            OpportunityWidget::class
+        ];
     }
+
 
     // Method to get current date range for widgets
     public function getDateRange(): array
