@@ -17,14 +17,11 @@ use Carbon\Carbon;
 
 class CalendarWidget extends FullCalendarWidget
 {
-    protected static ?string $heading = 'Calendrier des activités';
-
     public Model | string | null $model = Activity::class;
 
     // Add listener to handle drag and drop event updates
     protected $listeners = [
         'eventDropped' => 'handleEventDropped',
-        // ...existing listeners...
     ];
 
     public function fetchEvents(array $fetchInfo): array
@@ -51,7 +48,7 @@ class CalendarWidget extends FullCalendarWidget
         return $activities->map(function (Activity $activity) {
 
             $statusLabel = $activity->statut->getLabel();
-            $title = $activity->label?->value .  ' [' . $activity->statut->getLabel() . ' ]';
+            $title = $activity->label?->value;
 
             return EventData::make()
                 ->id($activity->id)
@@ -59,11 +56,12 @@ class CalendarWidget extends FullCalendarWidget
                 ->start($activity->date_debut ?? $activity->due_date)
                 ->end(Carbon::parse($activity->date_fin)->addDays(1) ?? $activity->due_date)
                 ->allDay((bool) $activity->is_all_day)
-                ->backgroundColor("#333333")
-                ->borderColor("#FFFFFF")
                 ->extendedProps([
                     'type'       => $activity->type,
+                    'date_debut'     => $activity->statut,
                     'statut'     => $activity->statut,
+                    'statutLabel' => $activity->statut->getLabel(),
+                    'statutBadge' => $activity->statut->getBadge(),
                     'prioritaire' => $activity->prioritaire,
                     'contact'    => $activity->contact?->name,
                     'opportunity' => $activity->opportunity?->titre,
@@ -153,6 +151,45 @@ class CalendarWidget extends FullCalendarWidget
                 ->options(ActivityStatut::class),
         ];
     }
+
+    public function eventDidMount(): string
+    {
+        return <<<JS
+                function({ event, el }) {
+                    const status = (event.extendedProps?.statut ?? '').toLowerCase();
+                    const statusLabel = (event.extendedProps?.statutLabel ?? '');
+                    const statusBadge = (event.extendedProps?.statutBadge ?? '');
+
+                    console.log(el)
+                    // event time
+                    const eventTime = el.getElementsByClassName('fc-event-time')[0];
+                    // event title
+                    const eventTitle = el.getElementsByClassName('fc-event-title')[0];
+                    // don't display the event time
+                    const eventStatus = document.createElement('span');
+                    eventStatus.innerHTML = statusLabel;
+                    eventTime.style.display = 'none';
+
+
+                    eventStatus.style.backgroundColor = statusBadge;
+                    el.style.border = 'none';
+                    eventStatus.style.color = 'white';
+                    el.style.color = 'white';
+
+                    el.appendChild(eventStatus);
+                    el.style.display = 'flex' ;
+                    el.style.alignItems = 'center' ;
+                    el.style.gap = '1rem' ;
+
+                    eventStatus.style.padding = '5px';
+                    eventStatus.style.borderRadius = '.5rem';
+
+                    el.setAttribute("x-tooltip", "tooltip");
+                    el.setAttribute("x-data", "{ tooltip: '"+event.title+"' }");
+                }
+            JS;
+    }
+
 
     /**
      * Actions de la modal

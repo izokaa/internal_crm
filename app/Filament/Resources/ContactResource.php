@@ -238,7 +238,7 @@ class ContactResource extends Resource
                         'client' => 'Client',
                         'partner' => 'Partenaire',
                         'fournisseur' => 'Fournisseur',
-                    ])->default('client'),
+                    ])->default(''),
                 Tables\Filters\SelectFilter::make('ville')
                     ->relationship('ville', 'nom'),
                 Tables\Filters\SelectFilter::make('specialite')
