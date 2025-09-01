@@ -11,24 +11,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 class Activity extends Model
 {
     use HasFactory;
-    use LogsActivity;
 
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-                ->logOnly([
-                    'titre',
-                    'statut',
-                    'description',
-                    'date_debut',
-                    'date_fin',
-                    'due_date',
-                    'prioritaire',
-                    'is_all_day',
-                    'label_id',
-                    'contact_id'
-                ]);
-    }
 
     protected $fillable = [
         'titre',

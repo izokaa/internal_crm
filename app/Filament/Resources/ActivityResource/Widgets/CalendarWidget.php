@@ -11,6 +11,8 @@ use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
 use App\Enums\ActivityStatut;
 use Saade\FilamentFullCalendar\Actions;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class CalendarWidget extends FullCalendarWidget
 {
@@ -54,14 +56,16 @@ class CalendarWidget extends FullCalendarWidget
                 ->id($activity->id)
                 ->title($title)
                 ->start($activity->date_debut ?? $activity->due_date)
-                ->end($activity->date_fin ?? $activity->due_date)
+                ->end(Carbon::parse($activity->date_fin)->addDays(1) ?? $activity->due_date)
                 ->allDay((bool) $activity->is_all_day)
+                ->backgroundColor("#333333")
+                ->borderColor("#FFFFFF")
                 ->extendedProps([
                     'type'       => $activity->type,
                     'statut'     => $activity->statut,
                     'prioritaire' => $activity->prioritaire,
                     'contact'    => $activity->contact?->name,
-                    'opportunity' => $activity->opportunity?->name,
+                    'opportunity' => $activity->opportunity?->titre,
                 ]);
         })->toArray();
     }
@@ -89,6 +93,8 @@ class CalendarWidget extends FullCalendarWidget
 
             Forms\Components\Select::make('label_id')
                 ->label('Label')
+                ->relationship('label')
+                ->default(fn ($record) => $record->label->vlaue)
                 ->options(function (Forms\Get $get) {
                     $type = $get('type');
                     if ($type === 'task') {
@@ -103,6 +109,8 @@ class CalendarWidget extends FullCalendarWidget
                 ->searchable(),
 
             Forms\Components\Select::make('user_id')
+                ->relationship('user')
+                ->default(fn (Activity $record) => $record->user->nom . $record->user->prenom)
                 ->label('Responsable')
                 ->options(function () {
                     return User::all()->mapWithKeys(function (User $user) {
@@ -142,7 +150,7 @@ class CalendarWidget extends FullCalendarWidget
 
             Forms\Components\Select::make('statut')
                 ->label('Statut')
-                ->default('To Do')
+                ->default(fn ($record) => $record->statut ?? ActivityStatut::TODO->value)
                 ->options(ActivityStatut::class),
         ];
     }
@@ -156,10 +164,15 @@ class CalendarWidget extends FullCalendarWidget
             Actions\EditAction::make()
                 ->mountUsing(
                     function (Activity $record, Forms\Form $form, array $arguments) {
+                        Log::info($arguments);
                         $form->fill([
+                            'titre' => $record->titre,
+                            'statut' => $record->statut,
+                            'label' => $record->label->value,
+                            'description' => $record->description,
                             'type' => 'event',
-                            'date_debut' => $arguments['start'] ?? null,
-                            'date_fin' => $arguments['end'] ?? null,
+                            'date_debut' => $arguments['event']['start'] ?? $record->date_debut,
+                            'date_fin' => $arguments['event']['end'] ? Carbon::parse($arguments['event']['end'])->subDays(1) : $record->date_fin ,
                         ]);
                     }
                 )
@@ -179,8 +192,9 @@ class CalendarWidget extends FullCalendarWidget
                  function (Forms\Form $form, array $arguments) {
                      $form->fill([
                         'type' => 'event',
-                        'date_debut' => $arguments['start'] ?? null,
-                        'date_fin' => $arguments['end'] ?? null
+                            'date_debut' => $arguments['start'] ?? null,
+                            'date_fin' => $arguments['end'] ?? null,
+                            'statut' => ActivityStatut::TODO->value
                      ]);
                  }
              )
