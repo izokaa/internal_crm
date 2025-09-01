@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ActivityResource\Widgets;
 
 use App\Models\Activity;
+use App\Models\Label;
 use App\Models\User;
 use Filament\Forms;
 use Illuminate\Support\Facades\Event;
@@ -82,32 +83,30 @@ class CalendarWidget extends FullCalendarWidget
 
             Forms\Components\Select::make('type')
                 ->label('Type')
-                ->default('event')
                 ->options([
                     'event' => 'Événement',
                     'call'  => 'Appel',
                     'task'  => 'Tâche',
                 ])
                 ->required()
-                ->live(),
+                ->reactive(), // <-- important en v3
 
             Forms\Components\Select::make('label_id')
                 ->label('Label')
-                ->relationship('label')
-                ->default(fn ($record) => $record->label->vlaue)
+                ->default(fn ($record) => $record?->label?->value) // protège si null
                 ->options(function (Forms\Get $get) {
                     $type = $get('type');
                     if ($type === 'task') {
-                        return \App\Models\Label::taskLabels()->pluck('value', 'id');
+                        return Label::taskLabels()->pluck('value', 'id');
                     } elseif ($type === 'event') {
-                        return \App\Models\Label::eventLabels()->pluck('value', 'id');
+                        return Label::eventLabels()->pluck('value', 'id');
                     } elseif ($type === 'call') {
-                        return \App\Models\Label::callLabels()->pluck('value', 'id');
+                        return Label::callLabels()->pluck('value', 'id');
                     }
-                    return \App\Models\Label::all()->pluck('value', 'id');
+                    return [];
                 })
-                ->searchable(),
-
+                ->searchable()
+                ->reactive(), // <-- lui aussi doit réagir
             Forms\Components\Select::make('user_id')
                 ->relationship('user')
                 ->default(fn (Activity $record) => $record->user->nom . $record->user->prenom)
@@ -170,9 +169,11 @@ class CalendarWidget extends FullCalendarWidget
                             'statut' => $record->statut,
                             'label' => $record->label->value,
                             'description' => $record->description,
-                            'type' => 'event',
+                            'type' => $record->type,
+                            'due_date' => @$arguments['event']['start'] ?? $record->due_date,
+                            'label_id' => $record->label_id,
                             'date_debut' => $arguments['event']['start'] ?? $record->date_debut,
-                            'date_fin' => $arguments['event']['end'] ? Carbon::parse($arguments['event']['end'])->subDays(1) : $record->date_fin ,
+                            'date_fin' => @$arguments['event']['end'] ? Carbon::parse($arguments['event']['end'])->subDays(1) : $record->date_fin ,
                         ]);
                     }
                 )
@@ -191,9 +192,9 @@ class CalendarWidget extends FullCalendarWidget
              ->mountUsing(
                  function (Forms\Form $form, array $arguments) {
                      $form->fill([
-                        'type' => 'event',
                             'date_debut' => $arguments['start'] ?? null,
                             'date_fin' => $arguments['end'] ?? null,
+                            'due_date' => $arguments['start'] ?? null,
                             'statut' => ActivityStatut::TODO->value
                      ]);
                  }
