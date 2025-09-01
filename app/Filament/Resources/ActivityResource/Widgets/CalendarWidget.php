@@ -24,6 +24,39 @@ class CalendarWidget extends FullCalendarWidget
         'eventDropped' => 'handleEventDropped',
     ];
 
+    public function eventDidMount(): string
+    {
+        return <<<JS
+                function({ event, el }) {
+                    const status = (event.extendedProps?.statut ?? '').toLowerCase();
+                    const statusLabel = event.extendedProps?.statutLabel ?? '';
+                    const statusBadge = event.extendedProps?.statutBadge ?? '';
+
+                    // event time
+                    const eventTime = el.getElementsByClassName('fc-event-time')[0];
+                    eventTime.style.display = 'none';
+                    // event title
+                    const eventTitle = el.getElementsByClassName('fc-event-title')[0];
+                    // don't display the event time
+                    const eventStatus = document.createElement('span');
+                    eventStatus.innerHTML = statusLabel;
+                    eventStatus.style.color = 'white';
+                    eventStatus.style.backgroundColor = statusBadge;
+                    eventStatus.style.padding = '5px';
+                    eventStatus.style.borderRadius = '.5rem';
+                    el.appendChild(eventStatus);
+
+                    el.style.border = 'none';
+                    el.style.color = 'white';
+
+                    el.style.display = 'flex' ;
+                    el.style.alignItems = 'center' ;
+                    el.style.gap = '1rem' ;
+
+                }
+            JS;
+    }
+
     public function fetchEvents(array $fetchInfo): array
     {
         $activities = Activity::query()
@@ -59,7 +92,7 @@ class CalendarWidget extends FullCalendarWidget
                 ->extendedProps([
                     'type'       => $activity->type,
                     'date_debut'     => $activity->statut,
-                    'statut'     => $activity->statut,
+                    'statut'     => $activity->statut->value,
                     'statutLabel' => $activity->statut->getLabel(),
                     'statutBadge' => $activity->statut->getBadge(),
                     'prioritaire' => $activity->prioritaire,
@@ -92,6 +125,7 @@ class CalendarWidget extends FullCalendarWidget
             Forms\Components\Select::make('label_id')
                 ->label('Label')
                 ->default(fn ($record) => $record?->label?->value) // protège si null
+                ->required()
                 ->options(function (Forms\Get $get) {
                     $type = $get('type');
                     if ($type === 'task') {
@@ -108,6 +142,7 @@ class CalendarWidget extends FullCalendarWidget
             Forms\Components\Select::make('user_id')
                 ->relationship('user')
                 ->default(fn (Activity $record) => $record->user->nom . $record->user->prenom)
+                ->required()
                 ->label('Responsable')
                 ->options(function () {
                     return User::all()->mapWithKeys(function (User $user) {
@@ -152,43 +187,6 @@ class CalendarWidget extends FullCalendarWidget
         ];
     }
 
-    public function eventDidMount(): string
-    {
-        return <<<JS
-                function({ event, el }) {
-                    const status = (event.extendedProps?.statut ?? '').toLowerCase();
-                    const statusLabel = (event.extendedProps?.statutLabel ?? '');
-                    const statusBadge = (event.extendedProps?.statutBadge ?? '');
-
-                    console.log(el)
-                    // event time
-                    const eventTime = el.getElementsByClassName('fc-event-time')[0];
-                    // event title
-                    const eventTitle = el.getElementsByClassName('fc-event-title')[0];
-                    // don't display the event time
-                    const eventStatus = document.createElement('span');
-                    eventStatus.innerHTML = statusLabel;
-                    eventTime.style.display = 'none';
-
-
-                    eventStatus.style.backgroundColor = statusBadge;
-                    el.style.border = 'none';
-                    eventStatus.style.color = 'white';
-                    el.style.color = 'white';
-
-                    el.appendChild(eventStatus);
-                    el.style.display = 'flex' ;
-                    el.style.alignItems = 'center' ;
-                    el.style.gap = '1rem' ;
-
-                    eventStatus.style.padding = '5px';
-                    eventStatus.style.borderRadius = '.5rem';
-
-                    el.setAttribute("x-tooltip", "tooltip");
-                    el.setAttribute("x-data", "{ tooltip: '"+event.title+"' }");
-                }
-            JS;
-    }
 
 
     /**
@@ -262,6 +260,7 @@ class CalendarWidget extends FullCalendarWidget
                 }),
         ];
     }
+
 
     public function handleEventDropped(array $data): void
     {
