@@ -48,12 +48,9 @@ class OpportunityResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('titre')
-                    ->required()
                     ->maxLength(255),
-                Forms\Components\Textarea::make('description')
-                    ->required()
-                    ->columnSpanFull(),
                 Forms\Components\MarkdownEditor::make('note')
+                    ->default('')
                     ->columnSpanFull(),
                 Forms\Components\Grid::make(2)
                     ->schema([
@@ -108,7 +105,7 @@ class OpportunityResource extends Resource
                     ->live()
                     ->afterStateUpdated(fn (Set $set) => $set('etape_pipeline_id', null))
                     ->nullable(),
-                Forms\Components\Select::make('etape_pipeline_id') ->label('Étape du Pipeline')
+                Forms\Components\Select::make('etape_pipeline_id')->label('Étape du Pipeline')
                     ->required()
                     ->options(fn (Get $get): array => Pipeline::find($get('pipeline_id'))?->etapePipelines->pluck('nom', 'id')->toArray() ?? []),
 
@@ -141,8 +138,9 @@ class OpportunityResource extends Resource
                         TextEntry::make('titre'),
                         TextEntry::make('identifiant')
                             ->getStateUsing(fn (Opportunity $record): string => "{$record->prefix}-{$record->id}"),
-                        TextEntry::make('description'),
-                        TextEntry::make('note')->markdown(),
+                        TextEntry::make('note')
+                            ->markdown()
+                            ->formatStateUsing(fn ($state) => $state ?? ''),
                         TextEntry::make('date_echeance')
                             ->date(),
                         TextEntry::make('probabilite')
@@ -267,15 +265,15 @@ class OpportunityResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false),
             ])
             ->filters([
-            Tables\Filters\SelectFilter::make('contact')
+                Tables\Filters\SelectFilter::make('contact')
                     ->relationship('contact', 'nom'),
-            Tables\Filters\SelectFilter::make('source')
+                Tables\Filters\SelectFilter::make('source')
                     ->relationship('source', 'nom'),
-            Tables\Filters\SelectFilter::make('pipeline')
+                Tables\Filters\SelectFilter::make('pipeline')
                     ->relationship('pipeline', 'nom'),
-            Tables\Filters\SelectFilter::make('etapePipeline')
+                Tables\Filters\SelectFilter::make('etapePipeline')
                     ->relationship('etapePipeline', 'nom'),
-            Tables\Filters\SelectFilter::make('contact_type')
+                Tables\Filters\SelectFilter::make('contact_type')
                     ->relationship('contact', 'type')
                     ->label('Type de Contact')
                     ->options([
@@ -283,7 +281,7 @@ class OpportunityResource extends Resource
                         'client' => 'Client',
                     ]),
 
-            Tables\Filters\SelectFilter::make('status')
+                Tables\Filters\SelectFilter::make('status')
                     ->label('Statut')
                     ->options(collect(OpportunityStatut::cases())->mapWithKeys(
                         fn (OpportunityStatut $status) => [$status?->value => $status->getLabel()]
@@ -294,19 +292,19 @@ class OpportunityResource extends Resource
                         }
                         return $query;
                     }),
-        ], layout: FiltersLayout::AboveContentCollapsible)
+            ], layout: FiltersLayout::AboveContentCollapsible)
             ->actions([
-            ActionGroup::make([
+                ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
+                ])
             ])
-        ])
             ->bulkActions([
-            Tables\Actions\BulkActionGroup::make([
+                Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-            ]),
-        ]);
+                ]),
+            ]);
     }
 
     public static function getRelations(): array

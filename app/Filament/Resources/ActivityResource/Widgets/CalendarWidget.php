@@ -105,12 +105,6 @@ class CalendarWidget extends FullCalendarWidget
     public function getFormSchema(): array
     {
         return [
-            Forms\Components\TextInput::make('titre')
-                ->label('Titre')
-                ->maxLength(255),
-
-            Forms\Components\Textarea::make('description')
-                ->label('Description'),
 
             Forms\Components\Select::make('type')
                 ->label('Type')
@@ -147,8 +141,8 @@ class CalendarWidget extends FullCalendarWidget
                 ->options(function () {
                     return User::all()->mapWithKeys(function (User $user) {
                         $name = $user->id == auth()->id()
-                        ? $user->name . ' (moi)'
-                        : $user->name;
+                            ? $user->name . ' (moi)'
+                            : $user->name;
                         return [$user->id => $name];
                     });
                 })
@@ -208,11 +202,10 @@ class CalendarWidget extends FullCalendarWidget
                             'due_date' => @$arguments['event']['start'] ?? $record->due_date,
                             'label_id' => $record->label_id,
                             'date_debut' => $arguments['event']['start'] ?? $record->date_debut,
-                            'date_fin' => @$arguments['event']['end'] ? Carbon::parse($arguments['event']['end'])->subDays(1) : $record->date_fin ,
+                            'date_fin' => @$arguments['event']['end'] ? Carbon::parse($arguments['event']['end'])->subDays(1) : $record->date_fin,
                         ]);
                     }
-                )
-            ,
+                ),
             Actions\DeleteAction::make(),
         ];
     }
@@ -224,16 +217,16 @@ class CalendarWidget extends FullCalendarWidget
     {
         return [
             Actions\CreateAction::make()
-             ->mountUsing(
-                 function (Forms\Form $form, array $arguments) {
-                     $form->fill([
+                ->mountUsing(
+                    function (Forms\Form $form, array $arguments) {
+                        $form->fill([
                             'date_debut' => $arguments['start'] ?? null,
                             'date_fin' => $arguments['end'] ?? null,
                             'due_date' => $arguments['start'] ?? null,
                             'statut' => ActivityStatut::TODO->value
-                     ]);
-                 }
-             )
+                        ]);
+                    }
+                )
         ];
     }
 

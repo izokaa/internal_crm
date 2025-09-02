@@ -16,7 +16,6 @@ class Opportunity extends Model
 
     protected $fillable = [
         'titre',
-        'description',
         'note',
         'montant_estime',
         'montant_reel',
@@ -71,5 +70,4 @@ class Opportunity extends Model
     {
         return $this->hasMany(PieceJointe::class);
     }
-
 }

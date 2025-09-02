@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class () extends Migration {
+return new class() extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -12,14 +13,13 @@ return new class () extends Migration {
     {
         Schema::create('opportunities', function (Blueprint $table) {
             $table->id();
-            $table->string('titre');
-            $table->text('description');
-            $table->text('note');
+            $table->string('titre')->nullable();
+            $table->text('note')->nullable();
             $table->decimal('montant_estime');
             $table->enum('devise', ['MAD', 'EUR', 'USD'])->default('EUR');
             $table->date('date_echeance');
             $table->integer('probabilite');
-            $table->enum('status', ['Lost','Negotiation','Proposal','Qualification','Open', 'Won'])->default('Open');
+            $table->enum('status', ['Lost', 'Negotiation', 'Proposal', 'Qualification', 'Open', 'Won'])->default('Open');
             $table->string('prefix')->nullable(); // Réajouté
             $table->foreignId('contact_id')->constrained()->cascadeOnDelete();
             $table->foreignId('source_id')->constrained()->cascadeOnDelete();

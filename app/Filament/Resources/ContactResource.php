@@ -19,6 +19,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Tables\Actions\ActionGroup;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use Filament\Tables\Enums\FiltersLayout;
 
 class ContactResource extends Resource
 {
@@ -174,80 +175,153 @@ class ContactResource extends Resource
                     ->circular()
                     ->defaultImageUrl('https://ui-avatars.com/api/?name=Contact&background=random&color=fff'),
 
+                Tables\Columns\TextColumn::make('title')
+                    ->label('Titre')
+                    ->default(fn ($record) => $record->title ?? 'N/A')
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('nom')
                     ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('prenom')
                     ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('telephone')
                     ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('type')
-                    ->searchable()
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'prospect' => 'info',
                         'client' => 'success',
+                        'partner' => 'warning',
+                        'fournisseur' => 'danger',
                         default => 'gray',
                     })
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(),
+
+                Tables\Columns\TextColumn::make('company_type')
+                    ->label('Type Société')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'individual' => 'success', // vert
+                        'corporate'    => 'info',    // bleu
+                        default      => 'secondary', // gris par défaut
+                    })
+                    ->sortable()
+                    ->toggleable(),
+
+
+                Tables\Columns\TextColumn::make('company_name')
+                    ->label('Nom Société')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+
+                Tables\Columns\TextColumn::make('website')
+                    ->label('Site Web')
+                    ->url(fn ($record) => $record->website, true)
+                    ->openUrlInNewTab()
+                    ->sortable()
+                    ->toggleable(),
+
+                Tables\Columns\TextColumn::make('adresse')
+                    ->label('Adresse')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+
                 Tables\Columns\TextColumn::make('ville.nom')
                     ->label('Ville')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('ville.pays.nom')
                     ->label('Pays')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('specialite.nom')
                     ->label('Spécialité')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('businessUnit.nom')
                     ->label('Unité Commerciale')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('service.nom')
                     ->label('Service')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(),
+
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Date de création')
+                    ->label('Créé le')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->label('Date de modification')
+                    ->label('Modifié le')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                Tables\Filters\SelectFilter::make('title')
+                    ->options([
+                        'Mr' => 'Mr',
+                        'Mrs' => 'Mrs',
+                        'Ms' => 'Ms',
+                        'Dr' => 'Dr',
+                        'Prof' => 'Prof',
+                    ]),
                 Tables\Filters\SelectFilter::make('type')
                     ->options([
                         'prospect' => 'Prospect',
                         'client' => 'Client',
                         'partner' => 'Partenaire',
                         'fournisseur' => 'Fournisseur',
-                    ])->default(''),
+                    ]),
+
+                Tables\Filters\SelectFilter::make('company_type')
+                    ->options([
+                        'individual' => 'Individuel',
+                        'corporate' => 'Société',
+                    ])
+                    ->label('Type Société'),
+
+                Tables\Filters\Filter::make('company_name')
+                    ->form([
+                        Forms\Components\TextInput::make('company_name')
+                            ->label('Nom Société'),
+                    ])
+                    ->query(fn ($query, array $data) => $query->when($data['company_name'], fn ($q, $value) => $q->where('company_name', 'like', "%{$value}%"))),
+
+                Tables\Filters\Filter::make('website')
+                    ->form([
+                        Forms\Components\TextInput::make('website')
+                            ->label('Site Web'),
+                    ])
+                    ->query(fn ($query, array $data) => $query->when($data['website'], fn ($q, $value) => $q->where('website', 'like', "%{$value}%"))),
+
                 Tables\Filters\SelectFilter::make('ville')
                     ->relationship('ville', 'nom'),
+
                 Tables\Filters\SelectFilter::make('specialite')
                     ->relationship('specialite', 'nom'),
+
                 Tables\Filters\SelectFilter::make('businessUnit')
                     ->relationship('businessUnit', 'nom'),
+
                 Tables\Filters\SelectFilter::make('service')
                     ->relationship('service', 'nom'),
-            ])
+            ], layout: FiltersLayout::AboveContentCollapsible)
+
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\ViewAction::make(),

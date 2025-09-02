@@ -10,12 +10,24 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class Activity extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'statut',
+                'date_debut',
+                'date_fin',
+                'due_date',
+                'prioritaire',
+                'is_all_day',
+                'label_id',
+                'contact_id'
+            ]);
+    }
 
     protected $fillable = [
-        'titre',
-        'description',
         'type',
         'statut', // WARNING: event, task or call 'type',
         'date_debut',
@@ -57,5 +69,4 @@ class Activity extends Model
     {
         return $this->belongsTo(Contact::class);
     }
-
 }

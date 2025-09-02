@@ -124,11 +124,17 @@ class ContratResource extends Resource
                             }),
                         Forms\Components\Select::make('client_id')
                             ->relationship('client')
-                            ->getOptionLabelFromRecordUsing(fn ($record) => $record->nom . ' ' . $record->prenom . ' - ' . $record->businessUnit->nom . ' - ' . $record->service->nom)
+                            ->getOptionLabelFromRecordUsing(
+                                fn ($record) =>
+                                $record->nom . ' ' . $record->prenom
+                                    . ' - ' . ($record->businessUnit?->nom ?? 'Sans unité')
+                                    . ' - ' . ($record->service?->nom ?? 'Sans service')
+                            )
                             ->required()
                             ->searchable()
                             ->preload()
                             ->label('Client'),
+
                         Forms\Components\Select::make('status')
                             ->label('Statut du Contrat')
                             ->default(ContratStatus::ACTIVE->value)

@@ -124,9 +124,6 @@ class ViewOpportunityDetails extends ViewRecord
                 ->form([
                     Grid::make(2)
                         ->schema([
-                            TextInput::make('title')
-                                ->label('Titre')
-                                ->required(),
                             Select::make('label_id')
                                 ->label('Label')
                                 ->options(Label::taskLabels()->pluck('value', 'id'))
@@ -141,28 +138,28 @@ class ViewOpportunityDetails extends ViewRecord
                         ->options(function () {
                             return User::all()->mapWithKeys(function (User $user) {
                                 $name = $user->id == auth()->id()
-                                ? $user->name . ' (moi)'
-                                : $user->name;
+                                    ? $user->name . ' (moi)'
+                                    : $user->name;
                                 return [$user->id => $name];
                             });
                         })
                         ->searchable()
                         ->preload()
                         ->default(auth()->id()),
-                        DatePicker::make('due_date')
+                    DatePicker::make('due_date')
                         ->label('Date d\'échéance'),
-                    MarkdownEditor::make('description')
-                        ->label('Description'),
+                    Select::make('statut')
+                        ->label('Statut')
+                        ->default(fn ($record) => $record->statut ?? ActivityStatut::TODO->value)
+                        ->options(ActivityStatut::class),
                 ])
                 ->action(function (array $data) {
                     Activity::create([
                         'opportunity_id' => $this->record->id,
                         'type' => 'task',
                         'statut' => ActivityStatut::TODO,
-                        'titre' => $data['title'],
                         'prioritaire' => $data['prioritaire'],
                         'user_id' => $data['user_id'], // ← Utilisez la valeur du formulaire
-                        'description' => $data['description'],
                         'due_date' => $data['due_date'],
                         'label_id' => $data['label_id']
                     ]);
@@ -177,9 +174,6 @@ class ViewOpportunityDetails extends ViewRecord
             HeaderAction::make('createEvent')
                 ->label('Programmer un évènement')
                 ->form([
-                    TextInput::make('title')
-                        ->label('Titre')
-                        ->required(),
                     Grid::make(2)
                         ->schema([
                             Select::make('user_id')
@@ -187,8 +181,8 @@ class ViewOpportunityDetails extends ViewRecord
                                 ->options(function () {
                                     return User::all()->mapWithKeys(function (User $user) {
                                         $name = $user->id == auth()->id()
-                                        ? $user->name . ' (moi)'
-                                        : $user->name;
+                                            ? $user->name . ' (moi)'
+                                            : $user->name;
                                         return [$user->id => $name];
                                     });
                                 })
@@ -216,8 +210,10 @@ class ViewOpportunityDetails extends ViewRecord
                                 ->withoutTime(fn ($get) => $get('is_all_day'))
                                 ->required(),
                         ]),
-                    MarkdownEditor::make('description')
-                        ->label('Description'),
+                    Select::make('statut')
+                        ->label('Statut')
+                        ->default(fn ($record) => $record->statut ?? ActivityStatut::TODO->value)
+                        ->options(ActivityStatut::class),
                 ])
                 ->action(function (array $data) {
                     $activityData = [
@@ -225,8 +221,6 @@ class ViewOpportunityDetails extends ViewRecord
                         'type' => 'event',
                         // NOTE: Propriataire
                         'user_id' => $data['user_id'],
-                        'titre' => $data['title'],
-                        'description' => $data['description'],
                         'label_id' => $data['label_id'],
                         'is_all_day' => $data['is_all_day'],
                     ];
@@ -262,8 +256,8 @@ class ViewOpportunityDetails extends ViewRecord
                                 ->options(function () {
                                     return User::all()->mapWithKeys(function (User $user) {
                                         $name = $user->id == auth()->id()
-                                        ? $user->name . ' (moi)'
-                                        : $user->name;
+                                            ? $user->name . ' (moi)'
+                                            : $user->name;
                                         return [$user->id => $name];
                                     });
                                 })
@@ -279,19 +273,18 @@ class ViewOpportunityDetails extends ViewRecord
                     DatePicker::make('due_date')
                         ->required()
                         ->label('Date'),
-                    MarkdownEditor::make('description')
-                        ->label('Note'),
+                    Select::make('statut')
+                        ->label('Statut')
+                        ->options(ActivityStatut::class),
                 ])
                 ->action((function (array $data) {
                     Activity::create([
                         'opportunity_id' => $this->record->id,
-                        'titre' => 'empty cause it\'s event',
                         'type' => 'call',
                         'statut' => ActivityStatut::TODO,
                         'prioritaire' => $data['prioritaire'],
                         // HACK: responsable
                         'user_id' => $data['user_id'],
-                        'description' => $data['description'],
                         'due_date' => $data['due_date'],
                         'label_id' => $data['label_id']
                     ]);

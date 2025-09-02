@@ -18,6 +18,7 @@ use Livewire\Attributes\On; // Import the On attribute
 use App\Models\Label;
 use App\Models\Contact;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class OpportunityActivityTimeline extends Component implements HasForms, HasInfolists
 {
@@ -47,18 +48,19 @@ class OpportunityActivityTimeline extends Component implements HasForms, HasInfo
     {
         $activities = Activity::where(function ($query) {
             $query->where('subject_type', Opportunity::class)
-                  ->where('subject_id', $this->opportunity->id);
+                ->where('subject_id', $this->opportunity->id);
         })->orWhere(function ($query) {
             $query->where('subject_type', \App\Models\Activity::class)
-                  ->whereIn('subject_id', $this->opportunity->activities->pluck('id'));
+                ->whereIn('subject_id', $this->opportunity->activities->pluck('id'));
         })
-        ->with('causer')
-        ->latest()
-        ->get();
+            ->with('causer')
+            ->latest()
+            ->get();
 
 
         return $activities->map(function ($activityLog) {
             $activity = AppActivity::with(['label'])->find($activityLog->subject_id);
+            Log::info($activity);
             $activityAction = collect([
                 'activity' => $activity,
                 'causer' => User::find($activityLog->causer_id),
