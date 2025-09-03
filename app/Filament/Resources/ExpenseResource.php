@@ -19,6 +19,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Forms\Components\DatePicker;
 use App\Enums\ModePayment;
 use Filament\Tables\Enums\FiltersLayout;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class ExpenseResource extends Resource
 {
@@ -93,8 +94,7 @@ class ExpenseResource extends Resource
                     ->placeholder('Description de la dépense')
                     ->label('Description')
                     ->columnSpanFull()
-                    ->nullable()
-                ,
+                    ->nullable(),
                 Forms\Components\Section::make('Pièces Jointes')
                     ->schema([
                         Forms\Components\Repeater::make('piecesJointes')
@@ -123,9 +123,17 @@ class ExpenseResource extends Resource
                     ->getStateUsing(fn ($record) => $record->supplier ? $record->supplier->nom . ' ' . $record->supplier->prenom : 'N/A')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('supplier.email')
+                    ->label('Email du fournisseur')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('client_id')
-                    ->label('Client/Prospect')
+                    ->label('Client')
                     ->getStateUsing(fn ($record) => $record->client ? $record->client->nom . ' ' . $record->client->prenom : 'N/A')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('client.email')
+                    ->label('Email du client')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('montant_ht')
@@ -224,6 +232,7 @@ class ExpenseResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    ExportBulkAction::make()
                 ]),
             ]);
     }

@@ -232,8 +232,12 @@ class ContratResource extends Resource
                 Tables\Columns\TextColumn::make('client.nom')
                     ->label('Client')
                     ->searchable()
-                    ->sortable()
-                    ->getStateUsing(fn (\App\Models\Contrat $record): string => "{$record->client->nom} {$record->client->prenom}"),
+                    ->getStateUsing(fn ($record) => $record->client->nom . ' ' . $record->client->prenom)
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('client.email')
+                    ->label('Email du Client')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('client.businessUnit.nom')
                     ->label('Business Unit')
                     ->searchable()

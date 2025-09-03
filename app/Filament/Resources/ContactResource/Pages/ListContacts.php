@@ -23,7 +23,7 @@ class ListContacts extends ListRecords
         return [
             \EightyNine\ExcelImport\ExcelImportAction::make()
                 ->slideOver()
-                ->color("primary")
+                ->label('Importer')
                 ->processCollectionUsing(function (string $modelClass, Collection $rows) {
                     foreach ($rows as $row) {
                         // Normaliser les clés (minuscules + trim sans accents)
@@ -31,7 +31,6 @@ class ListContacts extends ListRecords
                             $normalizedKey = strtolower(trim($key));
                             return [$normalizedKey => $value];
                         });
-                        Log::info($data);
 
                         // Récupération des champs Excel
                         $title        = $data->get('titre');

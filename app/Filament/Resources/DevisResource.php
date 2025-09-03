@@ -15,6 +15,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Tables\Actions\ActionGroup;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class DevisResource extends Resource
 {
@@ -114,18 +115,31 @@ class DevisResource extends Resource
                 Tables\Columns\TextColumn::make('contact.nom')
                     ->label('Contact')
                     ->searchable()
-                    ->sortable()
-                    ->getStateUsing(fn (\App\Models\Devis $record): string => "{$record->contact->nom} {$record->contact->prenom}"),
+                    ->getStateUsing(fn ($record) => $record->contact->nom . " " . $record->contact->prenom)
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('contact.email')
+                    ->label('Email du Contact')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('total_ht')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('tva')
+                    ->numeric()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('total_ttc')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('remise')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('devise')
                     ->label('Devise')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('date_devis')
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('date_emission')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
@@ -165,6 +179,7 @@ class DevisResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    ExportBulkAction::make()
                 ]),
             ]);
     }

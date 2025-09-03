@@ -13,8 +13,8 @@ class Expense extends Model
         'montant_ht',
         'montant_ttc',
         'tva',
-        'contact_id',
-        'opportunity_id',
+        'client_id',
+        'supplier_id',
         'devise',
         'date_expense',
         'description',
@@ -57,6 +57,4 @@ class Expense extends Model
     {
         return $this->hasMany(PieceJointe::class, 'expense_id');
     }
-
-
 }

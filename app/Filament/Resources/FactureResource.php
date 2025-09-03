@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use App\Traits\HasActiveIcon;
 use App\Enums\FactureStatus;
 use Filament\Tables\Actions\ActionGroup;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class FactureResource extends Resource
 {
@@ -30,10 +31,10 @@ class FactureResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('numero_facture')
-                ->placeholder('Optionel, généré automatiquement'),
+                    ->placeholder('Optionel, généré automatiquement'),
                 Forms\Components\DatePicker::make('date_facture'),
                 Forms\Components\DatePicker::make('echeance_payment')
-                ->label('Echeance paiement'),
+                    ->label('Echeance paiement'),
                 Forms\Components\TextInput::make('montant_ht')
                     ->required()
                     ->numeric(),
@@ -52,13 +53,13 @@ class FactureResource extends Resource
                 Forms\Components\Select::make('status')
                     ->options(FactureStatus::class)
                     ->required(),
-                    Forms\Components\Select::make('contrat_id')
+                Forms\Components\Select::make('contrat_id')
                     ->relationship('contrat', 'numero_contrat')
                     ->required()
                     ->preload()
                     ->label('Numéro de Contrat')
                     ->searchable(),
-                    Forms\Components\Section::make('Pièces Jointes')
+                Forms\Components\Section::make('Pièces Jointes')
                     ->schema([
                         Forms\Components\Repeater::make('piecesJointes')
                             ->relationship()
@@ -104,9 +105,9 @@ class FactureResource extends Resource
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
-                ->badge()
-                ->color(fn (Facture $record): string => $record->status->getFilamentBadge())
-                ->searchable(),
+                    ->badge()
+                    ->color(fn (Facture $record): string => $record->status->getFilamentBadge())
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('contrat_id')
                     ->getStateUsing(fn ($record) => $record->contrat->numero_contrat)
                     ->numeric()
@@ -135,6 +136,8 @@ class FactureResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    ExportBulkAction::make()
+
                 ]),
             ]);
     }

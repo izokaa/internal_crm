@@ -32,6 +32,8 @@ class ViewContrat extends ViewRecord
             ->schema([
                 Section::make('Informations Générales')
                     ->schema([
+                        TextEntry::make('numero_contrat')
+                            ->label('Numéro contrat'),
                         TextEntry::make('date_contrat')
                             ->date()
                             ->label('Date de contrat'),
@@ -71,7 +73,7 @@ class ViewContrat extends ViewRecord
                 Section::make('Informations financières')
                     ->schema([
                         TextEntry::make('montant_ht')
-                            ->formatStateUsing(fn ($record): string => match($record->devise) {
+                            ->formatStateUsing(fn ($record): string => match ($record->devise) {
                                 'EUR' => $record->montant_ht . ' €',
                                 'USD' => $record->montant_ht . '$',
                                 'MAD' => $record->montant_ht . ' MAD',
@@ -79,7 +81,7 @@ class ViewContrat extends ViewRecord
                             })
                             ->label('Montant hors taxe'),
                         TextEntry::make('montant_ttc')
-                            ->formatStateUsing(fn ($record): string => match($record->devise) {
+                            ->formatStateUsing(fn ($record): string => match ($record->devise) {
                                 'EUR' => $record->montant_ttc . ' €',
                                 'USD' => $record->montant_ttc . '$',
                                 'MAD' => $record->montant_ttc . ' MAD',

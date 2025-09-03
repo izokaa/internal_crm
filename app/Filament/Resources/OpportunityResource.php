@@ -23,6 +23,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Infolist;
 use PhpOption\Option;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class OpportunityResource extends Resource
 {
@@ -204,11 +205,13 @@ class OpportunityResource extends Resource
                 Tables\Columns\TextColumn::make('montant_estime')
                     ->numeric()
                     ->sortable()
-                    ->formatStateUsing(fn (string $state, Opportunity $record): string => $state != null ? "{$state} {$record->devise}" : "Non précisé"),
+                    ->formatStateUsing(fn (string $state, Opportunity $record): string => $state != null ? $state : "Non précisé"),
                 Tables\Columns\TextColumn::make('montant_reel')
                     ->numeric()
                     ->sortable()
                     ->formatStateUsing(fn (string $state, Opportunity $record): string => $state != null && $state !== '' ? "{$state} {$record->devise}" : "Non précisé"),
+                Tables\Columns\TextColumn::make('devise')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('date_echeance')
                     ->date()
                     ->sortable(),
@@ -228,6 +231,9 @@ class OpportunityResource extends Resource
                     ->searchable(['contact.nom', 'contact.prenom', 'contact.type'])
                     ->sortable(['contact.nom'])
                     ->toggleable(isToggledHiddenByDefault: false),
+                Tables\Columns\TextColumn::make('contact.email')
+                    ->label('Email Contact')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('contact.type')
                     ->label('Type de Contact')
                     ->searchable()
@@ -303,6 +309,7 @@ class OpportunityResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    ExportBulkAction::make()
                 ]),
             ]);
     }

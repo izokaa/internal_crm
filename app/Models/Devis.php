@@ -11,7 +11,7 @@ class Devis extends Model
     protected $fillable = [
         'totlal_ht',
         'total_ttc',
-        'total_tva',
+        'tva',
         'devis',
         'date_devis',
         'contact_id',
@@ -55,6 +55,4 @@ class Devis extends Model
     {
         return $this->belongsTo(Contact::class);
     }
-
-
 }

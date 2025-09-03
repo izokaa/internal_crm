@@ -40,14 +40,12 @@ class CalendarWidget extends FullCalendarWidget
                     // don't display the event time
                     const eventStatus = document.createElement('span');
                     eventStatus.innerHTML = statusLabel;
-                    eventStatus.style.color = 'white';
                     eventStatus.style.backgroundColor = statusBadge;
                     eventStatus.style.padding = '5px';
                     eventStatus.style.borderRadius = '.5rem';
                     el.appendChild(eventStatus);
 
                     el.style.border = 'none';
-                    el.style.color = 'white';
 
                     el.style.display = 'flex' ;
                     el.style.alignItems = 'center' ;
