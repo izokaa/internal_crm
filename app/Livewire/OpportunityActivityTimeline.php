@@ -38,6 +38,7 @@ class OpportunityActivityTimeline extends Component implements HasForms, HasInfo
     #[On('activityCreated')] // Listen for the 'activityCreated' event
     public function refreshActivities(): void
     {
+        Log::info("what this function does ?");
         // This method will be called when the 'activityCreated' event is dispatched.
         // Livewire automatically re-renders the component when a public property changes
         // or a method is called that affects the view.

@@ -20,19 +20,6 @@ class ListExpenses extends ListRecords
     protected static string $resource = ExpenseResource::class;
 
 
-    public static function getWidgets(): array
-    {
-        return [
-            ExpenseWidget::class
-        ];
-    }
-
-    protected function getHeaderWidgets(): array
-    {
-        return [
-            ExpenseWidget::class
-        ];
-    }
 
 
     protected function getHeaderActions(): array

@@ -5,7 +5,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use App\Enums\FactureStatus;
 
-return new class () extends Migration {
+return new class() extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -21,7 +22,7 @@ return new class () extends Migration {
             $table->decimal('montant_ttc');
             $table->decimal('tva')->default(20);
             $table->enum('status', array_column(FactureStatus::cases(), 'value'))->defaul(FactureStatus::PENDING);
-            $table->foreignId('contrat_id')->constrained('contrats');
+            $table->foreignId('contrat_id')->constrained('contrats')->onDelete('cascade');
             $table->timestamps();
         });
     }

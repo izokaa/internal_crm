@@ -6,6 +6,7 @@ use App\Enums\OpportunityStatut;
 use App\Filament\Resources\OpportunityResource\Pages;
 use App\Models\Opportunity;
 use App\Models\Pipeline;
+use App\Models\Ville;
 use App\Traits\HasActiveIcon;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -57,7 +58,6 @@ class OpportunityResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('montant_estime')
                             ->label('Montant Potentiel')
-                            ->required()
                             ->numeric(),
                         Forms\Components\Select::make('devise')
                             ->options([
@@ -71,20 +71,20 @@ class OpportunityResource extends Resource
                 Forms\Components\DatePicker::make('date_echeance')
                     ->required(),
                 Forms\Components\TextInput::make('probabilite')
-                    ->required()
                     ->numeric()
                     ->suffix('%'),
                 Forms\Components\Select::make('status')
                     ->options(OpportunityStatut::class)
                     ->required()
-                    ->live()
+                    ->reactive()
                     ->default(OpportunityStatut::OPEN),
+
                 Forms\Components\TextInput::make('montant_reel')
                     ->label('Montant Réel')
-                    ->hidden(function (Get $get) {
-                        return $get('status') != OpportunityStatut::WON->value;
-                    })
+                    ->hidden(fn (Get $get) => $get('status')->value !== OpportunityStatut::WON->value)
+                    ->reactive()
                     ->numeric(),
+
                 Forms\Components\TextInput::make('prefix')
                     ->required()
                     ->maxLength(255)
@@ -271,8 +271,14 @@ class OpportunityResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('contact')
+                Tables\Filters\SelectFilter::make('contact.nom')
                     ->relationship('contact', 'nom'),
+                Tables\Filters\SelectFilter::make('contact')
+                    ->label('Ville')
+                    ->relationship('contact.ville', 'nom'),
+                Tables\Filters\SelectFilter::make('contact.pays')
+                    ->label('Pays')
+                    ->relationship('contact.ville.pays', 'nom'),
                 Tables\Filters\SelectFilter::make('source')
                     ->relationship('source', 'nom'),
                 Tables\Filters\SelectFilter::make('pipeline')
