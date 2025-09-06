@@ -81,7 +81,7 @@ class OpportunityResource extends Resource
 
                 Forms\Components\TextInput::make('montant_reel')
                     ->label('Montant Réel')
-                    ->hidden(fn (Get $get) => $get('status')->value !== OpportunityStatut::WON->value)
+                    ->hidden(fn (Get $get) => $get('status')?->value !== OpportunityStatut::WON->value)
                     ->reactive()
                     ->numeric(),
 

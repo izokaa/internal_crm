@@ -28,7 +28,6 @@ class CalendarWidget extends FullCalendarWidget
     {
         return <<<JS
                 function({ event, el }) {
-                    const status = (event.extendedProps?.statut ?? '').toLowerCase();
                     const statusLabel = event.extendedProps?.statutLabel ?? '';
                     const statusBadge = event.extendedProps?.statutBadge ?? '';
 
@@ -57,48 +56,51 @@ class CalendarWidget extends FullCalendarWidget
 
     public function fetchEvents(array $fetchInfo): array
     {
+        $start = $fetchInfo['start'];
+        $end = $fetchInfo['end'];
+
         $activities = Activity::query()
-            ->where(function ($query) use ($fetchInfo) {
-                // Cas : événements (date_debut / date_fin)
-                $query->where(function ($q) use ($fetchInfo) {
-                    $q->whereNotNull('date_debut')
-                        ->whereNotNull('date_fin')
-                        ->where('date_debut', '>=', $fetchInfo['start'])
-                        ->where('date_fin', '<=', $fetchInfo['end']);
-                })
-                    // OU Cas : tâches / appels (due_date)
-                    ->orWhere(function ($q) use ($fetchInfo) {
-                        $q->whereNotNull('due_date')
-                            ->where('due_date', '>=', $fetchInfo['start'])
-                            ->where('due_date', '<=', $fetchInfo['end']);
-                    });
+            // Regroupe la recherche sur date_debut/date_fin
+            ->where(function ($query) use ($start, $end) {
+                $query->whereBetween('date_debut', [$start, $end])
+                    ->orWhereBetween('date_fin', [$start, $end]);
             })
-            ->with(['label', 'contact', 'opportunity'])
+            // Ou bien les tasks/calls qui n'ont pas date_debut/date_fin mais ont due_date dans l'intervalle
+            ->orWhere(function ($query) use ($start, $end) {
+                $query->whereIn('type', ['task', 'call'])
+                    ->whereNull('date_debut')
+                    ->whereNull('date_fin')
+                    ->whereBetween('due_date', [$start, $end]);
+            })
+            ->with(['label'])
             ->get();
 
         return $activities->map(function (Activity $activity) {
+            $statusLabel = $activity->statut?->getLabel();
+            $title = $activity->label?->value ?? '';
 
-            $statusLabel = $activity->statut->getLabel();
-            $title = $activity->label?->value;
+            // fallback : si date_debut/fin manquent, utiliser due_date
+            $startDate = $activity->date_debut ?? $activity->due_date;
+            $endDate   = $activity->date_fin   ?? $activity->due_date;
+
+            // Assure-toi que les valeurs existent avant de parser
+            $startCarbon = $startDate ? Carbon::parse($startDate) : null;
+            $endCarbon   = $endDate   ? Carbon::parse($endDate)->addDay(1) : null; // keep existing addDays(1) logic
 
             return EventData::make()
                 ->id($activity->id)
                 ->title($title)
-                ->start($activity->date_debut ?? $activity->due_date)
-                ->end(Carbon::parse($activity->date_fin)->addDays(1) ?? $activity->due_date)
+                ->start($startCarbon)
+                ->end($endCarbon)
                 ->allDay((bool) $activity->is_all_day)
                 ->extendedProps([
-                    'type'       => $activity->type,
-                    'date_debut'     => $activity->statut,
-                    'statut'     => $activity->statut->value,
-                    'statutLabel' => $activity->statut->getLabel(),
-                    'statutBadge' => $activity->statut->getBadge(),
-                    'prioritaire' => $activity->prioritaire,
-                    'contact'    => $activity->contact?->name,
-                    'opportunity' => $activity->opportunity?->titre,
+                    'statutLabel' => $statusLabel,
+                    'statutBadge' => $activity->statut?->getBadge(),
+                    'type' => $activity->type,
                 ]);
         })->toArray();
     }
+
 
     public function getFormSchema(): array
     {
@@ -112,11 +114,20 @@ class CalendarWidget extends FullCalendarWidget
                     'task'  => 'Tâche',
                 ])
                 ->required()
-                ->reactive(), // <-- important en v3
+                ->afterStateUpdated(function (string $state, Forms\Set $set, Forms\Get $get) {
+                    if (in_array($state, ['task', 'call'])) {
+                        $due = $get('due_date');
+                        if ($due) {
+                            $set('date_debut', $due);
+                            $set('date_fin', $due);
+                        }
+                    }
+                })
+                ->reactive(),
 
             Forms\Components\Select::make('label_id')
                 ->label('Label')
-                ->default(fn ($record) => $record?->label?->value) // protège si null
+                ->default(fn ($record) => $record?->label?->value)
                 ->required()
                 ->options(function (Forms\Get $get) {
                     $type = $get('type');
@@ -150,23 +161,15 @@ class CalendarWidget extends FullCalendarWidget
 
             Forms\Components\DateTimePicker::make('date_debut')
                 ->label('Date début')
-                ->withoutTime(true)
                 ->hidden(fn (Forms\Get $get) => in_array($get('type'), ['task', 'call'])),
 
             Forms\Components\DateTimePicker::make('date_fin')
-                // ->withoutTime(fn ($get) => $get('is_all_day'))
                 ->label('Date fin')
-                ->withoutTime(true)
                 ->hidden(fn (Forms\Get $get) => in_array($get('type'), ['task', 'call'])),
 
             Forms\Components\DateTimePicker::make('due_date')
                 ->label('Date d\'échéance')
                 ->hidden(fn (Forms\Get $get) => $get('type') === 'event'),
-
-            // Forms\Components\Checkbox::make('is_all_day')
-            //     ->live()
-            //     ->hidden(fn (Forms\Get $get) => $get('type') === 'task' || $get('type') == 'call') // Correction: 'call' au lieu de 'appel'
-            //     ->label('Toute la journée'),
 
             Forms\Components\Toggle::make('prioritaire')
                 ->hidden(fn (Forms\Get $get) => $get('type') === 'event')
@@ -178,7 +181,6 @@ class CalendarWidget extends FullCalendarWidget
                 ->options(ActivityStatut::class),
         ];
     }
-
 
 
     /**

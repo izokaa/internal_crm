@@ -22,6 +22,7 @@ class ListDevis extends ListRecords
             Actions\CreateAction::make(),
             \EightyNine\ExcelImport\ExcelImportAction::make()
                 ->slideOver()
+                ->label('Importer')
                 ->processCollectionUsing(function (string $modelClass, Collection $rows) {
                     foreach ($rows as $row) {
                         // Normaliser les clés (minuscules + trim sans accents)

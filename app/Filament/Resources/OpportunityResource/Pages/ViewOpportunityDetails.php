@@ -157,10 +157,12 @@ class ViewOpportunityDetails extends ViewRecord
                     Activity::create([
                         'opportunity_id' => $this->record->id,
                         'type' => 'task',
-                        'statut' => ActivityStatut::TODO,
+                        'statut' => $data['statut'],
                         'prioritaire' => $data['prioritaire'],
-                        'user_id' => $data['user_id'], // ← Utilisez la valeur du formulaire
+                        'user_id' => $data['user_id'],
                         'due_date' => $data['due_date'],
+                        'date_debut' => $data['due_date'],
+                        'date_fin' => $data['due_date'],
                         'label_id' => $data['label_id']
                     ]);
 
@@ -168,8 +170,6 @@ class ViewOpportunityDetails extends ViewRecord
                         ->title('Tâche créée avec succès!')
                         ->success()
                         ->send();
-
-                    $this->dispatch('activityCreated');
                 }),
             HeaderAction::make('createEvent')
                 ->label('Programmer un évènement')
@@ -195,19 +195,15 @@ class ViewOpportunityDetails extends ViewRecord
                                 ->required()
                                 ->searchable(),
                         ]),
-                    Checkbox::make('is_all_day')
-                        ->extraAttributes(['class' => 'h-6 w-6'])
-                        ->label('Toute la journée')
-                        ->live(),
                     Grid::make(2)
                         ->schema([
                             DateTimePicker::make('date_debut')
                                 ->label('Date début')
-                                ->withoutTime(fn ($get) => $get('is_all_day'))
+                                ->withoutTime(true)
                                 ->required(),
                             DateTimePicker::make('date_fin')
                                 ->label('Date fin')
-                                ->withoutTime(fn ($get) => $get('is_all_day'))
+                                ->withoutTime(true)
                                 ->required(),
                         ]),
                     Select::make('statut')
@@ -217,21 +213,14 @@ class ViewOpportunityDetails extends ViewRecord
                 ])
                 ->action(function (array $data) {
                     $activityData = [
+                        'date_debut' => $data['date_debut'],
+                        'date_fin' => $data['date_fin'],
                         'opportunity_id' => $this->record->id,
                         'type' => 'event',
-                        // NOTE: Propriataire
                         'user_id' => $data['user_id'],
                         'label_id' => $data['label_id'],
-                        'is_all_day' => $data['is_all_day'],
+                        'statut' => $data['statut'],
                     ];
-
-                    if ($data['is_all_day']) {
-                        $activityData['date_debut'] = Carbon::parse($data['date_debut'])->startOfDay();
-                        $activityData['date_fin'] = Carbon::parse($data['date_fin'])->endOfDay();
-                    } else {
-                        $activityData['date_debut'] = $data['date_debut'];
-                        $activityData['date_fin'] = $data['date_fin'];
-                    }
 
                     Activity::create($activityData);
 
@@ -239,13 +228,10 @@ class ViewOpportunityDetails extends ViewRecord
                         ->title('Évènement créé avec succès!')
                         ->success()
                         ->send();
-
-                    $this->dispatch('activityCreated');
                 }),
 
             HeaderAction::make('createCall')
-                ->label('Programmer un appel')
-                ->form([
+                ->label('Programmer un appel')->form([
                     Checkbox::make('prioritaire')
                         ->extraAttributes(['class' => 'h-6 w-6'])
                         ->label('Priorité'),
@@ -281,11 +267,13 @@ class ViewOpportunityDetails extends ViewRecord
                     Activity::create([
                         'opportunity_id' => $this->record->id,
                         'type' => 'call',
-                        'statut' => ActivityStatut::TODO,
+                        'statut' => $data['statut'],
                         'prioritaire' => $data['prioritaire'],
                         // HACK: responsable
                         'user_id' => $data['user_id'],
                         'due_date' => $data['due_date'],
+                        'date_debut' => $data['due_date'],
+                        'date_fin' => $data['due_date'],
                         'label_id' => $data['label_id']
                     ]);
 
@@ -293,8 +281,6 @@ class ViewOpportunityDetails extends ViewRecord
                         ->title('Tâche créée avec succès!')
                         ->success()
                         ->send();
-
-                    $this->dispatch('activityCreated');
                 })),
         ];
     }
