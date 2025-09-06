@@ -166,6 +166,8 @@ class ViewOpportunityDetails extends ViewRecord
                         'label_id' => $data['label_id']
                     ]);
 
+                    $this->dispatch('activityCreated');
+
                     Notification::make()
                         ->title('Tâche créée avec succès!')
                         ->success()
@@ -224,6 +226,8 @@ class ViewOpportunityDetails extends ViewRecord
 
                     Activity::create($activityData);
 
+                    $this->dispatch('activityCreated');
+
                     Notification::make()
                         ->title('Évènement créé avec succès!')
                         ->success()
@@ -276,6 +280,8 @@ class ViewOpportunityDetails extends ViewRecord
                         'date_fin' => $data['due_date'],
                         'label_id' => $data['label_id']
                     ]);
+
+                    $this->dispatch('activityCreated');
 
                     Notification::make()
                         ->title('Tâche créée avec succès!')

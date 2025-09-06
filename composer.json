@@ -21,6 +21,7 @@
         "konnco/filament-import": "^3.0",
         "laravel/framework": "^11.0",
         "laravel/tinker": "^2.10.1",
+        "livewire/livewire": "^3.6",
         "mallardduck/blade-boxicons": "^2.4",
         "mallardduck/blade-lucide-icons": "^1.23",
         "pxlrbt/filament-excel": "^2.4",

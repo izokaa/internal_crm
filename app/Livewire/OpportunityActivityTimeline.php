@@ -20,54 +20,63 @@ use App\Models\Contact;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
-class OpportunityActivityTimeline extends Component implements HasForms, HasInfolists
+class OpportunityActivityTimeline extends Component
 {
-    use InteractsWithInfolists;
-    use InteractsWithForms;
-
-
-    public $record;
     public Opportunity $opportunity;
+
+    public $activities = [];
+
+    protected $listeners = [
+        'activityCreated' => 'refreshTheFucingPage',
+    ];
+
+    public function refreshTheFucingPage()
+    {
+        $this->refreshActivities();
+        Log::info($this->activities[count($this->activities) - 1]);
+    }
 
     public function mount(Opportunity $opportunity)
     {
         $this->opportunity = $opportunity;
-        $this->record = $opportunity;
+        $this->refreshActivities();
     }
 
-    #[On('activityCreated')] // Listen for the 'activityCreated' event
-    public function refreshActivities(): void
+    public function refreshActivities()
     {
-        Log::info("what this function does ?");
-        // This method will be called when the 'activityCreated' event is dispatched.
-        // Livewire automatically re-renders the component when a public property changes
-        // or a method is called that affects the view.
-        // Since getActivitiesProperty is a computed property, it will be re-evaluated.
-    }
+        // recharge la relation et actualise $activities
+        $this->opportunity->refresh();
 
-    public function getActivitiesProperty(): Collection
-    {
         $activities = Activity::where(function ($query) {
             $query->where('subject_type', Opportunity::class)
                 ->where('subject_id', $this->opportunity->id);
-        })->orWhere(function ($query) {
-            $query->where('subject_type', \App\Models\Activity::class)
-                ->whereIn('subject_id', $this->opportunity->activities->pluck('id'));
         })
+            ->orWhere(function ($query) {
+                $query->where('subject_type', \App\Models\Activity::class)
+                    ->whereIn('subject_id', $this->opportunity->activities->pluck('id'));
+            })
             ->with('causer')
             ->latest()
             ->get();
 
+        $this->activities = $activities->map(function ($activityLog) {
+            $activity = AppActivity::with(['label', 'contact'])->find($activityLog->subject_id);
 
-        return $activities->map(function ($activityLog) {
-            $activity = AppActivity::with(['label'])->find($activityLog->subject_id);
-            Log::info($activity);
-            $activityAction = collect([
-                'activity' => $activity,
-                'causer' => User::find($activityLog->causer_id),
-            ]);
-
-            return $activityAction;
+            return [
+                'type'       => $activity?->type,
+                'created_at' => $activity?->created_at?->toDateTimeString(),
+                'label_name' => $activity?->label?->name,
+                'label_value' => $activity?->label?->value,
+                'statut'     => $activity?->statut?->value,
+                'badge'      => $activity?->statut?->getBadge(),
+                'due_date'   => $activity?->due_date?->toDateTimeString(),
+                'date_debut' => $activity?->date_debut?->toDateTimeString(),
+                'date_fin'   => $activity?->date_fin?->toDateTimeString(),
+                'prioritaire' => $activity?->prioritaire,
+                'contact'    => $activity?->contact?->name,
+                'causer_name' => optional($activityLog->causer)->name,
+                'causer_initial' => $activityLog->causer ? strtoupper(substr($activityLog->causer->name, 0, 1)) : null,
+            ];
         });
     }
 
