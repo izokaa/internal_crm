@@ -16,6 +16,7 @@ class Activity extends Model
     {
         return LogOptions::defaults()
             ->logOnly([
+                'type',
                 'statut',
                 'date_debut',
                 'date_fin',
@@ -23,7 +24,9 @@ class Activity extends Model
                 'prioritaire',
                 'is_all_day',
                 'label_id',
-                'contact_id'
+                'user_id',
+                'created_at',
+                'updated_at'
             ]);
     }
 

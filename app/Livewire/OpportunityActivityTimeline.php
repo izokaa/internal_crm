@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Models\Activity as AppActivity;
+use App\Enums\ActivityStatut;
 use App\Models\User;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -33,7 +33,6 @@ class OpportunityActivityTimeline extends Component
     public function refreshTheFucingPage()
     {
         $this->refreshActivities();
-        Log::info($this->activities[count($this->activities) - 1]);
     }
 
     public function mount(Opportunity $opportunity)
@@ -48,32 +47,38 @@ class OpportunityActivityTimeline extends Component
         $this->opportunity->refresh();
 
         $activities = Activity::where(function ($query) {
-            $query->where('subject_type', Opportunity::class)
-                ->where('subject_id', $this->opportunity->id);
+            $query->where('subject_type', Opportunity::class);
         })
             ->orWhere(function ($query) {
-                $query->where('subject_type', \App\Models\Activity::class)
-                    ->whereIn('subject_id', $this->opportunity->activities->pluck('id'));
+                $query->where('subject_type', \App\Models\Activity::class);
             })
             ->with('causer')
             ->latest()
             ->get();
 
         $this->activities = $activities->map(function ($activityLog) {
-            $activity = AppActivity::with(['label', 'contact'])->find($activityLog->subject_id);
+            $attributes = $activityLog->description == 'deleted' ? $activityLog->properties['old'] : $activityLog->properties['attributes'];
+            $label = Label::find($attributes['label_id']);
+            $responsable = User::find($attributes['user_id']);
+
+            $description = match ($activityLog->description) {
+                'created' => 'créé',
+                'updated' => 'modifé',
+                'deleted' => 'supprimé',
+            };
 
             return [
-                'type'       => $activity?->type,
-                'created_at' => $activity?->created_at?->toDateTimeString(),
-                'label_name' => $activity?->label?->name,
-                'label_value' => $activity?->label?->value,
-                'statut'     => $activity?->statut?->value,
-                'badge'      => $activity?->statut?->getBadge(),
-                'due_date'   => $activity?->due_date?->toDateTimeString(),
-                'date_debut' => $activity?->date_debut?->toDateTimeString(),
-                'date_fin'   => $activity?->date_fin?->toDateTimeString(),
-                'prioritaire' => $activity?->prioritaire,
-                'contact'    => $activity?->contact?->name,
+                'description' => $description,
+                'type'       => $attributes['type'],
+                'created_at' => $attributes['created_at'],
+                'label_value' => $label?->value,
+                'statut'      => collect(ActivityStatut::cases())->where('value', $attributes['statut'])->first()?->getLabel() ?? '',
+                'badge'      => collect(ActivityStatut::cases())->where('value', $attributes['statut'])->first()?->getBadge() ?? '',
+                'due_date'   => $attributes['due_date'],
+                'date_debut'   => $attributes['date_debut'],
+                'date_fin'   => $attributes['date_fin'],
+                'responsable_name' => $responsable?->name,
+                'prioritaire' => $attributes['prioritaire'],
                 'causer_name' => optional($activityLog->causer)->name,
                 'causer_initial' => $activityLog->causer ? strtoupper(substr($activityLog->causer->name, 0, 1)) : null,
             ];

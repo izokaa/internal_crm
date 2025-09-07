@@ -41,7 +41,7 @@ $colorClass = match ($a['type']) {
 
             <div class="p-4 bg-white rounded-lg shadow-sm dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                 <h4 class="text-md font-semibold text-gray-900 dark:text-white mb-2">
-                    {{ $a['label_value'] ?? '' }}
+                    {{ $a['label_value'] ?? '' }} - {{ $a['description'] }}
                 </h4>
 
                 <div class="flex flex-wrap items-center gap-2 mb-2">
@@ -49,13 +49,6 @@ $colorClass = match ($a['type']) {
                         class="px-2.5 py-0.5 rounded-full text-xs font-medium">
                         {{ $a['statut'] }}
                     </span>
-
-                    @if ($a['label_name'])
-                        <span
-                            class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300">
-                            {{ $a['label_name'] }}
-                        </span>
-                    @endif
 
                     @if ($a['prioritaire'])
                         <span
@@ -79,8 +72,8 @@ $colorClass = match ($a['type']) {
                         <p>Date de l'appel: {{ \Carbon\Carbon::parse($a['due_date'])->format('d M Y H:i') }}</p>
                     @endif
 
-                    @if ($a['contact'])
-                        <p>Contact: {{ $a['contact'] }}</p>
+                    @if ($a['responsable_name'])
+                        <p>Responsable: {{ $a['responsable_name'] }}</p>
                     @endif
                 </div>
             </div>
