@@ -95,6 +95,8 @@ class ListContrats extends ListRecords
         ];
     }
 
+
+
     public function getTabs(): array
     {
         return [

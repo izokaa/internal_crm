@@ -9,9 +9,9 @@ enum OpportunityStatut: string implements HasLabel
     case OPEN = 'Open';
     case WON = 'Won';
     case LOST = 'Lost';
-    case LATE = 'Late';       // En retard
-    case CANCELED = 'Canceled'; // Annulée
-    case CLOSED = 'Closed';   // Fermée
+    case LATE = 'Late';
+    case CANCELED = 'Canceled';
+    case CLOSED = 'Closed';
 
     public function getLabel(): ?string
     {

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ContratResource\Pages;
 
+use App\Enums\ContratStatus;
 use App\Filament\Resources\ContratResource;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
@@ -24,6 +25,7 @@ class CreateContrat extends CreateRecord
                 $contrat->piecesJointes()->create($pieceJointeData);
             }
         }
+
 
         return $contrat;
     }

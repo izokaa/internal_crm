@@ -6,6 +6,7 @@ use App\Models\EtapePipeline;
 use Livewire\Component;
 use App\Models\Opportunity;
 use App\Enums\OpportunityStatut;
+use Illuminate\Support\Facades\Log;
 
 class OpportunityPipelineTimeline extends Component
 {

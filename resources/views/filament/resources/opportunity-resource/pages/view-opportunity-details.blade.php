@@ -70,28 +70,8 @@
                     </div>
                     <div class="col-span-1">
                         <p class="text-sm text-gray-500 dark:text-gray-400">Statut:</p>
-                        @php
-                            $statusBgColor = match ($record->status) {
-                                'Ouverte' => '#DBEAFE', // blue-100
-                                'Gagnée' => '#D1FAE5', // green-100
-                                'Perdue' => '#FEE2E2', // red-100
-                                'En retard' => '#FEF3C7', // yellow-100
-                                'Annulée' => '#E5E7EB', // gray-100
-                                'Fermée' => '#EDE9FE', // purple-100
-                                default => '#E5E7EB', // gray-100
-                            };
-                            $statusTextColor = match ($record->status) {
-                                'Ouverte' => '#1E40AF', // blue-800
-                                'Gagnée' => '#065F46', // green-800
-                                'Perdue' => '#991B1B', // red-800
-                                'En retard' => '#92400E', // yellow-800
-                                'Annulée' => '#4B5563', // gray-800
-                                'Fermée' => '#5B21B6', // purple-800
-                                default => '#4B5563', // gray-800
-                            };
-                        @endphp
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                            style="background-color: {{ $statusBgColor }}; color: {{ $statusTextColor }};">
+                            style="background-color: {{ $record->status->getBadge() }}; color: {{ $record->status->getTextStatusColor() }};">
                             {{ $record->status->getLabel() }}
                         </span>
                     </div>

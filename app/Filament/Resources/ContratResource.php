@@ -255,6 +255,9 @@ class ContratResource extends Resource
                     ->badge()
                     ->color(fn (Contrat $record) => $record->status->getFilamentBadge())
                     ->toggleable(isToggledHiddenByDefault: false),
+                Tables\Columns\TextColumn::make('renewable_count')
+                    ->label('nombre de reounvellement')
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('mode_payment')
                     ->label('Mode de Paiement')
                     ->badge()
