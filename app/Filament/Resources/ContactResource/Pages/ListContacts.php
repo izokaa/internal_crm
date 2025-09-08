@@ -24,6 +24,10 @@ class ListContacts extends ListRecords
             \EightyNine\ExcelImport\ExcelImportAction::make()
                 ->slideOver()
                 ->label('Importer')
+                ->validateUsing([
+                    'telephone' => 'unique:contacts,telephone',
+                    'email' => 'unique:contacts,email',
+                ])
                 ->processCollectionUsing(function (string $modelClass, Collection $rows) {
                     foreach ($rows as $row) {
                         // Normaliser les clés (minuscules + trim sans accents)
