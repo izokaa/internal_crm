@@ -109,6 +109,8 @@ class ExpenseResource extends Resource
                                     ->downloadable()
                                     ->required(),
                             ])
+                            ->collapsible()
+                            ->defaultItems(0)
                             ->columnSpanFull(),
                     ]),
             ]);

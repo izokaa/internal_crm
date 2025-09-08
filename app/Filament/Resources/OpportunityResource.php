@@ -91,7 +91,7 @@ class OpportunityResource extends Resource
                     ->default('OPPO'),
                 Forms\Components\Select::make('contact_id')
                     ->relationship('contact')
-                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->nom . $record->prenom)
+                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->nom . " " . $record->prenom . " - BU: " . $record->businessUnit?->nom . " - Service: " . $record->service?->nom)
                     ->required()
                     ->searchable()
                     ->preload()
@@ -125,6 +125,8 @@ class OpportunityResource extends Resource
                                     ->downloadable()
                                     ->required(),
                             ])
+                            ->collapsible()
+                            ->defaultItems(0)
                             ->columnSpanFull(),
                     ]),
             ]);
