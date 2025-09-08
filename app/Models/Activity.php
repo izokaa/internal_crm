@@ -30,6 +30,12 @@ class Activity extends Model
             ]);
     }
 
+    public function tapActivity($activity, string $eventName)
+    {
+        $activity->subject_id = $this->opportunity->id;
+    }
+
+
     protected $fillable = [
         'type',
         'statut', // WARNING: event, task or call 'type',

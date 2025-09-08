@@ -47,11 +47,9 @@ class OpportunityActivityTimeline extends Component
         $this->opportunity->refresh();
 
         $activities = Activity::where(function ($query) {
-            $query->where('subject_type', Opportunity::class);
+            $query->where('subject_type', \App\Models\Activity::class)
+                ->where('subject_id', $this->opportunity->id);
         })
-            ->orWhere(function ($query) {
-                $query->where('subject_type', \App\Models\Activity::class);
-            })
             ->with('causer')
             ->latest()
             ->get();
