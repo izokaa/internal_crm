@@ -8,6 +8,7 @@ use App\Models\Contact;
 use App\Models\Pays;
 use App\Models\BusinessUnit;
 use App\Traits\HasActiveIcon;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -30,6 +31,7 @@ class ContactResource extends Resource
     protected static ?string $navigationActiveIcon = 'bxs-contact';
     protected static ?string $recordTitleAttribute = 'nom';
     protected static ?string $navigationGroup = 'CRM';
+
 
     public static function getGloballySearchableAttributes(): array
     {

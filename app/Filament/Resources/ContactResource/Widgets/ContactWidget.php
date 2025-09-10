@@ -4,14 +4,18 @@ namespace App\Filament\Resources\ContactResource\Widgets;
 
 use App\Models\Contact;
 // Removed: use App\Models\Fournisseur;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Carbon\Carbon;
 
 class ContactWidget extends BaseWidget
 {
+    use HasWidgetShield;
+
     public ?string $startDate = null;
     public ?string $endDate = null;
+    protected ?string $heading = 'Stats des contacts';
 
     // Listen for date range updates
     protected $listeners = ['dateRangeUpdated' => 'updateDateRange'];

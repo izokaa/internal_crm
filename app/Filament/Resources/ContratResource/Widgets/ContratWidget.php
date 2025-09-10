@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ContratResource\Widgets;
 
 use App\Models\Contrat;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Carbon\Carbon;
@@ -10,8 +11,11 @@ use App\Enums\ContratStatus;
 
 class ContratWidget extends BaseWidget
 {
+    use HasWidgetShield;
+
     public ?string $startDate = null;
     public ?string $endDate = null;
+    protected ?string $heading = "Stats des Contrats";
 
     // Listen for date range updates
     protected $listeners = ['dateRangeUpdated' => 'updateDateRange'];

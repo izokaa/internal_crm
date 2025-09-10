@@ -3,6 +3,9 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\OpportunityBoardPage;
+use App\Filament\Resources\ContactResource\Widgets\ContactWidget;
+use App\Filament\Resources\ContratResource\Widgets\ContratWidget;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use CharrafiMed\GlobalSearchModal\GlobalSearchModalPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -55,6 +58,8 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
+                ContactWidget::class,
+                ContratWidget::class
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -78,6 +83,22 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->globalSearch(false)
             ->plugins([
+                FilamentShieldPlugin::make()
+                    ->gridColumns([
+                        'default' => 1,
+                        'sm' => 2,
+                        'lg' => 3
+                    ])
+                    ->sectionColumnSpan(1)
+                    ->checkboxListColumns([
+                        'default' => 1,
+                        'sm' => 2,
+                        'lg' => 4,
+                    ])
+                    ->resourceCheckboxListColumns([
+                        'default' => 1,
+                        'sm' => 2,
+                    ]),
                 GlobalSearchModalPlugin::make(),
                 FilamentFullCalendarPlugin::make()
                     ->selectable(true)
@@ -90,7 +111,7 @@ class AdminPanelProvider extends PanelProvider
                             'right'  => 'dayGridMonth,timeGridWeek,timeGridDay',
                         ],
                         'firstDay' => 1, // semaine commence le lundi
-                    ])
+                    ]),
             ]);
     }
 }

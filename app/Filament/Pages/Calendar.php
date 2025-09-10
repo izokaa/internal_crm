@@ -3,10 +3,13 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Resources\ActivityResource\Widgets\CalendarWidget;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Pages\Page;
 
 class Calendar extends Page
 {
+    use HasPageShield;
+
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
     protected static string $view = 'filament.pages.calendar';
     protected static ?string $navigationLabel = 'Calendrier';
