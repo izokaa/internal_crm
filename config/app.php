@@ -15,6 +15,8 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    'admin_email' => 'admin@gmail.com',
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

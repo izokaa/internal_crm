@@ -3,24 +3,22 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ContactResource\Pages;
-use App\Filament\Resources\ContactResource\RelationManagers;
 use App\Models\Contact;
 use App\Models\Pays;
 use App\Models\BusinessUnit;
 use App\Traits\HasActiveIcon;
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Tables\Actions\ActionGroup;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use Filament\Tables\Enums\FiltersLayout;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ResourceExported;
 
 class ContactResource extends Resource
 {
@@ -335,7 +333,11 @@ class ContactResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                     ExportBulkAction::make()
-                    ->visible(auth()->user()->can('export_contact'))
+                        ->visible(auth()->user()->can('export_contact'))
+                        ->after(function () {
+                            Mail::to(config('app.admin_email'))->send(new ResourceExported('contacts', auth()->user()));
+                        })
+
                 ]),
             ]);
     }
