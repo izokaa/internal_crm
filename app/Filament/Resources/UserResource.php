@@ -25,21 +25,6 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required(),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required(),
-                Forms\Components\TextInput::make('password')
-                    ->label('Mot de passe')
-                    ->password()
-                    ->confirmed()
-                    ->required(),
-                Forms\Components\TextInput::make('password_confirmation')
-                    ->label('Confirmation du mot de passe')
-                    ->password()
-                    ->dehydrated(false)
-                    ->required(),
                 Forms\Components\CheckboxList::make('roles')
                     ->relationship('roles', 'name')
                     ->searchable(),
@@ -72,7 +57,6 @@ class UserResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
