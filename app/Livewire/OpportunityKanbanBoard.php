@@ -27,7 +27,7 @@ class OpportunityKanbanBoard extends Component
     }
 
 
-    
+
 
     public function getOpportunitiesProperty(): Collection
     {
@@ -54,6 +54,9 @@ class OpportunityKanbanBoard extends Component
 
     public function updateOpportunityStage($opportunityId, $newStageId, $newOrder): void
     {
+        if (!auth()->user()->can('update_opportunity')) {
+            return ;
+        }
         $opportunity = Opportunity::find($opportunityId);
         if ($opportunity) {
             $opportunity->etape_pipeline_id = $newStageId;
@@ -61,6 +64,7 @@ class OpportunityKanbanBoard extends Component
 
             $this->reorderOpportunities($newOrder);
         }
+
     }
 
     public function updateOpportunityOrder($opportunityId, $newOrder): void

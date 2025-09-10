@@ -85,7 +85,7 @@ class CalendarWidget extends FullCalendarWidget
 
             // Assure-toi que les valeurs existent avant de parser
             $startCarbon = $startDate ? Carbon::parse($startDate) : null;
-            $endCarbon   = $endDate   ? Carbon::parse($endDate)->addDay(1) : null; // keep existing addDays(1) logic
+            $endCarbon   = $endDate ? Carbon::parse($endDate)->addDay(1) : null; // keep existing addDays(1) logic
 
             return EventData::make()
                 ->id($activity->id)
@@ -190,6 +190,7 @@ class CalendarWidget extends FullCalendarWidget
     {
         return [
             Actions\EditAction::make()
+                ->visible(auth()->user()->can('create_activity'))
                 ->mountUsing(
                     function (Activity $record, Forms\Form $form, array $arguments) {
                         Log::info($arguments);
@@ -206,7 +207,8 @@ class CalendarWidget extends FullCalendarWidget
                         ]);
                     }
                 ),
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()
+                ->visible(auth()->user()->can('create_activity')),
         ];
     }
 
@@ -217,6 +219,7 @@ class CalendarWidget extends FullCalendarWidget
     {
         return [
             Actions\CreateAction::make()
+                ->visible(auth()->user()->can('create_activity'))
                 ->mountUsing(
                     function (Forms\Form $form, array $arguments) {
                         $form->fill([
@@ -236,6 +239,7 @@ class CalendarWidget extends FullCalendarWidget
         return [
             Actions\CreateAction::make()
                 ->slideOver() // Optionnel : pour un meilleur UX
+                ->visible(auth()->user()->can('create_activity'))
                 ->mutateFormDataUsing(function (array $data, array $arguments) {
                     // Pré-remplir les dates selon le type d'activité
                     if (isset($arguments['start'])) {
@@ -257,6 +261,9 @@ class CalendarWidget extends FullCalendarWidget
 
     public function handleEventDropped(array $data): void
     {
+        if (!auth()->user()->can('create_activity')) {
+            return;
+        }
         // Assuming $data contains keys: id, start, end.
         $activity = \App\Models\Activity::find($data['id']);
         if ($activity) {

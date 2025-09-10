@@ -235,6 +235,7 @@ class ExpenseResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                     ExportBulkAction::make()
+                        ->visible(auth()->user()->can('export_expense'))
                 ]),
             ]);
     }

@@ -23,8 +23,10 @@ class ListContrats extends ListRecords
 
     protected function getHeaderActions(): array
     {
+        $actions = [];
         return [
             \EightyNine\ExcelImport\ExcelImportAction::make()
+                ->visible(auth()->user()->can('import_contrat'))
                 ->slideOver()
                 ->label('Importer')
                 ->processCollectionUsing(function (string $modelClass, Collection $rows) {

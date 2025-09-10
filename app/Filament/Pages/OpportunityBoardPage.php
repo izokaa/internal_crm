@@ -25,6 +25,7 @@ class OpportunityBoardPage extends Page
     {
         return [
             Action::make('createOpportunity')
+                ->visible(auth()->user()->can('create_opportunity'))
                 ->label('Créer une nouvelle opportunité')
                 ->url(route('filament.admin.resources.opportunities.create'))
                 ->icon('heroicon-o-plus'),

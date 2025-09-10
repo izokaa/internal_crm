@@ -7,6 +7,7 @@ use App\Models\Contrat;
 use App\Traits\HasActiveIcon;
 use App\Enums\ContratStatus;
 use App\Enums\ModePayment;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -24,6 +25,8 @@ class ContratResource extends Resource
 {
     use HasActiveIcon;
     protected static ?string $model = Contrat::class;
+
+
 
     protected static ?string $navigationIcon = 'clarity-contract-line';
     protected static ?string $navigationActiveIcon = 'clarity-contract-solid';
@@ -312,6 +315,7 @@ class ContratResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                     ExportBulkAction::make()
+                        ->visible(auth()->user()->can('export_contrat'))
                 ]),
             ]);
     }

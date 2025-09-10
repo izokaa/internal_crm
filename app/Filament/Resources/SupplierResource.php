@@ -21,14 +21,13 @@ use App\Filament\Resources\ContactResource\Pages\CreateContact;
 use App\Filament\Resources\ContactResource\Pages\ViewContact;
 use App\Filament\Resources\ContactResource\Pages\EditContact;
 
-
 class SupplierResource extends Resource
 {
     protected static ?string $model = Contact::class;
 
     protected static ?string $navigationLabel = 'Fournisseurs';
     protected static ?string $navigationIcon = 'heroicon-o-briefcase';
-    protected static ?string $navigationGroup = 'Achats & Dépenses';   
+    protected static ?string $navigationGroup = 'Achats & Dépenses';
     // change the root path of navigation from Contacts/list to Suppliers/list
     protected static ?string $navigationRoot = 'fournisseurs';
 

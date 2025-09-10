@@ -28,6 +28,7 @@ class ListExpenses extends ListRecords
             Actions\CreateAction::make(),
             \EightyNine\ExcelImport\ExcelImportAction::make()
                 ->slideOver()
+                ->visible(auth()->user()->can('import_expense'))
                 ->processCollectionUsing(function (string $modelClass, Collection $rows) {
                     foreach ($rows as $row) {
                         // Normaliser les clés (minuscules + trim sans accents)

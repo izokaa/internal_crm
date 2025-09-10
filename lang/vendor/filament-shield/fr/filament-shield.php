@@ -76,5 +76,7 @@ return [
         'replicate' => 'Répliquer',
         'reorder' => 'Réordonner',
         'restore_any' => 'Restaurer tout',
+        'import' => 'Importer',
+        'export' => 'Exporter'
     ],
 ];

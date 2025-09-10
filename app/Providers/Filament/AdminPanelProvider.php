@@ -3,8 +3,6 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\OpportunityBoardPage;
-use App\Filament\Resources\ContactResource\Widgets\ContactWidget;
-use App\Filament\Resources\ContratResource\Widgets\ContratWidget;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use CharrafiMed\GlobalSearchModal\GlobalSearchModalPlugin;
 use Filament\Http\Middleware\Authenticate;
@@ -58,8 +56,6 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
-                ContactWidget::class,
-                ContratWidget::class
             ])
             ->middleware([
                 EncryptCookies::class,

@@ -28,6 +28,7 @@ class ListOpportunities extends ListRecords
                 ->icon('heroicon-o-view-columns'),
             Actions\CreateAction::make(),
             \EightyNine\ExcelImport\ExcelImportAction::make()
+                ->visible(auth()->user()->can('import_opportunity'))
                 ->label('Importer')
                 ->slideOver()
                 ->processCollectionUsing(function (string $modelClass, Collection $rows) {

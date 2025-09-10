@@ -21,6 +21,7 @@ class ListDevis extends ListRecords
         return [
             Actions\CreateAction::make(),
             \EightyNine\ExcelImport\ExcelImportAction::make()
+                ->visible(auth()->user()->can('import_devis'))
                 ->slideOver()
                 ->label('Importer')
                 ->processCollectionUsing(function (string $modelClass, Collection $rows) {

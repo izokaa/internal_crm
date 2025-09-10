@@ -16,6 +16,8 @@ class User extends Authenticatable
     use Notifiable;
     use HasComments;
     use HasRoles;
+
+
     /**
      * The attributes that are mass assignable.
      *

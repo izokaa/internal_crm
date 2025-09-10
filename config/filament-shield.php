@@ -46,6 +46,8 @@ return [
             'delete_any',
             'force_delete',
             'force_delete_any',
+            'import',
+            'export',
         ],
 
         'page' => 'page',
@@ -76,13 +78,13 @@ return [
             'AccountWidget', 'FilamentInfoWidget',
         ],
 
-        'resources' => [],
+        'resources' => ['SupplierResource'],
     ],
 
     'discovery' => [
-        'discover_all_resources' => true,
-        'discover_all_widgets' => true,
-        'discover_all_pages' => true,
+        'discover_all_resources' => false,
+        'discover_all_widgets' => false,
+        'discover_all_pages' => false,
     ],
 
     'register_role_policy' => [

@@ -22,6 +22,7 @@ class ListContacts extends ListRecords
     {
         return [
             \EightyNine\ExcelImport\ExcelImportAction::make()
+                ->visible(auth()->user()->can('import_contact'))
                 ->slideOver()
                 ->label('Importer')
                 ->validateUsing([

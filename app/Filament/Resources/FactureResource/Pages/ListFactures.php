@@ -21,6 +21,7 @@ class ListFactures extends ListRecords
         return [
             Actions\CreateAction::make(),
             \EightyNine\ExcelImport\ExcelImportAction::make()
+                ->visible(auth()->user()->can('import_facture'))
                 ->slideOver()
                 ->label('Importer')
                 ->processCollectionUsing(function (string $modelClass, Collection $rows) {
