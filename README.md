@@ -26,6 +26,10 @@ Ce projet est un petit CRM (Customer Relationship Management) pour la gestion co
 6. `php artisan migrate`
 7. `php artisan db:seed`
 8. `php artisan server`
+9. `php shield:super-admin`
+10. `php shield:setup`
+11. `php artisan migrate`
+12. `php artisan shield:generate --all`
 
 * login :
 
