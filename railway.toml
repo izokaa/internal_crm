@@ -9,8 +9,11 @@ npm run build
 [deploy]
 # single string (not array!)
 preDeployCommand = """
+composer dump-autoload && \
 php artisan optimize:clear && \
 php artisan filament:optimize && \
+php artisan filament:assets && \
+php artisan filament:cache-components && \
 php artisan vendor:publish --force --tag=livewire:assets && \
 php artisan migrate:fresh --force --seed && \
 php artisan shield:super-admin && \
