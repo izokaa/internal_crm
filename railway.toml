@@ -11,6 +11,7 @@ npm run build
 preDeployCommand = """
 php artisan optimize:clear && \
 php artisan filament:optimize && \
+php artisan vendor:publish --force --tag=livewire:assets && \
 php artisan migrate:fresh --force --seed && \
 php artisan shield:super-admin && \
 npm install && npm run build
