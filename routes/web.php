@@ -9,10 +9,6 @@ Route::get('/', function () {
 });
 
 
-Route::get('/health', function () {
-    return response('OK', 200);
-});
-
 Route::middleware('signed')
         ->get('/invitation/{invitationId}/accept', AcceptInvite::class)
         ->name('invitation.accept');
