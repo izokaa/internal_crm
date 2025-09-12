@@ -42,9 +42,6 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->assets([
-                Css::make('timeline-styles', Vite::asset('resources/css/timeline.css')),
-            ])
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('20rem')
             ->maxContentWidth('full')
