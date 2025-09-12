@@ -33,7 +33,7 @@ class Activity extends Model
 
     public function tapActivity($activity, string $eventName)
     {
-        $activity->subject_id = $this->opportunity->id;
+        $activity->subject_id = $this->opportunity ? $this->opportunity->id : null;
     }
 
 

@@ -36,7 +36,7 @@ return [
     'allow-guest-reactions' => env('ALLOW_GUEST_REACTIONS', false), // Allow guest users to react
     'allow-guest-comments' => env('ALLOW_GUEST_COMMENTS', false), // Allow guest users to comment
     'mentions' => [
-        'items-placeholder' => 'Search users by name or email address',
-        'empty-items-message' => 'No users found',
+        'items-placeholder' => 'Rechercher des utilisateurs par nom ou par adresse e-mail',
+        'empty-items-message' => 'Aucun utilisateur trouvé',
     ],
 ];

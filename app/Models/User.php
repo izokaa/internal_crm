@@ -53,6 +53,14 @@ class User extends Authenticatable
         ];
     }
 
+    public static function admins()
+    {
+        return self::where('role', 'admin')
+            ->where('id', '!=', auth()->id())
+                ->get();
+    }
+
+
     public function opportunities()
     {
         return $this->belongsToMany(Opportunity::class);

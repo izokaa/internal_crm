@@ -17,7 +17,6 @@ use Livewire\Component;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
 
-
 class TaskModal extends Component implements HasActions, HasForms
 {
     use InteractsWithActions;
@@ -90,9 +89,16 @@ class TaskModal extends Component implements HasActions, HasForms
             'due_date' => $this->due_date,
             'opportunity_id' => $this->record->id
         ];
-        Activity::create($task);
+        $tache = Activity::create($task);
         $this->dispatch('activityCreated');
         $this->dispatch('close-modal', id: 'activity-modal');
+
+        $responsable = User::find($task['user_id']);
+        $responsable->notify(
+            Notification::make()
+                ->title('Vous êtes le responsable du tâche ' . $tache->id . " label : " . $tache->label->value)
+                ->toDatabase()
+        );
 
         Notification::make()
             ->title('La tâche créée avec succès!')

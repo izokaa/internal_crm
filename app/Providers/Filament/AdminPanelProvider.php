@@ -36,6 +36,8 @@ class AdminPanelProvider extends PanelProvider
             ->profile()
             ->path('admin')
             ->login()
+            ->databaseNotifications()
+            ->databaseNotificationsPolling("10s")
             ->brandLogo(fn () => view('filament.admin.logo'))
             ->colors([
                 'primary' => Color::Amber,

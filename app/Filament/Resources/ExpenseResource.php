@@ -4,7 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ExpenseResource\Pages;
 use App\Filament\Resources\ExpenseResource\RelationManagers;
-use App\Models\Expense;
+use App\Models\{Expense, User};
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -20,6 +20,9 @@ use Filament\Forms\Components\DatePicker;
 use App\Enums\ModePayment;
 use Filament\Tables\Enums\FiltersLayout;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use Illuminate\Support\Facades\Notification;
+use Filament\Notifications\Notification as FilamentNotification;
+use Filament\Notifications\Actions\Action;
 
 class ExpenseResource extends Resource
 {
@@ -236,6 +239,23 @@ class ExpenseResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                     ExportBulkAction::make()
                         ->visible(auth()->user()->can('export_expense'))
+                        ->after(function () {
+                            Notification::send(
+                                User::admins(),
+                                FilamentNotification::make()
+                                    ->title('Expenses a été exporté par ' . auth()->user()->name)
+                                    ->body('L\'utilisateur ' . auth()->user()->name . " a exporté la resource Expenses")
+                                    ->actions([
+                                        Action::make('voir+')
+                                            ->url(route('filament.admin.resources.users.view', auth()->id()))
+                                            ->icon('heroicon-o-eye')
+                                    ])
+                                    ->info()
+                                    ->toDatabase()
+                            );
+                        })
+
+
                 ]),
             ]);
     }

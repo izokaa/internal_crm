@@ -4,9 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Enums\OpportunityStatut;
 use App\Filament\Resources\OpportunityResource\Pages;
-use App\Models\Opportunity;
-use App\Models\Pipeline;
-use App\Models\Ville;
+use App\Models\{Opportunity, Pipeline, Ville, User};
 use App\Traits\HasActiveIcon;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -23,8 +21,11 @@ use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Infolist;
+use Illuminate\Support\Facades\Notification;
 use PhpOption\Option;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use Filament\Notifications\Notification as FilamentNotification;
+use Filament\Notifications\Actions\Action;
 
 class OpportunityResource extends Resource
 {
@@ -81,7 +82,7 @@ class OpportunityResource extends Resource
 
                 Forms\Components\TextInput::make('montant_reel')
                     ->label('Montant Réel')
-                    ->hidden(fn (Get $get) => $get('status')?->value !== OpportunityStatut::WON->value)
+                    ->hidden(fn (Get $get) => $get('status') !== OpportunityStatut::WON->value)
                     ->reactive()
                     ->numeric(),
 
@@ -319,7 +320,22 @@ class OpportunityResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                     ExportBulkAction::make()
                         ->visible(auth()->user()->can('export_opportunity'))
-                ]),
+                        ->after(function () {
+                            Notification::send(
+                                User::admins(),
+                                FilamentNotification::make()
+                                    ->title('Opportuntés a été exporté par ' . auth()->user()->name)
+                                    ->body('L\'utilisateur ' . auth()->user()->name . " a exporté la resource Opportunités")
+                                    ->actions([
+                                        Action::make('voir+')
+                                            ->url(route('filament.admin.resources.users.view', auth()->id()))
+                                            ->icon('heroicon-o-eye')
+                                    ])
+                                    ->info()
+                                    ->toDatabase()
+                            );
+                        })
+                ])
             ]);
     }
 

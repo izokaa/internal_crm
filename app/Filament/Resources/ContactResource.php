@@ -6,19 +6,23 @@ use App\Filament\Resources\ContactResource\Pages;
 use App\Models\Contact;
 use App\Models\Pays;
 use App\Models\BusinessUnit;
+use App\Models\User;
 use App\Traits\HasActiveIcon;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Actions\Action;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Tables\Actions\ActionGroup;
+use Illuminate\Support\Facades\Notification;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use Filament\Tables\Enums\FiltersLayout;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ResourceExported;
+use Filament\Notifications\Notification as FilamentNotification;
 
 class ContactResource extends Resource
 {
@@ -335,7 +339,19 @@ class ContactResource extends Resource
                     ExportBulkAction::make()
                         ->visible(auth()->user()->can('export_contact'))
                         ->after(function () {
-                            Mail::to(config('app.admin_email'))->send(new ResourceExported('contacts', auth()->user()));
+                            Notification::send(
+                                User::admins(),
+                                FilamentNotification::make()
+                                    ->title('Contacts a été exporté par ' . auth()->user()->name)
+                                    ->info()
+                                    ->body('L\'utilisateur ' . auth()->user()->name . ' a exporté la resource Contacts')
+                                    ->actions([
+                                        Action::make('voir+')
+                                            ->url(route('filament.admin.resources.users.view', auth()->id()))
+                                            ->icon('heroicon-o-eye')
+                                    ])
+                                    ->toDatabase()
+                            );
                         })
 
                 ]),

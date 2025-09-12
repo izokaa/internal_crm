@@ -7,6 +7,7 @@ use App\Mail\InviteUserMail;
 use App\Models\Invitation;
 use Filament\Actions;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Checkbox;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Mail;
@@ -25,12 +26,11 @@ class ListUsers extends ListRecords
                 ->form([
                     TextInput::make('email')
                         ->email()
-                        ->required()
+                        ->required(),
                 ])
                 ->action(function (array $data) {
                     $invitation = Invitation::create(['email' => $data['email']]);
 
-                    // TODO: Send email inviation.
                     Mail::to($invitation->email)->send(new InviteUserMail($invitation));
 
                     Notification::make('invitedSuccess')

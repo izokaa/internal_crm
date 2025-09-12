@@ -3,10 +3,9 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ContratResource\Pages;
-use App\Models\Contrat;
+use App\Models\{Contrat, User};
 use App\Traits\HasActiveIcon;
-use App\Enums\ContratStatus;
-use App\Enums\ModePayment;
+use App\Enums\{ContratStatus, ModePayment};
 use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -20,6 +19,9 @@ use Filament\Forms\Get;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use Filament\Notifications\Notification as FilamentNotification;
+use Illuminate\Support\Facades\Notification;
+use Filament\Notifications\Actions\Action;
 
 class ContratResource extends Resource
 {
@@ -316,6 +318,21 @@ class ContratResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                     ExportBulkAction::make()
                         ->visible(auth()->user()->can('export_contrat'))
+                        ->after(function () {
+                            Notification::send(
+                                User::admins(),
+                                FilamentNotification::make()
+                                    ->title('Contrats a été exporté par ' . auth()->user()->name)
+                                    ->info()
+                                    ->body('L\'utilisateur ' . auth()->user()->name . ' a exporté la resource Contrats')
+                                    ->actions([
+                                        Action::make('voir+')
+                                            ->url(route('filament.admin.resources.users.view', auth()->id()))
+                                            ->icon('heroicon-o-eye')
+                                    ])
+                                    ->toDatabase()
+                            );
+                        })
                 ]),
             ]);
     }

@@ -6,6 +6,7 @@ use App\Models\Activity;
 use App\Models\Label;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Event;
 use Saade\FilamentFullCalendar\Data\EventData;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
@@ -193,7 +194,7 @@ class CalendarWidget extends FullCalendarWidget
                 ->visible(auth()->user()->can('create_activity'))
                 ->mountUsing(
                     function (Activity $record, Forms\Form $form, array $arguments) {
-                        Log::info($arguments);
+                        // Log::info($arguments);
                         $form->fill([
                             'titre' => $record->titre,
                             'statut' => $record->statut,
@@ -254,7 +255,7 @@ class CalendarWidget extends FullCalendarWidget
                     }
 
                     return $data;
-                }),
+                })
         ];
     }
 

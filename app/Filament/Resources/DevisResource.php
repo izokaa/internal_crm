@@ -5,17 +5,20 @@ namespace App\Filament\Resources;
 use App\Enums\DevisStatus;
 use App\Filament\Resources\DevisResource\Pages;
 use App\Filament\Resources\DevisResource\RelationManagers;
-use App\Models\Devis;
+use App\Models\{Devis, User};
 use App\Traits\HasActiveIcon;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Actions\Action;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Tables\Actions\ActionGroup;
+use Illuminate\Support\Facades\Notification;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use Filament\Notifications\Notification as FilamentNotification;
 
 class DevisResource extends Resource
 {
@@ -183,6 +186,21 @@ class DevisResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                     ExportBulkAction::make()
                         ->visible(auth()->user()->can('export_devis'))
+                        ->after(function () {
+                            Notification::send(
+                                User::admins(),
+                                FilamentNotification::make()
+                                    ->title('Devis a été exporté par ' . auth()->user()->name)
+                                    ->body('L\'utilisateur ' . auth()->user()->name . " a exporté la resource Devis")
+                                    ->actions([
+                                        Action::make('voir+')
+                                            ->url(route('filament.admin.resources.users.view', auth()->id()))
+                                            ->icon('heroicon-o-eye')
+                                    ])
+                                    ->info()
+                                    ->toDatabase()
+                            );
+                        })
                 ]),
             ]);
     }

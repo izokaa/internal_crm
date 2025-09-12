@@ -4,7 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\FactureResource\Pages;
 use App\Filament\Resources\FactureResource\RelationManagers;
-use App\Models\Facture;
+use App\Models\{Facture, User};
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -14,6 +14,8 @@ use App\Traits\HasActiveIcon;
 use App\Enums\FactureStatus;
 use Filament\Tables\Actions\ActionGroup;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use Illuminate\Support\Facades\Notification;
+use Filament\Notifications\Notification as FilamentNotification;
 
 class FactureResource extends Resource
 {
@@ -140,6 +142,15 @@ class FactureResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                     ExportBulkAction::make()
                         ->visible(auth()->user()->can('export_facture'))
+                        ->after(function () {
+                            Notification::send(
+                                User::admins(),
+                                FilamentNotification::make()
+                                ->body('L\'utilisateur ' . auth()->user()->name . " a exporté la resource Factures")
+                                ->info()
+                                ->toDatabase()
+                            );
+                        })
 
                 ]),
             ]);
