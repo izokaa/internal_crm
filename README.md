@@ -40,15 +40,4 @@ Ce projet est un petit CRM (Customer Relationship Management) pour la gestion co
 
 Framework Filament v^3.3.
 
-## Dépendances et Plugins
-
-* charrafimed/global-search-modal": "^3.7",
-* codeat3/blade-clarity-icons": "^1.10",
-* coolsam/nested-comments": "^1.1",
-* filament/filament": "^3.3",
-* laravel/framework": "^11.0",
-* laravel/tinker": "^2.10.1",
-* mallardduck/blade-boxicons": "^2.4",
-* mallardduck/blade-lucide-icons": "^1.23",
-* saade/filament-fullcalendar": "^3.2",
-* spatie/laravel-activit
+**I am realy bad at documenting this**
