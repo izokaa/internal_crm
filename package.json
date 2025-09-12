@@ -4,6 +4,7 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
+        "postinstall": "vite build",
         "dev": "vite"
     },
     "engines": {

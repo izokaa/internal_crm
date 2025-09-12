@@ -2,7 +2,7 @@
 builder = "nixpacks"
 buildCommand = """
 composer install --optimize-autoloader --no-scripts --no-interaction && \
-npm install && \
+npm ci && \
 npm run build
 """
 
@@ -15,9 +15,10 @@ php artisan filament:optimize && \
 php artisan filament:assets && \
 php artisan filament:cache-components && \
 php artisan vendor:publish --force --tag=livewire:assets && \
+php artisan filament:install --ansi --force && \
 php artisan migrate:fresh --force --seed && \
 php artisan shield:super-admin && \
-npm install && npm run build
+npm ci && npm run build
 """
 
 startCommand = "php artisan serve --host=0.0.0.0 --port ${PORT}"
