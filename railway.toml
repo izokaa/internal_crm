@@ -10,7 +10,8 @@ npm run build
 # single string (not array!)
 preDeployCommand = """
 php artisan migrate --force --seed && \
-php artisan shield:super-admin
+php artisan shield:super-admin && \
+npm install && npm run build
 """
 
 startCommand = "php artisan serve --host=0.0.0.0 --port ${PORT}"
