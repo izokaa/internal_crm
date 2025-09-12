@@ -9,6 +9,10 @@ npm run build
 [deploy]
 # single string (not array!)
 preDeployCommand = """
+php artisan cache:clear && \
+php artisan route:clear && \
+php artisan config:clear && \
+php artisan view:clear && \
 php artisan migrate --force --seed && \
 php artisan shield:super-admin && \
 npm install && npm run build
