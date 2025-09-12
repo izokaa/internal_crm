@@ -14,10 +14,6 @@ Ce projet est un petit CRM (Customer Relationship Management) pour la gestion co
 
 ## Installation
 
-**Note**:
-
-*Il faut Respecter l'ordre de l'installation !!*
-
 1. `git clone git@github.com:izokaa/internal_crm.git`
 2. `npm install`
 3. `composer install`

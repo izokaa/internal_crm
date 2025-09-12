@@ -1,9 +1,9 @@
 [build]
 builder = "nixpacks"
 buildCommand = """
+composer install --optimize-autoloader --no-scripts --no-interaction && \
 npm install && \
-npm run build && \
-composer install --optimize-autoloader --no-scripts --no-interaction
+npm run build
 """
 
 [deploy]
