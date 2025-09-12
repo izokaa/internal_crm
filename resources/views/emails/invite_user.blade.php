@@ -38,7 +38,7 @@
           <!-- Footer -->
           <tr>
             <td align="center" style="padding:20px; background:#f1f1f1; font-size:12px; color:#777;">
-              © {{ date('Y') }} Votre Société. Tous droits réservés.
+              © {{ date('Y') }} Plénitude Groupe. Tous droits réservés.
             </td>
           </tr>
         </table>
