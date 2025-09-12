@@ -9,7 +9,10 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
+        "ext-intl": "*",
+        "ext-zip": "*",
+        "ext-gd": "*",
         "bezhansalleh/filament-shield": "^3.9",
         "charrafimed/global-search-modal": "^3.7",
         "codeat3/blade-carbon-icons": "^2.36",
