@@ -1,13 +1,24 @@
 [build]
-builder = "paketobuildpacks/builder:base"
+builder = "nixpacks"
+# Installer PHP deps + build assets
+buildCommand = """
+composer install --optimize-autoloader --no-scripts --no-interaction
+npm install
+npm run build
+"""
 
-[phases.setup]
-nixPkgs = ["php", "phpExtensions.intl", "phpExtensions.gd", "phpExtensions.zip"]
-
-[phases.build]
-cmds = [
-  "composer install --optimize-autoloader --no-scripts --no-interaction"
+[deploy]
+# Créer la base sqlite + exécuter les migrations
+preDeployCommand = [
+    "mkdir -p database",
+    "touch database/database.sqlite",
+    "php artisan migrate --force",
 ]
 
-[start]
-cmd = "php artisan serve --host=0.0.0.0 --port=${PORT:-3000}"
+# Lancer le serveur Laravel
+startCommand = "php artisan serve --host=0.0.0.0 --port ${PORT}"
+
+# Options santé
+healthcheckPath = "/"
+healthcheckTimeout = 100
+restartPolicyType = "always"
