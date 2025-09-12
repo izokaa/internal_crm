@@ -1,0 +1,13 @@
+[build]
+builder = "paketobuildpacks/builder:base"
+
+[phases.setup]
+nixPkgs = ["php", "phpExtensions.intl", "phpExtensions.gd", "phpExtensions.zip"]
+
+[phases.build]
+cmds = [
+  "composer install --optimize-autoloader --no-scripts --no-interaction"
+]
+
+[start]
+cmd = "php artisan serve --host=0.0.0.0 --port=${PORT:-3000}"
