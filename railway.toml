@@ -21,6 +21,8 @@ php artisan shield:super-admin && \
 php artisan shield:install admin && \
 php artisan shield:generate --panel=admin --all && \
 chmod -R 775 storage bootstrap/cache && \
+chmod -R 775 storage storage && \
+chmod -R 775 storage public && \
 php artisan storage:link && \
 npm ci && npm run build
 """
