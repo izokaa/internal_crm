@@ -20,6 +20,7 @@ php artisan migrate:fresh --force --seed && \
 php artisan shield:super-admin && \
 php artisan shield:install admin && \
 php artisan shield:generate --panel=admin --all && \
+php artisan storage:link && \
 npm ci && npm run build
 """
 
