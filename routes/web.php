@@ -12,14 +12,3 @@ Route::get('/', function () {
 Route::middleware('signed')
         ->get('/invitation/{invitationId}/accept', AcceptInvite::class)
         ->name('invitation.accept');
-
-
-use Livewire\Livewire;
-
-Livewire::setScriptRoute(function ($handle) {
-    return Route::get('/vendor/public/livewire/livewire.js', $handle);
-});
-
-Livewire::setUpdateRoute(function ($handle) {
-    return Route::post('/vendor/public/livewire/update', $handle);
-});
