@@ -81,7 +81,7 @@ class DevisResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('contact_id')
                             ->relationship('contact')
-                            ->getOptionLabelFromRecordUsing(fn ($record) => $record->nom . ' ' . $record->prenom . ' - BU: ' . $record->businessUnit->nom . ' - Service: ' . $record->service->nom)
+                            ->getOptionLabelFromRecordUsing(fn ($record) => $record->contact->nom . ' ' . $record->contact->prenom . ' - BU: ' . $record->contact->businessUnit->nom . ' - Service: ' . $record->contact->service->nom)
                             ->required()
                             ->searchable()
                             ->preload()

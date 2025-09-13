@@ -14,13 +14,11 @@ class ListSuppliers extends ListRecords
 
     protected function getTableQuery(): Builder
     {
-        $query = parent::getTableQuery()
-            ->orderBy('name', 'asc');
-        
+        $query = parent::getTableQuery();
         $query->where('type', 'fournisseur');
 
         return $query;
-            
+
     }
 
 

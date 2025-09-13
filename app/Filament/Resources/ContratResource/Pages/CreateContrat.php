@@ -29,4 +29,6 @@ class CreateContrat extends CreateRecord
 
         return $contrat;
     }
+
+
 }
