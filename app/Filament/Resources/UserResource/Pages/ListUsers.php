@@ -21,8 +21,9 @@ class ListUsers extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            Actions\CreateAction::make(),
             Actions\Action::make('inviteUser')
-                ->label('inviter')
+                ->label('+ inviter')
                 ->form([
                     TextInput::make('email')
                         ->email()
