@@ -23,7 +23,8 @@ class ListUsers extends ListRecords
         return [
             Actions\CreateAction::make(),
             Actions\Action::make('inviteUser')
-                ->label('+ inviter')
+                ->label('inviter')
+                ->icon('heroicon-o-plus')
                 ->form([
                     TextInput::make('email')
                         ->email()
